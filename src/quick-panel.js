@@ -172,6 +172,7 @@
     { id: "wallpaper", get label() { return weT("壁纸"); } },
     { id: "appearance", get label() { return weT("外观"); } },
     { id: "playback", get label() { return weT("播放"); } },
+    { id: "gallery", get label() { return weT("在线图库"); } },
   ];
   // 页签记忆（同 picker-tab / qp-view 口径：仅 UI 状态，localStorage，不进 config.json）。
   const QP_TAB_KEY = "dsh-wallpaper-engine:qp-tab";
@@ -865,6 +866,21 @@
             glassUiOpen, onToggleGlassUiSection: toggleGlassUiSection,
             cornersOpen, onToggleCornersSection: toggleCornersSection,
           })
+          : qpTab === "gallery"
+            ? renderGalleryTab({
+              sel,
+              gallery: {
+                items: sel.galleryItems,
+                sel: sel.gallerySel,
+                busy: sel.galleryBusy,
+                error: sel.galleryError,
+                note: sel.galleryNote,
+                result: sel.galleryResult,
+              },
+              galleryThumbUrl,
+              onGalleryEndpoint, onGalleryJsonPath, onGalleryCompress, onGalleryAllowPrivate,
+              onGalleryFetch, onGalleryProbe, onGalleryToggle, onGallerySelectAll, onGalleryDownload,
+            })
           : qpTab === "playback"
             ? qpRenderPlaybackPane(sel, switchQpTab)
             : null),
