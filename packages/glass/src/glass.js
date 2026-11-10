@@ -159,7 +159,10 @@ function applyGlass(selection, s) {
   for (const sid of ['content', 'trace']) {
     const own = (p) => selection[sid + p.charAt(0).toUpperCase() + p.slice(1)];
     const pct = Number(glassValue(sid, 'transparency', own('transparency'), selection.glassAlpha)) || 0;
-    s.setProperty('--we-' + sid + '-glass-alpha', String(Math.max(0.10, 0.25 - pct / 100 * 0.15)));
+    // ⚠️ 曲线**刻意比卡片面宽**（0.90 → 0.10）：这两个面是整块面板，沿用 0.25→0.10 的
+    //    卡片曲线时，叠上可读性地板（floor×fidelity）后滑杆几乎看不出变化（用户报障：
+    //    "内容面板透明度调整无效"）。宽曲线让 0 = 接近实心、100 = 近乎全透，滑杆所见即所得。
+    s.setProperty('--we-' + sid + '-glass-alpha', String(Math.max(0.10, 0.90 - pct / 100 * 0.80)));
     s.setProperty('--we-' + sid + '-glass-blur', String(glassValue(sid, 'blur', own('blur'), selection.blur)) + 'px');
     const fidRaw = Number(glassValue(sid, 'fidelity', own('fidelity'), selection.glassFidelity));
     const fid = Number.isFinite(fidRaw) ? Math.min(1, Math.max(0, fidRaw / 100)) : 1;

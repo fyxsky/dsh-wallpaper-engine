@@ -175,4 +175,19 @@ const WE_I18N_EN_GLASS = {
   "四角全圆角": "All corners round",
 };
 
-export { WE_I18N_EN_GLASS };
+export { WE_I18N_EN_GLASS   "对话中栏整列（消息流所在的画布）": "The whole conversation column (the canvas the transcript lives in)",
+  "正文玻璃·独立配置": "Content glass · Independent config",
+  "正文玻璃·玻璃颜色": "Content glass · Glass color",
+  "正文玻璃·玻璃透明度": "Content glass · Glass opacity",
+  "正文玻璃·雾化": "Content glass · Frost",
+  "正文玻璃·玻璃保真度": "Content glass · Glass fidelity",
+  "「轨迹」页签的记录区": "The record area of the Trajectory tab",
+  "轨迹页玻璃·独立配置": "Trajectory glass · Independent config",
+  "轨迹页玻璃·玻璃颜色": "Trajectory glass · Glass color",
+  "轨迹页玻璃·玻璃透明度": "Trajectory glass · Glass opacity",
+  "轨迹页玻璃·雾化": "Trajectory glass · Frost",
+  "轨迹页玻璃·玻璃保真度": "Trajectory glass · Glass fidelity",
+  "打开后**紧接在本行下方**出现这一面自己的参数（透明度 / 雾化 / 保真度 / 颜色），关闭则完全跟随全局玻璃配置": "On: this surface's own parameters appear right below; off: it fully follows the global glass configuration",
+  "0 = 接近实心，100 = 近乎全透。这一面的曲线比卡片面更宽，滑杆所见即所得。": "0 = nearly solid, 100 = nearly clear. This surface uses a wider curve than the card surfaces, so the slider matches what you see.",
+  "可读性地板的权重：100 = 最坏壁纸下正文仍可读（底板较实），拉低则让壁纸更透。": "Weight of the readability floor: 100 keeps text readable on the worst wallpaper (more solid plate); lower lets the wallpaper show through.",
+};

@@ -104,6 +104,18 @@ function renderAppearanceGlassSection(ctx) {
     //    不留"参数不存在却有一份翻译"的死文案（R3a 的同一口径）。
     // ⚠️ 它还挂在 `thinkingGlass` 门下（登记表的 `master`）⇒ 开关关着时这几条文案根本不渲染
     //    （那正是"门关着 ⇒ 本面不生效"的如实反映）。
+    content: {
+      hint: weT("对话中栏整列（消息流所在的画布）"),
+      indep: weT("正文玻璃·独立配置"), color: weT("正文玻璃·玻璃颜色"),
+      alpha: weT("正文玻璃·玻璃透明度"), blur: weT("正文玻璃·雾化"),
+      fidelity: weT("正文玻璃·玻璃保真度"),
+    },
+    trace: {
+      hint: weT("「轨迹」页签的记录区"),
+      indep: weT("轨迹页玻璃·独立配置"), color: weT("轨迹页玻璃·玻璃颜色"),
+      alpha: weT("轨迹页玻璃·玻璃透明度"), blur: weT("轨迹页玻璃·雾化"),
+      fidelity: weT("轨迹页玻璃·玻璃保真度"),
+    },
     thinkingTrigger: {
       hint: weT("对话里「思考过程」那一行的入口条"),
       indep: weT("思考触发条玻璃·独立配置"),
@@ -262,6 +274,34 @@ function renderAppearanceGlassSection(ctx) {
     // ── 子 UI 独立配置：这一节只有**一层** —— 每个子面一个「独立配置」开关（开 = 用
     //    自己那套参数覆盖全局）。⚠️ 这里**没有**「要不要玻璃」的开关：所有子面恒吃玻璃。
     advRows.push(...childRows);
+  }
+  // ── 页面级玻璃（本 fork 新增）：正文 / 轨迹 ──────────────────────────────
+  // 用户口径「设置里要能调正文玻璃」⇒ 这两面**不走** `detailOpen` 那条"高级细节"门
+  //（那条门只让侧栏档画子面），设置页与侧栏档都画。
+  // 仍保留「独立配置」开关：`glassValue()` 只在 `glassMode[sid] === 'custom'` 时读这面
+  // 自己的键 —— 直接摊旋钮在 inherit 档就是一对死旋钮（本仓专门防这一类）。
+  if (open) {
+    for (const c of children.filter((x) => x.id === "content" || x.id === "trace")) {
+      const cn = CHILD_CN[c.id];
+      const indep = !!(childIndependentOn && childIndependentOn(c.id));
+      advRows.push(switchRow(cn.indep, indep, (e) => onToggleChildIndependent(c.id, e.target.checked), {
+        key: "pg-" + c.id,
+        hint: cn.hint,
+        tooltip: weT("打开后**紧接在本行下方**出现这一面自己的参数（透明度 / 雾化 / 保真度 / 颜色），关闭则完全跟随全局玻璃配置"),
+      }));
+      if (!indep) continue;
+      const P = (param) => childGlassKey(c.id, param);
+      advRows.push(SliderRow(cn.alpha, 0, 100, 5, sel[P("transparency")],
+        (v) => onGlassChildParam(c.id, "transparency", v), "%", "pg-alpha-" + c.id,
+        { tooltip: weT("0 = 接近实心，100 = 近乎全透。这一面的曲线比卡片面更宽，滑杆所见即所得。") }));
+      advRows.push(SliderRow(cn.blur, 0, 60, 1, sel[P("blur")],
+        (v) => onGlassChildParam(c.id, "blur", v), "px", "pg-blur-" + c.id));
+      advRows.push(SliderRow(cn.fidelity, 0, 100, 5, sel[P("fidelity")],
+        (v) => onGlassChildParam(c.id, "fidelity", v), "%", "pg-fid-" + c.id,
+        { tooltip: weT("可读性地板的权重：100 = 最坏壁纸下正文仍可读（底板较实），拉低则让壁纸更透。") }));
+      advRows.push(swatchRow(cn.color, GLASS_COLOR_PRESETS, sel[P("color")],
+        (v) => onGlassChildParam(c.id, "color", v), { key: "pg-color-" + c.id }));
+    }
   }
   // ── 内容面（阅读文件页 / 编辑器 / 终端）的底色与透明度 ──────────────────────
   //    **不在 `detailOpen` 块里**：用户口径「侧边栏阅读文件页面的背景底色的设置被删除了，
