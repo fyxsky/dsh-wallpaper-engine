@@ -357,4 +357,5 @@ export { WE_I18N_EN_PANEL   "在线图库": "Online gallery",
   "出错：": "Error: ",
   "接口可用": "Endpoint OK",
   "拉到 {n} 张": "Fetched {n} images",
+  "有损（转 JPEG 高质量，体积最小）": "Lossy (high-quality JPEG, smallest size)",
 };

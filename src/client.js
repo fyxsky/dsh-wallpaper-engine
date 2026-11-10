@@ -3455,7 +3455,7 @@ const onGalleryPreset = (id) => {
 
 const onGalleryEndpoint = (e) => { setSetting('galleryEndpoint', String((e && e.target && e.target.value) || '')); emit(); };
 const onGalleryJsonPath = (e) => { setSetting('galleryJsonPath', String((e && e.target && e.target.value) || '')); emit(); };
-const onGalleryCompress = (v) => { setSetting('galleryCompress', v === 'off' ? 'off' : 'lossless'); emit(); };
+const onGalleryCompress = (v) => { setSetting('galleryCompress', v === 'lossless' ? 'lossless' : (v === 'off' ? 'off' : 'lossy')); emit(); };
 const onGalleryAllowPrivate = (v) => { setSetting('galleryAllowPrivate', !!v); emit(); };
 /** 缩略图走宿主代理（绕开 CORS / 防盗链）；内网开关要一起带上。 */
 function galleryThumbUrl(url) {
@@ -3512,7 +3512,7 @@ async function onGalleryDownload() {
   try {
     const res = await apiPostJson(apiUrl('/gallery/download'), {
       items,
-      compress: selection.galleryCompress === 'off' ? 'off' : 'lossless',
+      compress: selection.galleryCompress || 'lossy',
       allowPrivate: selection.galleryAllowPrivate === true,
     });
     if (res.ok && res.data) {

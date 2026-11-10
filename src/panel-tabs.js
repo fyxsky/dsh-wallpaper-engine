@@ -92,9 +92,10 @@
       row([
         label(weT("下载后压缩")),
         React.createElement("select", {
-          className: "we-picker__select", value: sel.galleryCompress || "lossless",
+          className: "we-picker__select", value: sel.galleryCompress || "lossy",
           onChange: (e) => ctx.onGalleryCompress(e.target.value),
         },
+          React.createElement("option", { value: "lossy" }, weT("有损（转 JPEG 高质量，体积最小）")),
           React.createElement("option", { value: "lossless" }, weT("无损（PNG 重编码 / 其余只去元数据）")),
           React.createElement("option", { value: "off" }, weT("不压缩")),
         ),
