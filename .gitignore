@@ -23,9 +23,7 @@ scene-layers-out/
 
 # 构建产物出库（v1.4）：lib/client.js 由 `npm run build` 现场生成（开发者 / CI / prepack 三条路径），
 # 不再入库。安装 npm 包与 Release tgz 时由打包期的 prepack 构建。
-/lib/client.js
 # P-A 起每包一产物（ADR-0003/0012 的同一口径）：子包的浏览器半边同样由 `npm run build` 现场生成。
-packages/*/lib/client.*.js
 
 /.git.bak-broken/
 
@@ -73,3 +71,8 @@ _t4logs/
 
 # 本地调研缓存与一次性脚本（gh 数据快照、asar 读取工具、守卫步骤清单等，不入库）
 /.research/
+
+# 构建产物**入库**（本 fork 从 GitHub 直装：pnpm 按 files[] + .gitignore 打包，
+# 产物不入库则安装后缺 lib/client.js 与 packages/*/lib/client.*.js，
+# client-modules 会在启动期报 "client bundle not found" 并让整个 profile 起不来）。
+# 改 src/ 后请执行 node scripts/build-client.mjs 并一并提交产物。
