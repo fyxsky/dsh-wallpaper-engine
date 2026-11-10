@@ -431,6 +431,13 @@ const selection = {
   armedConfirm: "",
   // Custom-upload UI state (transient): in-flight flag + last error message.
   uploading: false,
+  // ── 在线图库（本 fork 新增）的瞬态态：拉取结果 / 已选 url / 忙碌 / 错误 / 提示 / 下载结果 ──
+  galleryItems: [],
+  gallerySel: [],
+  galleryBusy: false,
+  galleryError: "",
+  galleryNote: "",
+  galleryResult: null,
   uploadError: "",
   uploadNote: "",
   // Upload-directory editor (transient): open state + draft path.
@@ -2062,6 +2069,7 @@ const PICKER_TABS = [
   { id: "appearance", get label() { return weT("外观"); } },
   { id: "playback", get label() { return weT("播放"); } },
   { id: "system", get label() { return weT("系统"); } },
+  { id: "gallery", get label() { return weT("在线图库"); } },
 ];
 // 旧页签 id → 新 id 的迁移（「字体」并入「外观」）：别把老用户甩回第一页。
 const PICKER_TAB_LEGACY = {
@@ -3427,6 +3435,78 @@ const officialColorOf = (tokens) => {
   return "";
 };
 
+// ── 在线图库（本 fork 新增）：接口地址 / 取图路径 / 压缩档 / 内网开关 + 拉取、测试、下载 ──
+const onGalleryEndpoint = (e) => { setSetting('galleryEndpoint', String((e && e.target && e.target.value) || '')); emit(); };
+const onGalleryJsonPath = (e) => { setSetting('galleryJsonPath', String((e && e.target && e.target.value) || '')); emit(); };
+const onGalleryCompress = (v) => { setSetting('galleryCompress', v === 'off' ? 'off' : 'lossless'); emit(); };
+const onGalleryAllowPrivate = (v) => { setSetting('galleryAllowPrivate', !!v); emit(); };
+/** 缩略图走宿主代理（绕开 CORS / 防盗链）；内网开关要一起带上。 */
+function galleryThumbUrl(url) {
+  return apiUrl('/gallery/thumb?url=' + encodeURIComponent(String(url || '')) + (selection.galleryAllowPrivate ? '&allowPrivate=1' : ''));
+}
+function galleryFail(message) { setTransient('galleryError', String(message || '')); setTransient('galleryBusy', false); emit(); }
+async function onGalleryProbe() {
+  const endpoint = String(selection.galleryEndpoint || '').trim();
+  if (!endpoint) return;
+  setTransient('galleryBusy', true); setTransient('galleryError', ''); setTransient('galleryNote', ''); emit();
+  try {
+    const res = await apiFetch(apiUrl('/gallery/probe?url=' + encodeURIComponent(endpoint) + (selection.galleryAllowPrivate ? '&allowPrivate=1' : '')), { parse: 'always' });
+    if (res.ok && res.data) {
+      setTransient('galleryNote', weT('接口可用') + ' · HTTP ' + res.data.status + ' · ' + String(res.data.contentType || '?') + ' · ' + res.data.bytes + ' B');
+      setTransient('galleryBusy', false); emit();
+    } else galleryFail((res.data && res.data.error) || ('HTTP ' + res.status));
+  } catch (err) { galleryFail(err && err.message ? err.message : err); }
+}
+async function onGalleryFetch() {
+  const endpoint = String(selection.galleryEndpoint || '').trim();
+  if (!endpoint) return;
+  setTransient('galleryBusy', true); setTransient('galleryError', ''); setTransient('galleryNote', ''); setTransient('galleryResult', null); emit();
+  try {
+    const res = await apiPostJson(apiUrl('/gallery/preview'), {
+      endpoint,
+      format: selection.galleryFormat || 'auto',
+      jsonPath: selection.galleryJsonPath || '',
+      headers: selection.galleryHeaders || '',
+      count: 24,
+      allowPrivate: selection.galleryAllowPrivate === true,
+    });
+    if (res.ok && res.data && Array.isArray(res.data.items)) {
+      setTransient('galleryItems', res.data.items);
+      setTransient('gallerySel', []);
+      setTransient('galleryNote', weT('拉到 {n} 张').replace('{n}', String(res.data.items.length)));
+      setTransient('galleryBusy', false); emit();
+    } else galleryFail((res.data && res.data.error) || ('HTTP ' + res.status));
+  } catch (err) { galleryFail(err && err.message ? err.message : err); }
+}
+function onGalleryToggle(url) {
+  const cur = Array.isArray(selection.gallerySel) ? selection.gallerySel.slice() : [];
+  const i = cur.indexOf(url);
+  if (i >= 0) cur.splice(i, 1); else cur.push(url);
+  setTransient('gallerySel', cur); emit();
+}
+function onGallerySelectAll(on) {
+  const all = (Array.isArray(selection.galleryItems) ? selection.galleryItems : []).map((it) => it && it.url).filter(Boolean);
+  setTransient('gallerySel', on ? all : []); emit();
+}
+async function onGalleryDownload() {
+  const items = Array.isArray(selection.gallerySel) ? selection.gallerySel.slice() : [];
+  if (items.length === 0) return;
+  setTransient('galleryBusy', true); setTransient('galleryError', ''); emit();
+  try {
+    const res = await apiPostJson(apiUrl('/gallery/download'), {
+      items,
+      compress: selection.galleryCompress === 'off' ? 'off' : 'lossless',
+      allowPrivate: selection.galleryAllowPrivate === true,
+    });
+    if (res.ok && res.data) {
+      setTransient('galleryResult', res.data);
+      setTransient('gallerySel', []);
+      setTransient('galleryBusy', false); emit();
+      loadInventory().catch(() => { /* 失败保持现状 */ });
+    } else galleryFail((res.data && res.data.error) || ('HTTP ' + res.status));
+  } catch (err) { galleryFail(err && err.message ? err.message : err); }
+}
+
 // 字体自定义：总开关 + 颜色/字重/字体族，各项立即生效并持久化。
 // 打开开关时**顺手**去要一次本机字体清单（宿主那次扫描很贵，只在用户真的进这一区时才发生；
 // 清单本身不参与字体值，拿不到也不影响任何别的功能 —— 见 src/system-fonts.js）。
@@ -4002,7 +4082,21 @@ function WallpaperPicker() {
   // 四页签 = 单渲染器（「外观」）+ 两个合并渲染器（「播放」= 效果 + 声音，「系统」= 高级）
   // + 壁纸库。
   const renderActiveTab = () => {
-    if (activeTab === "appearance") return renderAppearanceTab({
+    if (activeTab === "gallery") return renderGalleryTab({
+      sel: selection,
+      gallery: {
+        items: selection.galleryItems,
+        sel: selection.gallerySel,
+        busy: selection.galleryBusy,
+        error: selection.galleryError,
+        note: selection.galleryNote,
+        result: selection.galleryResult,
+      },
+      galleryThumbUrl,
+      onGalleryEndpoint, onGalleryJsonPath, onGalleryCompress, onGalleryAllowPrivate,
+      onGalleryFetch, onGalleryProbe, onGalleryToggle, onGallerySelectAll, onGalleryDownload,
+    });
+if (activeTab === "appearance") return renderAppearanceTab({
       setSetting, setTransient,
       fontSet: fontSetCtx(),
       glassPresets: glassPresetCtx(),

@@ -336,4 +336,25 @@ const WE_I18N_EN_PANEL = {
 
 };
 
-export { WE_I18N_EN_PANEL };
+export { WE_I18N_EN_PANEL   "在线图库": "Online gallery",
+  "填一个图库接口地址（Picsum / Bing 每日 / 自建图床都行），拉回来的图可以勾选后下载到「自定义壁纸」目录": "Paste a gallery API URL (Picsum, Bing daily, your own image host). Fetched images can be selected and downloaded into the custom-wallpaper folder.",
+  "测试": "Test",
+  "拉取": "Fetch",
+  "拉取中…": "Fetching…",
+  "取图路径": "Image path",
+  "留空自动识别，例如 images[].url": "Leave empty to auto-detect, e.g. images[].url",
+  "下载后压缩": "Compress on save",
+  "无损（PNG 重编码 / 其余只去元数据）": "Lossless (PNG re-encode / metadata strip only)",
+  "不压缩": "No compression",
+  " 允许内网/本机地址": " Allow private/local addresses",
+  "全选": "Select all",
+  "清空选择": "Clear selection",
+  "下载选中": "Download selected",
+  "下载中…": "Downloading…",
+  "已保存 {saved} 张，跳过 {skipped} 张": "Saved {saved}, skipped {skipped}",
+  "，失败 {n} 张": ", {n} failed",
+  "体积": "size",
+  "出错：": "Error: ",
+  "接口可用": "Endpoint OK",
+  "拉到 {n} 张": "Fetched {n} images",
+};

@@ -46,6 +46,77 @@
   // 判据按真渲染的节序列钉住，见 verify-scene-live 的节顺序一节）。
   // 首行空解构是**契约**（test/verify-scene-live.mjs 的『每个页签首行都从 ctx 解构』）：
   // 本页签只把 ctx **转交**给各节、自己不读字段 —— 所以那不是无操作声明，是"要什么写在签名处"。
+  // ── 「在线图库」页签（本 fork 新增）────────────────────────────────────────
+  // 契约与本文件其余 render*Tab 一致：只读 ctx、动作全走 on*、浏览器安全、无顶层可执行语句。
+  // 数据面：gallery.items（接口拉回来的条目）+ gallery.sel（已选 url 数组）+ gallery.busy/error/note/result。
+  function renderGalleryTab(ctx) {
+    const { sel, gallery } = ctx;
+    const g = gallery || {};
+    const items = Array.isArray(g.items) ? g.items : [];
+    const picked = new Set(Array.isArray(g.sel) ? g.sel : []);
+    const busy = g.busy === true;
+    const row = (children, key) => React.createElement("div", { className: "we-picker__ctl we-picker__ctl--wrap", key }, children);
+    const label = (text) => React.createElement("span", { className: "we-picker__hint we-picker__label" }, text);
+    const head = React.createElement(React.Fragment, null,
+      React.createElement("div", { className: "we-picker__hint" }, weT("填一个图库接口地址（Picsum / Bing 每日 / 自建图床都行），拉回来的图可以勾选后下载到「自定义壁纸」目录")),
+      row([
+        React.createElement("input", {
+          className: "we-picker__text", type: "text", spellCheck: false,
+          placeholder: "https://picsum.photos/v2/list?page=1&limit=30",
+          value: sel.galleryEndpoint || "", onInput: ctx.onGalleryEndpoint,
+        }),
+        React.createElement("button", { className: "we-picker__btn", type: "button", disabled: busy, onClick: ctx.onGalleryProbe }, weT("测试")),
+        React.createElement("button", { className: "we-picker__btn", type: "button", disabled: busy || !(sel.galleryEndpoint || "").trim(), onClick: ctx.onGalleryFetch }, busy ? weT("拉取中…") : weT("拉取")),
+      ], "g-url"),
+      row([
+        label(weT("取图路径")),
+        React.createElement("input", {
+          className: "we-picker__text", type: "text", spellCheck: false,
+          placeholder: weT("留空自动识别，例如 images[].url"),
+          value: sel.galleryJsonPath || "", onInput: ctx.onGalleryJsonPath,
+        }),
+      ], "g-path"),
+      row([
+        label(weT("下载后压缩")),
+        React.createElement("select", {
+          className: "we-picker__select", value: sel.galleryCompress || "lossless",
+          onChange: (e) => ctx.onGalleryCompress(e.target.value),
+        },
+          React.createElement("option", { value: "lossless" }, weT("无损（PNG 重编码 / 其余只去元数据）")),
+          React.createElement("option", { value: "off" }, weT("不压缩")),
+        ),
+        React.createElement("label", { className: "we-picker__hint" },
+          React.createElement("input", { type: "checkbox", checked: sel.galleryAllowPrivate === true, onChange: (e) => ctx.onGalleryAllowPrivate(e.target.checked) }),
+          weT(" 允许内网/本机地址"),
+        ),
+      ], "g-compress"),
+      g.note ? React.createElement("div", { className: "we-picker__hint" }, g.note) : null,
+      g.error ? React.createElement("div", { className: "we-picker__hint" }, weT("出错：") + g.error) : null,
+    );
+    const grid = items.length === 0 ? null : React.createElement("div", { className: "we-picker__preset-grid" },
+      items.map((it, i) => React.createElement("div", { className: "we-picker__preset-cell", key: it.url + i },
+        React.createElement("label", { className: "we-picker__hint", title: it.title || it.url },
+          React.createElement("input", { type: "checkbox", checked: picked.has(it.url), onChange: () => ctx.onGalleryToggle(it.url) }),
+          React.createElement("img", {
+            src: ctx.galleryThumbUrl(it.url), alt: "", loading: "lazy", decoding: "async",
+            style: { width: "100%", height: "84px", objectFit: "cover", borderRadius: "6px", display: "block" },
+          }),
+        ),
+      )),
+    );
+    const actions = items.length === 0 ? null : row([
+      React.createElement("button", { className: "we-picker__btn", type: "button", onClick: () => ctx.onGallerySelectAll(true) }, weT("全选")),
+      React.createElement("button", { className: "we-picker__btn", type: "button", onClick: () => ctx.onGallerySelectAll(false) }, weT("清空选择")),
+      React.createElement("button", { className: "we-picker__btn", type: "button", disabled: busy || picked.size === 0, onClick: ctx.onGalleryDownload },
+        busy ? weT("下载中…") : weT("下载选中") + " (" + picked.size + ")"),
+    ], "g-actions");
+    const result = g.result ? React.createElement("div", { className: "we-picker__hint" },
+      weT("已保存 {saved} 张，跳过 {skipped} 张", { saved: g.result.saved, skipped: g.result.skipped }) + (g.result.failed && g.result.failed.length ? weT("，失败 {n} 张", { n: g.result.failed.length }) : "") +
+      (g.result.bytesBefore ? " · " + weT("体积") + " " + Math.round(g.result.bytesBefore / 1024) + "KB → " + Math.round(g.result.bytesAfter / 1024) + "KB" : ""),
+    ) : null;
+    return React.createElement(React.Fragment, null, head, grid, actions, result);
+  }
+
   function renderWallpaperTab(ctx) {
     const { } = ctx;
     // 四节（current / 切换过场 / 自动轮播 / 自定义壁纸）在 P-D S3a–S3c 起全部搬进
