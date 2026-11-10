@@ -1,7 +1,7 @@
 {
   "$schema": "dsh-we/profile-preset@1",
   "id": "factory-dracula-blade",
-  "name": "Dracula Blade · 青",
+  "name": "Blade · 青",
   "values": {
     "glassSurfacePolicy": {},
     "floaterSolidBase": true,

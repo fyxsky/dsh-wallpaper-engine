@@ -1,7 +1,7 @@
 {
   "$schema": "dsh-we/profile-preset@1",
   "id": "factory-dracula-buffy",
-  "name": "Dracula Buffy · 粉",
+  "name": "Buffy · 粉",
   "values": {
     "glassSurfacePolicy": {},
     "floaterSolidBase": true,

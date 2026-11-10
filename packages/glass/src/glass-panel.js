@@ -322,11 +322,11 @@ function renderAppearanceGlassSection(ctx) {
       !!(childIndependentOn && childIndependentOn("sidebarContent")),
       (e) => onToggleChildIndependent("sidebarContent", e.target.checked), {
         key: "content-independent",
-        hint: weT("阅读文件页 / 编辑器 / 终端的底色"),
+        hint: weT("右栏阅读文件页 / 编辑器 / 终端（不影响对话正文）"),
         tooltip: weT("打开后**紧接在本行下方**出现内容面自己的两项（透明度 / 底色），**完全覆盖**全局玻璃配置；关闭则回到继承全局"),
       }));
     if (childIndependentOn && childIndependentOn("sidebarContent")) {
-      advRows.push(SliderRow(weT("内容面透明度"), 0, 100, 5, sel.sidebarContentAlpha, onSidebarContentAlpha, "%", "content-alpha",
+      advRows.push(SliderRow(weT("右栏内容面透明度"), 0, 100, 5, sel.sidebarContentAlpha, onSidebarContentAlpha, "%", "content-alpha",
         { tooltip: weT("阅读文件页、编辑器与终端的底板不透明度（0 = 接近全透、100 = 最实）。越大越透，与玻璃透明度同语义。") }));
       advRows.push(swatchRow(weT("内容面底色"), GLASS_COLOR_PRESETS, sel.sidebarContentColor, onSidebarContentColor, {
         key: "content-color",

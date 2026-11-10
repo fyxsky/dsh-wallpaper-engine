@@ -1,7 +1,7 @@
 {
   "$schema": "dsh-we/profile-preset@1",
   "id": "factory-dracula-lincoln",
-  "name": "Dracula Lincoln · 黄",
+  "name": "Lincoln · 黄",
   "values": {
     "glassSurfacePolicy": {},
     "floaterSolidBase": true,

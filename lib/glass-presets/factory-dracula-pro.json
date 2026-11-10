@@ -1,7 +1,7 @@
 {
   "$schema": "dsh-we/profile-preset@1",
   "id": "factory-dracula-pro",
-  "name": "Dracula Pro · 紫",
+  "name": "Pro · 紫",
   "values": {
     "glassSurfacePolicy": {},
     "floaterSolidBase": true,

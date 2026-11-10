@@ -1,7 +1,7 @@
 {
   "$schema": "dsh-we/profile-preset@1",
   "id": "factory-dracula-classic",
-  "name": "Dracula Classic · 蓝",
+  "name": "Classic · 蓝",
   "values": {
     "glassSurfacePolicy": {},
     "floaterSolidBase": true,

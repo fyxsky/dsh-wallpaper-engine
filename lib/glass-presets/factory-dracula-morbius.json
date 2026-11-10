@@ -1,7 +1,7 @@
 {
   "$schema": "dsh-we/profile-preset@1",
   "id": "factory-dracula-morbius",
-  "name": "Dracula Morbius · 红",
+  "name": "Morbius · 红",
   "values": {
     "glassSurfacePolicy": {},
     "floaterSolidBase": true,

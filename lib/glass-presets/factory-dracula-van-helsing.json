@@ -1,7 +1,7 @@
 {
   "$schema": "dsh-we/profile-preset@1",
   "id": "factory-dracula-van-helsing",
-  "name": "Dracula Van Helsing · 墨蓝",
+  "name": "V.Helsing · 墨蓝",
   "values": {
     "glassSurfacePolicy": {},
     "floaterSolidBase": true,

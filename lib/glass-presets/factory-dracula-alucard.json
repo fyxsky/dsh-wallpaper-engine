@@ -1,7 +1,7 @@
 {
   "$schema": "dsh-we/profile-preset@1",
   "id": "factory-dracula-alucard",
-  "name": "Dracula Alucard · 亮",
+  "name": "Alucard · 亮",
   "values": {
     "glassSurfacePolicy": {},
     "floaterSolidBase": true,

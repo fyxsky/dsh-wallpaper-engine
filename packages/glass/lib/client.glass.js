@@ -1924,23 +1924,23 @@ window.__ModuleLoader__.load({
 				    background-color: rgba(var(--we-content-glass-tint-rgb-dark, 13, 21, 36), 0.92);
 				  }
 
-				  body[data-we-glass-trace][data-we-glass-page]:not([data-we-glass-fallback]) [data-trajectory-scroll] {
+				  body[data-we-glass-trace][data-we-glass-page]:not([data-we-glass-fallback]) [data-conversation-composer-overlay]:has([data-trajectory-scroll]) {
 				    background-color: color-mix(in srgb,
 				      var(--we-readability-base, #ffffff) calc(var(--we-readability-floor-base, 0.45) * var(--we-trace-glass-fidelity, 1) * 100%),
 				      rgba(var(--we-trace-glass-tint-rgb-light, 255, 255, 255), var(--we-trace-glass-alpha, 0.15)) calc((1 - var(--we-readability-floor-base, 0.45) * var(--we-trace-glass-fidelity, 1)) * 100%));
 				    -webkit-backdrop-filter: blur(var(--we-trace-glass-blur, 24px)) saturate(var(--we-saturate, 1.8));
 				    backdrop-filter: blur(var(--we-trace-glass-blur, 24px)) saturate(var(--we-saturate, 1.8));
 				  }
-				  body[data-ds-dark-theme][data-we-glass-trace][data-we-glass-page]:not([data-we-glass-fallback]) [data-trajectory-scroll] {
+				  body[data-ds-dark-theme][data-we-glass-trace][data-we-glass-page]:not([data-we-glass-fallback]) [data-conversation-composer-overlay]:has([data-trajectory-scroll]) {
 				    background-color: color-mix(in srgb,
 				      var(--we-readability-base, #0d1524) calc(var(--we-readability-floor-base, 0.59) * var(--we-trace-glass-fidelity, 1) * 100%),
 				      rgba(var(--we-trace-glass-tint-rgb-dark, 13, 21, 36), var(--we-trace-glass-alpha, 0.15)) calc((1 - var(--we-readability-floor-base, 0.59) * var(--we-trace-glass-fidelity, 1)) * 100%));
 				  }
-				  body[data-we-glass-trace][data-we-glass-page][data-we-glass-fallback] [data-trajectory-scroll] {
+				  body[data-we-glass-trace][data-we-glass-page][data-we-glass-fallback] [data-conversation-composer-overlay]:has([data-trajectory-scroll]) {
 				    background-color: rgba(var(--we-trace-glass-tint-rgb-light, 255, 255, 255), 0.92);
 				    -webkit-backdrop-filter: none; backdrop-filter: none;
 				  }
-				  body[data-ds-dark-theme][data-we-glass-trace][data-we-glass-page][data-we-glass-fallback] [data-trajectory-scroll] {
+				  body[data-ds-dark-theme][data-we-glass-trace][data-we-glass-page][data-we-glass-fallback] [data-conversation-composer-overlay]:has([data-trajectory-scroll]) {
 				    background-color: rgba(var(--we-trace-glass-tint-rgb-dark, 13, 21, 36), 0.92);
 				  }
 
@@ -3421,11 +3421,11 @@ window.__ModuleLoader__.load({
 				  // i18n 判据是文本扫描，只认 weT("…") 字面量；数据里的名字扫描看不见）。
 				  // 两侧靠 id 对齐；漏了的出厂 id 回落显示文件里的原名（渐进式，不炸）。
 				  const FACTORY_PRESET_CN = {
-				    "factory-dracula-pro": "Dracula Pro · 紫", "factory-dracula-classic": "Dracula Classic · 蓝",
-				    "factory-dracula-alucard": "Dracula Alucard · 亮", "factory-dracula-blade": "Dracula Blade · 青",
-				    "factory-dracula-buffy": "Dracula Buffy · 粉", "factory-dracula-lincoln": "Dracula Lincoln · 黄",
-				    "factory-dracula-morbius": "Dracula Morbius · 红", "factory-dracula-nosferatu": "Dracula Nosferatu · 冰蓝",
-				    "factory-dracula-van-helsing": "Dracula Van Helsing · 墨蓝",
+				    "factory-dracula-pro": "Pro · 紫", "factory-dracula-classic": "Classic · 蓝",
+				    "factory-dracula-alucard": "Alucard · 亮", "factory-dracula-blade": "Blade · 青",
+				    "factory-dracula-buffy": "Buffy · 粉", "factory-dracula-lincoln": "Lincoln · 黄",
+				    "factory-dracula-morbius": "Morbius · 红", "factory-dracula-nosferatu": "Nosferatu · 冰蓝",
+				    "factory-dracula-van-helsing": "V.Helsing · 墨蓝",
 				  };
 				  const labelOf = (row) => (row.origin === "builtin" && FACTORY_PRESET_CN[row.id])
 				    ? FACTORY_PRESET_CN[row.id]
@@ -3459,7 +3459,9 @@ window.__ModuleLoader__.load({
 				  //    同一口径）—— 拿它和带前缀的令牌串比较永远不等 ⇒ 确认行永远不渲染
 				  //    （实测："点删除没反应"就是这个）。行为守卫：verify-presets ④。
 				  const cells = [];
-				  for (let i = 0; i < 8; i++) {
+				  // 格子数 = 出厂 + 用户上限（与宿主 PRESET_TOTAL_MAX 同值；4 列 × 4 行）。
+				  const PRESET_GRID_SLOTS = 16;
+				  for (let i = 0; i < PRESET_GRID_SLOTS; i++) {
 				    const row = rows[i];
 				    if (!row) {
 				      cells.push(React.createElement("div", {
@@ -3517,8 +3519,8 @@ window.__ModuleLoader__.load({
 				    : React.createElement("div", { className: "we-picker__ctl we-picker__ctl--wrap", key: "gp-save-open" },
 				      React.createElement("button", {
 				        className: "we-picker__btn", type: "button",
-				        disabled: loading === true || rows.length >= 8,
-				        title: rows.length >= 8
+				        disabled: loading === true || rows.length >= PRESET_GRID_SLOTS,
+				        title: rows.length >= PRESET_GRID_SLOTS
 				          ? weT("已达预设上限（8 个）—— 删除不需要的预设后再存")
 				          : weT("把当前这套整机配置存成一份你自己的预设（之后从预设行一键取回）"),
 				        onClick: () => onOpenSave(),
@@ -3636,7 +3638,7 @@ window.__ModuleLoader__.load({
 				    : null;
 				  return React.createElement(React.Fragment, null,
 				    React.createElement("div", { className: "we-picker__ctl we-picker__ctl--wrap" },
-				      ctlText(weT("预设方案"), weT("一键套用整套配置（出厂七套 + 你自己存的，上限 8 个）：观感、行为与勾选的字体一起生效，应用后可继续微调")),
+				      ctlText(weT("预设方案"), weT("一键套用整套配置（出厂九套 + 你自己存的，上限 16 个）：观感、行为与勾选的字体一起生效，应用后可继续微调")),
 				    ),
 				    loading ? React.createElement("div", { className: "we-picker__hint" }, weT("正在处理…")) : null,
 				    // ⚠️ reason 必须再过一次 weT：它可能来自宿主回包（lib/routes/presets.js 的中文 error），
@@ -3979,11 +3981,11 @@ window.__ModuleLoader__.load({
 				      !!(childIndependentOn && childIndependentOn("sidebarContent")),
 				      (e) => onToggleChildIndependent("sidebarContent", e.target.checked), {
 				        key: "content-independent",
-				        hint: weT("阅读文件页 / 编辑器 / 终端的底色"),
+				        hint: weT("右栏阅读文件页 / 编辑器 / 终端（不影响对话正文）"),
 				        tooltip: weT("打开后**紧接在本行下方**出现内容面自己的两项（透明度 / 底色），**完全覆盖**全局玻璃配置；关闭则回到继承全局"),
 				      }));
 				    if (childIndependentOn && childIndependentOn("sidebarContent")) {
-				      advRows.push(SliderRow(weT("内容面透明度"), 0, 100, 5, sel.sidebarContentAlpha, onSidebarContentAlpha, "%", "content-alpha",
+				      advRows.push(SliderRow(weT("右栏内容面透明度"), 0, 100, 5, sel.sidebarContentAlpha, onSidebarContentAlpha, "%", "content-alpha",
 				        { tooltip: weT("阅读文件页、编辑器与终端的底板不透明度（0 = 接近全透、100 = 最实）。越大越透，与玻璃透明度同语义。") }));
 				      advRows.push(swatchRow(weT("内容面底色"), GLASS_COLOR_PRESETS, sel.sidebarContentColor, onSidebarContentColor, {
 				        key: "content-color",

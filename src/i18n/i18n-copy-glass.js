@@ -129,7 +129,7 @@ const WE_I18N_EN_GLASS = {
   "把当前活动字体集的颜色角色 / 排版 / 字族 / 组件字体一并存进预设": "Store the active font set's color roles / typography / families / component fonts in the preset",
   "数值配置（开关 / 尺寸 / 圆角 / 颜色等）总是完整保存，不受勾选影响 —— 勾选只决定图片与字体要不要一并带走；不勾的那一族一个字都不动对方，勾了而本机没有 = 声明「无」（对方回到内置）。": "Numeric settings (switches / sizes / radii / colors) are always saved in full regardless of the checks — the checks only decide whether images and fonts come along; an unchecked family is left completely untouched on the other side, while checking a family you do not have saves it as \"none\" (the other side returns to the built-in look).",
   "应用「{name}」：整机配置快照立即生效（观感 / 行为 / 勾选的字体与图片），之后可以继续微调": "Apply “{name}”: the full configuration snapshot takes effect immediately (look, behavior, plus any fonts and images it carries); fine-tune afterwards",
-    "一键套用整套配置（出厂七套 + 你自己存的，上限 8 个）：观感、行为与勾选的字体一起生效，应用后可继续微调": "Apply a whole configuration in one click (seven factory sets + your own, up to 8 total): look, behavior and the checked font set apply together — keep tuning afterwards",
+    "一键套用整套配置（出厂九套 + 你自己存的，上限 16 个）：观感、行为与勾选的字体一起生效，应用后可继续微调": "Apply a whole configuration in one click (seven factory sets + your own, up to 8 total): look, behavior and the checked font set apply together — keep tuning afterwards",
   "这份出厂预设的版本已作废：{reason}（旧格式不再兼容 —— 从预设栏重新保存一份即可）": "This factory preset's version is obsolete: {reason} (the old format is no longer compatible — just save a fresh preset from the presets row)",
   "这份预设读不出来：{reason}（删掉它，重新保存一份）": "This preset cannot be read: {reason} (delete it and save a fresh one)",
   "导入预设…": "Import preset…",
@@ -190,4 +190,6 @@ export { WE_I18N_EN_GLASS   "对话中栏整列（消息流所在的画布）": 
   "打开后**紧接在本行下方**出现这一面自己的参数（透明度 / 雾化 / 保真度 / 颜色），关闭则完全跟随全局玻璃配置": "On: this surface's own parameters appear right below; off: it fully follows the global glass configuration",
   "0 = 接近实心，100 = 近乎全透。这一面的曲线比卡片面更宽，滑杆所见即所得。": "0 = nearly solid, 100 = nearly clear. This surface uses a wider curve than the card surfaces, so the slider matches what you see.",
   "可读性地板的权重：100 = 最坏壁纸下正文仍可读（底板较实），拉低则让壁纸更透。": "Weight of the readability floor: 100 keeps text readable on the worst wallpaper (more solid plate); lower lets the wallpaper show through.",
+"右栏内容面透明度": "Right-sidebar content opacity",
+"右栏阅读文件页 / 编辑器 / 终端（不影响对话正文）": "Right-sidebar document preview / editor / terminal (does not affect the chat column)",
 };

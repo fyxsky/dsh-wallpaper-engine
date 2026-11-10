@@ -1916,23 +1916,23 @@ const CSS_GLASS = `
     background-color: rgba(var(--we-content-glass-tint-rgb-dark, 13, 21, 36), 0.92);
   }
 
-  body[data-we-glass-trace][data-we-glass-page]:not([data-we-glass-fallback]) [data-trajectory-scroll] {
+  body[data-we-glass-trace][data-we-glass-page]:not([data-we-glass-fallback]) [data-conversation-composer-overlay]:has([data-trajectory-scroll]) {
     background-color: color-mix(in srgb,
       var(--we-readability-base, #ffffff) calc(var(--we-readability-floor-base, 0.45) * var(--we-trace-glass-fidelity, 1) * 100%),
       rgba(var(--we-trace-glass-tint-rgb-light, 255, 255, 255), var(--we-trace-glass-alpha, 0.15)) calc((1 - var(--we-readability-floor-base, 0.45) * var(--we-trace-glass-fidelity, 1)) * 100%));
     -webkit-backdrop-filter: blur(var(--we-trace-glass-blur, 24px)) saturate(var(--we-saturate, 1.8));
     backdrop-filter: blur(var(--we-trace-glass-blur, 24px)) saturate(var(--we-saturate, 1.8));
   }
-  body[data-ds-dark-theme][data-we-glass-trace][data-we-glass-page]:not([data-we-glass-fallback]) [data-trajectory-scroll] {
+  body[data-ds-dark-theme][data-we-glass-trace][data-we-glass-page]:not([data-we-glass-fallback]) [data-conversation-composer-overlay]:has([data-trajectory-scroll]) {
     background-color: color-mix(in srgb,
       var(--we-readability-base, #0d1524) calc(var(--we-readability-floor-base, 0.59) * var(--we-trace-glass-fidelity, 1) * 100%),
       rgba(var(--we-trace-glass-tint-rgb-dark, 13, 21, 36), var(--we-trace-glass-alpha, 0.15)) calc((1 - var(--we-readability-floor-base, 0.59) * var(--we-trace-glass-fidelity, 1)) * 100%));
   }
-  body[data-we-glass-trace][data-we-glass-page][data-we-glass-fallback] [data-trajectory-scroll] {
+  body[data-we-glass-trace][data-we-glass-page][data-we-glass-fallback] [data-conversation-composer-overlay]:has([data-trajectory-scroll]) {
     background-color: rgba(var(--we-trace-glass-tint-rgb-light, 255, 255, 255), 0.92);
     -webkit-backdrop-filter: none; backdrop-filter: none;
   }
-  body[data-ds-dark-theme][data-we-glass-trace][data-we-glass-page][data-we-glass-fallback] [data-trajectory-scroll] {
+  body[data-ds-dark-theme][data-we-glass-trace][data-we-glass-page][data-we-glass-fallback] [data-conversation-composer-overlay]:has([data-trajectory-scroll]) {
     background-color: rgba(var(--we-trace-glass-tint-rgb-dark, 13, 21, 36), 0.92);
   }
 
