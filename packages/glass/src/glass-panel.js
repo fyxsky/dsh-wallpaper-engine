@@ -137,7 +137,9 @@ function renderAppearanceGlassSection(ctx) {
   //    ⚠️ 子门 `detailOpen` 那行的 `sidebarSurface &&` 保持不动 —— 那是"高级行只住侧栏"的
   //       老口径（设置页不画那些行），与整节折叠是两件事。
   const open = glassUiOpen === true;
-  for (const c of detailOpen ? children : []) {
+  // ⚠️ 排除「页面级」两面（content / trace）：它们由下面那块**常规行**在设置页与侧栏档
+  //    都画一次（用户口径「设置里要能调正文玻璃」）⇒ 这里再画一遍就是重复的两组滑杆。
+  for (const c of (detailOpen ? children.filter((x) => x.id !== "content" && x.id !== "trace") : [])) {
     const cn = CHILD_CN[c.id];
     // 登记表与词表必须一一对应：漏一个就整项无标签（比 ReferenceError 更隐蔽）。
     if (!cn) { childRows.push(React.createElement("div", { className: "we-picker__hint", key: "gc-missing-" + c.id }, weT("内部错误：这个子界面缺少文案"))); continue; }
