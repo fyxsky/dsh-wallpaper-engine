@@ -126,7 +126,8 @@
     ], "g-actions");
     const result = g.result ? React.createElement("div", { className: "we-picker__hint" },
       weT("已保存 {saved} 张，跳过 {skipped} 张", { saved: g.result.saved, skipped: g.result.skipped }) + (g.result.failed && g.result.failed.length ? weT("，失败 {n} 张", { n: g.result.failed.length }) : "") +
-      (g.result.bytesBefore ? " · " + weT("体积") + " " + Math.round(g.result.bytesBefore / 1024) + "KB → " + Math.round(g.result.bytesAfter / 1024) + "KB" : ""),
+      (g.result.bytesBefore ? " · " + weT("体积") + " " + Math.round(g.result.bytesBefore / 1024) + "KB → " + Math.round(g.result.bytesAfter / 1024) + "KB" : "") +
+      (g.result.failed && g.result.failed.length ? " · " + g.result.failed.slice(0, 2).map((f) => String(f.error)).join(" / ") : ""),
     ) : null;
     return React.createElement(React.Fragment, null, head, grid, actions, result);
   }
