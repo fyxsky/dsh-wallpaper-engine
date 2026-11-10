@@ -80,7 +80,11 @@ function renderGlassPresetsBlock(gp) {
   // i18n 判据是文本扫描，只认 weT("…") 字面量；数据里的名字扫描看不见）。
   // 两侧靠 id 对齐；漏了的出厂 id 回落显示文件里的原名（渐进式，不炸）。
   const FACTORY_PRESET_CN = {
-    "factory-default": weT("黑客绿(Fish)"), "purple-mood": weT("紫色心情"), "factory-frosted": weT("重磨砂"), "factory-night": weT("暗夜釉色"), "factory-vivid": weT("原色直出"), "factory-readable": weT("可读优先"), "factory-author": weT("作者自用"),
+    "factory-dracula-pro": "Dracula Pro · 紫", "factory-dracula-classic": "Dracula Classic · 蓝",
+    "factory-dracula-alucard": "Dracula Alucard · 亮", "factory-dracula-blade": "Dracula Blade · 青",
+    "factory-dracula-buffy": "Dracula Buffy · 粉", "factory-dracula-lincoln": "Dracula Lincoln · 黄",
+    "factory-dracula-morbius": "Dracula Morbius · 红", "factory-dracula-nosferatu": "Dracula Nosferatu · 冰蓝",
+    "factory-dracula-van-helsing": "Dracula Van Helsing · 墨蓝",
   };
   const labelOf = (row) => (row.origin === "builtin" && FACTORY_PRESET_CN[row.id])
     ? FACTORY_PRESET_CN[row.id]

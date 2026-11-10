@@ -1,11 +1,11 @@
 {
   "$schema": "dsh-we/profile-preset@1",
-  "id": "purple-mood",
-  "name": "紫色心情",
+  "id": "factory-dracula-classic",
+  "name": "Dracula Classic · 蓝",
   "values": {
     "glassSurfacePolicy": {},
     "floaterSolidBase": true,
-    "scrim": 0.5,
+    "scrim": 0.6,
     "border": 0.9,
     "blur": 9,
     "wallpaperBlur": 0,
@@ -48,18 +48,18 @@
     ],
     "pickerLayout": "fixed",
     "edgeCompat": true,
-    "accent": "#b388ff",
-    "glassAlpha": 80,
+    "accent": "#809fff",
+    "glassAlpha": 30,
     "glassColor": {
-      "light": "#533b78",
-      "dark": "#533b78"
+      "light": "#f8f8f2",
+      "dark": "#272935"
     },
     "glassDarkSeparate": false,
-    "glassFidelity": 35,
+    "glassFidelity": 60,
     "extraGlassSelectors": "",
     "capsuleBlur": 6,
-    "capsuleColor": "#ffffff",
-    "chatGlassFidelity": 10,
+    "capsuleColor": "#414458",
+    "chatGlassFidelity": 50,
     "leftSidebarGlass": true,
     "leftSidebarCornerRadius": "20",
     "leftSidebarSquareTL": true,
@@ -84,7 +84,7 @@
     },
     "settingsWindowTransparency": 90,
     "settingsWindowBlur": 8,
-    "conversationColor": "#ffffff",
+    "conversationColor": "#2e303e",
     "thinkingTriggerTransparency": 100,
     "thinkingTriggerBlur": 60,
     "floatersTransparency": 90,
@@ -98,43 +98,25 @@
     "sidebarFollowGlobal": true,
     "sidebarBlur": 8,
     "sidebarAlpha": 85,
-    "sidebarColor": "#ffffff",
+    "sidebarColor": "#272935",
     "sidebarContentAlpha": 20,
-    "sidebarContentColor": "#252044",
+    "sidebarContentColor": "#21222c",
     "fontCustom": true,
-    "caretColor": "#b388ff",
-    "uiColorCustom": false,
-    "uiColorSend": "",
-    "uiColorLink": "",
-    "uiColorFileIcon": "",
-    "uiColorTab": "",
-    "uiColorDeepDiving": "",
+    "caretColor": "#809fff",
+    "uiColorCustom": true,
+    "uiColorSend": "#809fff",
+    "uiColorLink": "#8be8fd",
+    "uiColorFileIcon": "#52fa7c",
+    "uiColorTab": "#ff7ac6",
+    "uiColorDeepDiving": "#99b3ff",
     "themeFollow": false,
     "layerPositionX": 50,
     "layerPositionY": 50,
-    "layerScale": 100
+    "layerScale": 100,
+    "contentTransparency": 55,
+    "contentBlur": 18,
+    "traceTransparency": 70,
+    "traceBlur": 24
   },
-  "assets": {
-    "font": {
-      "name": "默认",
-      "values": {
-        "themeColors": {
-          "secondary": {
-            "light": "#6d5f94",
-            "dark": "#c9a8ff"
-          },
-          "caption": {
-            "light": "#6b6093",
-            "dark": "#c4aaff"
-          }
-        },
-        "themeDarkSeparate": false,
-        "themeSize": {},
-        "themeWeight": {},
-        "themeFamily": {},
-        "globalFamily": "",
-        "componentFonts": {}
-      }
-    }
-  }
+  "assets": {}
 }

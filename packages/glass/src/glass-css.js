@@ -1891,6 +1891,51 @@ const CSS_GLASS = `
     stroke: color-mix(in srgb, var(--dsw-alias-label-tertiary, #979da6) 32%, transparent);
   }
 
+  /* ── 正文玻璃 / 轨迹页玻璃（本 fork 新增）──────────────────────────────────────
+     与其余面板同一张配方表：可读性地板（base @ floor×fidelity）+ 釉色（tint @ alpha）
+     + 霜（backdrop-filter）。地板保证"最坏壁纸上正文仍可读"，釉色/透明度/雾化可调，
+     默认跟随全局玻璃色（--we-surface-tint-* 那对由 glass.js 按主题钳制后写出）。
+     软渲染档（[data-we-glass-fallback]）不铺霜，只给不透明釉底 —— 与 #95 同政策。 */
+  body[data-we-glass-content][data-we-glass-page]:not([data-we-glass-fallback]) [data-conversation-content] {
+    background-color: color-mix(in srgb,
+      var(--we-readability-base, #ffffff) calc(var(--we-readability-floor-base, 0.45) * var(--we-content-glass-fidelity, 1) * 100%),
+      rgba(var(--we-content-glass-tint-rgb-light, 255, 255, 255), var(--we-content-glass-alpha, 0.15)) calc((1 - var(--we-readability-floor-base, 0.45) * var(--we-content-glass-fidelity, 1)) * 100%));
+    -webkit-backdrop-filter: blur(var(--we-content-glass-blur, 18px)) saturate(var(--we-saturate, 1.8));
+    backdrop-filter: blur(var(--we-content-glass-blur, 18px)) saturate(var(--we-saturate, 1.8));
+  }
+  body[data-ds-dark-theme][data-we-glass-content][data-we-glass-page]:not([data-we-glass-fallback]) [data-conversation-content] {
+    background-color: color-mix(in srgb,
+      var(--we-readability-base, #0d1524) calc(var(--we-readability-floor-base, 0.59) * var(--we-content-glass-fidelity, 1) * 100%),
+      rgba(var(--we-content-glass-tint-rgb-dark, 13, 21, 36), var(--we-content-glass-alpha, 0.15)) calc((1 - var(--we-readability-floor-base, 0.59) * var(--we-content-glass-fidelity, 1)) * 100%));
+  }
+  body[data-we-glass-content][data-we-glass-page][data-we-glass-fallback] [data-conversation-content] {
+    background-color: rgba(var(--we-content-glass-tint-rgb-light, 255, 255, 255), 0.92);
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  body[data-ds-dark-theme][data-we-glass-content][data-we-glass-page][data-we-glass-fallback] [data-conversation-content] {
+    background-color: rgba(var(--we-content-glass-tint-rgb-dark, 13, 21, 36), 0.92);
+  }
+
+  body[data-we-glass-trace][data-we-glass-page]:not([data-we-glass-fallback]) [data-trajectory-scroll] {
+    background-color: color-mix(in srgb,
+      var(--we-readability-base, #ffffff) calc(var(--we-readability-floor-base, 0.45) * var(--we-trace-glass-fidelity, 1) * 100%),
+      rgba(var(--we-trace-glass-tint-rgb-light, 255, 255, 255), var(--we-trace-glass-alpha, 0.15)) calc((1 - var(--we-readability-floor-base, 0.45) * var(--we-trace-glass-fidelity, 1)) * 100%));
+    -webkit-backdrop-filter: blur(var(--we-trace-glass-blur, 24px)) saturate(var(--we-saturate, 1.8));
+    backdrop-filter: blur(var(--we-trace-glass-blur, 24px)) saturate(var(--we-saturate, 1.8));
+  }
+  body[data-ds-dark-theme][data-we-glass-trace][data-we-glass-page]:not([data-we-glass-fallback]) [data-trajectory-scroll] {
+    background-color: color-mix(in srgb,
+      var(--we-readability-base, #0d1524) calc(var(--we-readability-floor-base, 0.59) * var(--we-trace-glass-fidelity, 1) * 100%),
+      rgba(var(--we-trace-glass-tint-rgb-dark, 13, 21, 36), var(--we-trace-glass-alpha, 0.15)) calc((1 - var(--we-readability-floor-base, 0.59) * var(--we-trace-glass-fidelity, 1)) * 100%));
+  }
+  body[data-we-glass-trace][data-we-glass-page][data-we-glass-fallback] [data-trajectory-scroll] {
+    background-color: rgba(var(--we-trace-glass-tint-rgb-light, 255, 255, 255), 0.92);
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  body[data-ds-dark-theme][data-we-glass-trace][data-we-glass-page][data-we-glass-fallback] [data-trajectory-scroll] {
+    background-color: rgba(var(--we-trace-glass-tint-rgb-dark, 13, 21, 36), 0.92);
+  }
+
 `;
 
 export { CSS_GLASS };

@@ -358,6 +358,11 @@ function disposeGlassLayer() {
     //    （判据"清理对称性"把这一组和上面 6 个一起抓了出来。）
     "--we-chat-glass-fidelity", "--we-chat-surface-tint-light", "--we-chat-surface-tint-dark",
     "--we-chat-surface-tint-rgb-light", "--we-chat-surface-tint-rgb-dark",
+    // 本 fork 新增的两个面（正文 / 轨迹）：与上面同一条清理对称性要求。
+    "--we-content-glass-alpha", "--we-content-glass-blur", "--we-content-glass-fidelity",
+    "--we-content-glass-tint-rgb-light", "--we-content-glass-tint-rgb-dark",
+    "--we-trace-glass-alpha", "--we-trace-glass-blur", "--we-trace-glass-fidelity",
+    "--we-trace-glass-tint-rgb-light", "--we-trace-glass-tint-rgb-dark",
   ]) s.removeProperty(v);
   // 额外补雾化通道（#200）：这一份是**运行期生成的** <style>，不在静态样式表里 ⇒
   // 必须显式撤标签（与上面那批 body 属性 / 变量成对，理由同"清理对称性"）。

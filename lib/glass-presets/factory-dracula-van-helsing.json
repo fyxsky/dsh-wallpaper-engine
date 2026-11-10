@@ -1,7 +1,7 @@
 {
   "$schema": "dsh-we/profile-preset@1",
-  "id": "factory-default",
-  "name": "黑客绿(Fish)",
+  "id": "factory-dracula-van-helsing",
+  "name": "Dracula Van Helsing · 墨蓝",
   "values": {
     "glassSurfacePolicy": {},
     "floaterSolidBase": true,
@@ -48,18 +48,18 @@
     ],
     "pickerLayout": "fixed",
     "edgeCompat": true,
-    "accent": "#00c800",
-    "glassAlpha": 80,
+    "accent": "#80bfff",
+    "glassAlpha": 30,
     "glassColor": {
-      "light": "#266d3c",
-      "dark": "#266d3c"
+      "light": "#f8f8f2",
+      "dark": "#0b0d0f"
     },
     "glassDarkSeparate": false,
-    "glassFidelity": 35,
+    "glassFidelity": 60,
     "extraGlassSelectors": "",
     "capsuleBlur": 6,
-    "capsuleColor": "#ffffff",
-    "chatGlassFidelity": 0,
+    "capsuleColor": "#414d58",
+    "chatGlassFidelity": 50,
     "leftSidebarGlass": true,
     "leftSidebarCornerRadius": "20",
     "leftSidebarSquareTL": true,
@@ -84,7 +84,7 @@
     },
     "settingsWindowTransparency": 90,
     "settingsWindowBlur": 8,
-    "conversationColor": "#ffffff",
+    "conversationColor": "#111417",
     "thinkingTriggerTransparency": 100,
     "thinkingTriggerBlur": 60,
     "floatersTransparency": 90,
@@ -98,43 +98,25 @@
     "sidebarFollowGlobal": true,
     "sidebarBlur": 8,
     "sidebarAlpha": 85,
-    "sidebarColor": "#ffffff",
+    "sidebarColor": "#0b0d0f",
     "sidebarContentAlpha": 20,
-    "sidebarContentColor": "#ffffff",
+    "sidebarContentColor": "#040506",
     "fontCustom": true,
-    "caretColor": "#96ff00",
-    "uiColorCustom": false,
-    "uiColorSend": "",
-    "uiColorLink": "",
-    "uiColorFileIcon": "",
-    "uiColorTab": "",
-    "uiColorDeepDiving": "",
+    "caretColor": "#80bfff",
+    "uiColorCustom": true,
+    "uiColorSend": "#80bfff",
+    "uiColorLink": "#80ffea",
+    "uiColorFileIcon": "#8aff80",
+    "uiColorTab": "#ff80bf",
+    "uiColorDeepDiving": "#99ccff",
     "themeFollow": false,
     "layerPositionX": 50,
     "layerPositionY": 50,
-    "layerScale": 100
+    "layerScale": 100,
+    "contentTransparency": 55,
+    "contentBlur": 18,
+    "traceTransparency": 70,
+    "traceBlur": 24
   },
-  "assets": {
-    "font": {
-      "name": "默认",
-      "values": {
-        "themeColors": {
-          "secondary": {
-            "light": "#067652",
-            "dark": "#00ff96"
-          },
-          "caption": {
-            "light": "#457313",
-            "dark": "#96ff00"
-          }
-        },
-        "themeDarkSeparate": false,
-        "themeSize": {},
-        "themeWeight": {},
-        "themeFamily": {},
-        "globalFamily": "",
-        "componentFonts": {}
-      }
-    }
-  }
+  "assets": {}
 }

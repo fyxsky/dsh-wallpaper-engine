@@ -31,7 +31,7 @@ function applyGlass(selection, s) {
   // ── 「皮肤在台上」的让路态：整族门控摘掉、本函数一概不挂（互操作块见 src/client.js）──
   // 这里是唯一会整族摘门控的路径。
   if (typeof skinYieldActive === "function" && skinYieldActive()) {
-    for (const attr of ["data-we-glass-page", "data-we-glass-chat", "data-we-glass-window",
+    for (const attr of ["data-we-glass-page", "data-we-glass-chat", "data-we-glass-window", "data-we-glass-content", "data-we-glass-trace",
       "data-we-left-sidebar", "data-we-titlebar-glass", "data-we-sidebar-glass", "data-we-sidebar-fullclear", "data-we-glass-floaters",
       "data-we-floater-solid"]) {
       document.body.removeAttribute(attr);
@@ -153,6 +153,26 @@ function applyGlass(selection, s) {
   //   属性保留是因为 CSS 侧的门控是**证书式**的（守卫 ⑨/⑬ 靠它判断"哪些规则画玻璃"），
   //   删属性要动几十条选择器并把两条判据的前提改掉。
   document.body.setAttribute("data-we-glass-chat", "on");
+  // ── 正文 / 轨迹：本 fork 新增的两个玻璃面 ────────────────────────────────────
+  // 与其余面同一套「两态」取值：glassMode[sid] === 'custom' 才读自己的键，否则读全局。
+  // 写出的变量名与 glass-css.js 的规则逐字对应（判据 ⑬：写了必须被 CSS 读到）。
+  for (const sid of ['content', 'trace']) {
+    const own = (p) => selection[sid + p.charAt(0).toUpperCase() + p.slice(1)];
+    const pct = Number(glassValue(sid, 'transparency', own('transparency'), selection.glassAlpha)) || 0;
+    s.setProperty('--we-' + sid + '-glass-alpha', String(Math.max(0.10, 0.25 - pct / 100 * 0.15)));
+    s.setProperty('--we-' + sid + '-glass-blur', String(glassValue(sid, 'blur', own('blur'), selection.blur)) + 'px');
+    const fidRaw = Number(glassValue(sid, 'fidelity', own('fidelity'), selection.glassFidelity));
+    const fid = Number.isFinite(fidRaw) ? Math.min(1, Math.max(0, fidRaw / 100)) : 1;
+    s.setProperty('--we-' + sid + '-glass-fidelity', String(fid));
+    const cLight = glassValue(sid, 'color', own('color'), glassColorOf(selection, 'light'));
+    const cDark = glassValue(sid, 'color', own('color'), glassColorOf(selection, 'dark'));
+    s.setProperty('--we-' + sid + '-glass-tint-rgb-light', toRgbTriple(weClampSurfaceColor(cLight, 'light', fid)));
+    s.setProperty('--we-' + sid + '-glass-tint-rgb-dark', toRgbTriple(weClampSurfaceColor(cDark, 'dark', fid)));
+  }
+  // 门控属性：与 -chat / -window 同族，恒挂（关 = 面板里没有"要不要玻璃"这个开关，
+  // 只有「独立配置」两态；停用玻璃行时由主包残留回收统一摘掉）。
+  document.body.setAttribute('data-we-glass-content', 'on');
+  document.body.setAttribute('data-we-glass-trace', 'on');
 
   // 「设置窗口液态玻璃」这个**显示开关**同样不提供（用户口径）：功能由「设置窗口玻璃·独立配置」
   // 接管，行为与开启时逐位一致（本面恒挂门控属性）—— "...都能到原生"的语义重叠随之消失。

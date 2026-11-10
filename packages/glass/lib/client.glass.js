@@ -1899,6 +1899,51 @@ window.__ModuleLoader__.load({
 				    stroke: color-mix(in srgb, var(--dsw-alias-label-tertiary, #979da6) 32%, transparent);
 				  }
 
+				  /* ── 正文玻璃 / 轨迹页玻璃（本 fork 新增）──────────────────────────────────────
+				     与其余面板同一张配方表：可读性地板（base @ floor×fidelity）+ 釉色（tint @ alpha）
+				     + 霜（backdrop-filter）。地板保证"最坏壁纸上正文仍可读"，釉色/透明度/雾化可调，
+				     默认跟随全局玻璃色（--we-surface-tint-* 那对由 glass.js 按主题钳制后写出）。
+				     软渲染档（[data-we-glass-fallback]）不铺霜，只给不透明釉底 —— 与 #95 同政策。 */
+				  body[data-we-glass-content][data-we-glass-page]:not([data-we-glass-fallback]) [data-conversation-content] {
+				    background-color: color-mix(in srgb,
+				      var(--we-readability-base, #ffffff) calc(var(--we-readability-floor-base, 0.45) * var(--we-content-glass-fidelity, 1) * 100%),
+				      rgba(var(--we-content-glass-tint-rgb-light, 255, 255, 255), var(--we-content-glass-alpha, 0.15)) calc((1 - var(--we-readability-floor-base, 0.45) * var(--we-content-glass-fidelity, 1)) * 100%));
+				    -webkit-backdrop-filter: blur(var(--we-content-glass-blur, 18px)) saturate(var(--we-saturate, 1.8));
+				    backdrop-filter: blur(var(--we-content-glass-blur, 18px)) saturate(var(--we-saturate, 1.8));
+				  }
+				  body[data-ds-dark-theme][data-we-glass-content][data-we-glass-page]:not([data-we-glass-fallback]) [data-conversation-content] {
+				    background-color: color-mix(in srgb,
+				      var(--we-readability-base, #0d1524) calc(var(--we-readability-floor-base, 0.59) * var(--we-content-glass-fidelity, 1) * 100%),
+				      rgba(var(--we-content-glass-tint-rgb-dark, 13, 21, 36), var(--we-content-glass-alpha, 0.15)) calc((1 - var(--we-readability-floor-base, 0.59) * var(--we-content-glass-fidelity, 1)) * 100%));
+				  }
+				  body[data-we-glass-content][data-we-glass-page][data-we-glass-fallback] [data-conversation-content] {
+				    background-color: rgba(var(--we-content-glass-tint-rgb-light, 255, 255, 255), 0.92);
+				    -webkit-backdrop-filter: none; backdrop-filter: none;
+				  }
+				  body[data-ds-dark-theme][data-we-glass-content][data-we-glass-page][data-we-glass-fallback] [data-conversation-content] {
+				    background-color: rgba(var(--we-content-glass-tint-rgb-dark, 13, 21, 36), 0.92);
+				  }
+
+				  body[data-we-glass-trace][data-we-glass-page]:not([data-we-glass-fallback]) [data-trajectory-scroll] {
+				    background-color: color-mix(in srgb,
+				      var(--we-readability-base, #ffffff) calc(var(--we-readability-floor-base, 0.45) * var(--we-trace-glass-fidelity, 1) * 100%),
+				      rgba(var(--we-trace-glass-tint-rgb-light, 255, 255, 255), var(--we-trace-glass-alpha, 0.15)) calc((1 - var(--we-readability-floor-base, 0.45) * var(--we-trace-glass-fidelity, 1)) * 100%));
+				    -webkit-backdrop-filter: blur(var(--we-trace-glass-blur, 24px)) saturate(var(--we-saturate, 1.8));
+				    backdrop-filter: blur(var(--we-trace-glass-blur, 24px)) saturate(var(--we-saturate, 1.8));
+				  }
+				  body[data-ds-dark-theme][data-we-glass-trace][data-we-glass-page]:not([data-we-glass-fallback]) [data-trajectory-scroll] {
+				    background-color: color-mix(in srgb,
+				      var(--we-readability-base, #0d1524) calc(var(--we-readability-floor-base, 0.59) * var(--we-trace-glass-fidelity, 1) * 100%),
+				      rgba(var(--we-trace-glass-tint-rgb-dark, 13, 21, 36), var(--we-trace-glass-alpha, 0.15)) calc((1 - var(--we-readability-floor-base, 0.59) * var(--we-trace-glass-fidelity, 1)) * 100%));
+				  }
+				  body[data-we-glass-trace][data-we-glass-page][data-we-glass-fallback] [data-trajectory-scroll] {
+				    background-color: rgba(var(--we-trace-glass-tint-rgb-light, 255, 255, 255), 0.92);
+				    -webkit-backdrop-filter: none; backdrop-filter: none;
+				  }
+				  body[data-ds-dark-theme][data-we-glass-trace][data-we-glass-page][data-we-glass-fallback] [data-trajectory-scroll] {
+				    background-color: rgba(var(--we-trace-glass-tint-rgb-dark, 13, 21, 36), 0.92);
+				  }
+
 				`;
 
 				// ── 内联模块：packages/glass/src/glass-surfaces.js —— 统一表面策略、安全载体、动态几何与可撤销生命周期（ADR-0016 迁入）；weGlassSurfaceStatus 经入口的 registerGlassStatus 登记回主包（外观 ctx 的诊断投影）（构建期注入；勿手改本段）──
@@ -2466,7 +2511,7 @@ window.__ModuleLoader__.load({
 				  // ── 「皮肤在台上」的让路态：整族门控摘掉、本函数一概不挂（互操作块见 src/client.js）──
 				  // 这里是唯一会整族摘门控的路径。
 				  if (typeof skinYieldActive === "function" && skinYieldActive()) {
-				    for (const attr of ["data-we-glass-page", "data-we-glass-chat", "data-we-glass-window",
+				    for (const attr of ["data-we-glass-page", "data-we-glass-chat", "data-we-glass-window", "data-we-glass-content", "data-we-glass-trace",
 				      "data-we-left-sidebar", "data-we-titlebar-glass", "data-we-sidebar-glass", "data-we-sidebar-fullclear", "data-we-glass-floaters",
 				      "data-we-floater-solid"]) {
 				      document.body.removeAttribute(attr);
@@ -2588,6 +2633,26 @@ window.__ModuleLoader__.load({
 				  //   属性保留是因为 CSS 侧的门控是**证书式**的（守卫 ⑨/⑬ 靠它判断"哪些规则画玻璃"），
 				  //   删属性要动几十条选择器并把两条判据的前提改掉。
 				  document.body.setAttribute("data-we-glass-chat", "on");
+				  // ── 正文 / 轨迹：本 fork 新增的两个玻璃面 ────────────────────────────────────
+				  // 与其余面同一套「两态」取值：glassMode[sid] === 'custom' 才读自己的键，否则读全局。
+				  // 写出的变量名与 glass-css.js 的规则逐字对应（判据 ⑬：写了必须被 CSS 读到）。
+				  for (const sid of ['content', 'trace']) {
+				    const own = (p) => selection[sid + p.charAt(0).toUpperCase() + p.slice(1)];
+				    const pct = Number(glassValue(sid, 'transparency', own('transparency'), selection.glassAlpha)) || 0;
+				    s.setProperty('--we-' + sid + '-glass-alpha', String(Math.max(0.10, 0.25 - pct / 100 * 0.15)));
+				    s.setProperty('--we-' + sid + '-glass-blur', String(glassValue(sid, 'blur', own('blur'), selection.blur)) + 'px');
+				    const fidRaw = Number(glassValue(sid, 'fidelity', own('fidelity'), selection.glassFidelity));
+				    const fid = Number.isFinite(fidRaw) ? Math.min(1, Math.max(0, fidRaw / 100)) : 1;
+				    s.setProperty('--we-' + sid + '-glass-fidelity', String(fid));
+				    const cLight = glassValue(sid, 'color', own('color'), glassColorOf(selection, 'light'));
+				    const cDark = glassValue(sid, 'color', own('color'), glassColorOf(selection, 'dark'));
+				    s.setProperty('--we-' + sid + '-glass-tint-rgb-light', toRgbTriple(weClampSurfaceColor(cLight, 'light', fid)));
+				    s.setProperty('--we-' + sid + '-glass-tint-rgb-dark', toRgbTriple(weClampSurfaceColor(cDark, 'dark', fid)));
+				  }
+				  // 门控属性：与 -chat / -window 同族，恒挂（关 = 面板里没有"要不要玻璃"这个开关，
+				  // 只有「独立配置」两态；停用玻璃行时由主包残留回收统一摘掉）。
+				  document.body.setAttribute('data-we-glass-content', 'on');
+				  document.body.setAttribute('data-we-glass-trace', 'on');
 
 				  // 「设置窗口液态玻璃」这个**显示开关**同样不提供（用户口径）：功能由「设置窗口玻璃·独立配置」
 				  // 接管，行为与开启时逐位一致（本面恒挂门控属性）—— "...都能到原生"的语义重叠随之消失。
@@ -3259,6 +3324,11 @@ window.__ModuleLoader__.load({
 				    //    （判据"清理对称性"把这一组和上面 6 个一起抓了出来。）
 				    "--we-chat-glass-fidelity", "--we-chat-surface-tint-light", "--we-chat-surface-tint-dark",
 				    "--we-chat-surface-tint-rgb-light", "--we-chat-surface-tint-rgb-dark",
+				    // 本 fork 新增的两个面（正文 / 轨迹）：与上面同一条清理对称性要求。
+				    "--we-content-glass-alpha", "--we-content-glass-blur", "--we-content-glass-fidelity",
+				    "--we-content-glass-tint-rgb-light", "--we-content-glass-tint-rgb-dark",
+				    "--we-trace-glass-alpha", "--we-trace-glass-blur", "--we-trace-glass-fidelity",
+				    "--we-trace-glass-tint-rgb-light", "--we-trace-glass-tint-rgb-dark",
 				  ]) s.removeProperty(v);
 				  // 额外补雾化通道（#200）：这一份是**运行期生成的** <style>，不在静态样式表里 ⇒
 				  // 必须显式撤标签（与上面那批 body 属性 / 变量成对，理由同"清理对称性"）。
@@ -3348,7 +3418,11 @@ window.__ModuleLoader__.load({
 				  // i18n 判据是文本扫描，只认 weT("…") 字面量；数据里的名字扫描看不见）。
 				  // 两侧靠 id 对齐；漏了的出厂 id 回落显示文件里的原名（渐进式，不炸）。
 				  const FACTORY_PRESET_CN = {
-				    "factory-default": weT("黑客绿(Fish)"), "purple-mood": weT("紫色心情"), "factory-frosted": weT("重磨砂"), "factory-night": weT("暗夜釉色"), "factory-vivid": weT("原色直出"), "factory-readable": weT("可读优先"), "factory-author": weT("作者自用"),
+				    "factory-dracula-pro": "Dracula Pro · 紫", "factory-dracula-classic": "Dracula Classic · 蓝",
+				    "factory-dracula-alucard": "Dracula Alucard · 亮", "factory-dracula-blade": "Dracula Blade · 青",
+				    "factory-dracula-buffy": "Dracula Buffy · 粉", "factory-dracula-lincoln": "Dracula Lincoln · 黄",
+				    "factory-dracula-morbius": "Dracula Morbius · 红", "factory-dracula-nosferatu": "Dracula Nosferatu · 冰蓝",
+				    "factory-dracula-van-helsing": "Dracula Van Helsing · 墨蓝",
 				  };
 				  const labelOf = (row) => (row.origin === "builtin" && FACTORY_PRESET_CN[row.id])
 				    ? FACTORY_PRESET_CN[row.id]

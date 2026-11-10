@@ -4145,7 +4145,7 @@ function WallpaperPickerSection() {
 let firstRunAuthorPending = false;
 function firstRunAdopt() {
   try {
-    applyPreset("factory-author").then((ok) => {
+    applyPreset("factory-dracula-pro").then((ok) => {
       if (ok) return;
       // 失败静默：新装用户不该一上手就看见一条红字。诊断行留给排障。
       try { liveLog && liveLog("首次安装套用作者自用失败：" + String(selection.glassPresetError || "")); } catch { /* ignore */ }

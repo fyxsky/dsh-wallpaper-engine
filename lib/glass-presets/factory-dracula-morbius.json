@@ -1,16 +1,16 @@
 {
   "$schema": "dsh-we/profile-preset@1",
-  "id": "factory-author",
-  "name": "作者自用",
+  "id": "factory-dracula-morbius",
+  "name": "Dracula Morbius · 红",
   "values": {
     "glassSurfacePolicy": {},
     "floaterSolidBase": true,
-    "scrim": 0.5,
-    "border": 0.35,
+    "scrim": 0.6,
+    "border": 0.9,
     "blur": 9,
     "wallpaperBlur": 0,
-    "backgroundBrightness": 85,
-    "backgroundContrast": 110,
+    "backgroundBrightness": 100,
+    "backgroundContrast": 100,
     "backgroundSaturate": 150,
     "wallpaperOpacity": 0,
     "switchTransition": "cut",
@@ -20,7 +20,7 @@
     "pictureSlideSeconds": 0,
     "playbackRate": 1,
     "videoVolume": 0,
-    "videoAudioEnabled": true,
+    "videoAudioEnabled": false,
     "fpsCap": 0,
     "sceneLive": true,
     "sceneLiveFps": 30,
@@ -29,7 +29,7 @@
     "audioSource": "auto",
     "adapterTarget": "auto",
     "mediaIntegration": true,
-    "pauseOnHidden": true,
+    "pauseOnHidden": false,
     "pauseOnBlur": false,
     "pauseOnBattery": false,
     "flip": false,
@@ -48,18 +48,18 @@
     ],
     "pickerLayout": "fixed",
     "edgeCompat": true,
-    "accent": "#67DCE7",
-    "glassAlpha": 40,
+    "accent": "#ff9580",
+    "glassAlpha": 30,
     "glassColor": {
-      "light": "#0d1524",
-      "dark": "#0d1524"
+      "light": "#f8f8f2",
+      "dark": "#2c2122"
     },
     "glassDarkSeparate": false,
-    "glassFidelity": 20,
+    "glassFidelity": 60,
     "extraGlassSelectors": "",
     "capsuleBlur": 6,
-    "capsuleColor": "#ffffff",
-    "chatGlassFidelity": 0,
+    "capsuleColor": "#584143",
+    "chatGlassFidelity": 50,
     "leftSidebarGlass": true,
     "leftSidebarCornerRadius": "20",
     "leftSidebarSquareTL": true,
@@ -84,7 +84,7 @@
     },
     "settingsWindowTransparency": 90,
     "settingsWindowBlur": 8,
-    "conversationColor": "#ffffff",
+    "conversationColor": "#342729",
     "thinkingTriggerTransparency": 100,
     "thinkingTriggerBlur": 60,
     "floatersTransparency": 90,
@@ -98,50 +98,25 @@
     "sidebarFollowGlobal": true,
     "sidebarBlur": 8,
     "sidebarAlpha": 85,
-    "sidebarColor": "#ffffff",
+    "sidebarColor": "#2c2122",
     "sidebarContentAlpha": 20,
-    "sidebarContentColor": "#0d1524",
+    "sidebarContentColor": "#231a1b",
     "fontCustom": true,
-    "caretColor": "",
-    "uiColorCustom": false,
-    "uiColorSend": "",
-    "uiColorLink": "",
-    "uiColorFileIcon": "",
-    "uiColorTab": "",
-    "uiColorDeepDiving": "",
+    "caretColor": "#ff9580",
+    "uiColorCustom": true,
+    "uiColorSend": "#ff9580",
+    "uiColorLink": "#80ffea",
+    "uiColorFileIcon": "#8aff80",
+    "uiColorTab": "#ff80bf",
+    "uiColorDeepDiving": "#ffaa99",
     "themeFollow": false,
     "layerPositionX": 50,
     "layerPositionY": 50,
-    "layerScale": 100
+    "layerScale": 100,
+    "contentTransparency": 55,
+    "contentBlur": 18,
+    "traceTransparency": 70,
+    "traceBlur": 24
   },
-  "assets": {
-    "font": {
-      "name": "默认",
-      "values": {
-        "themeColors": {
-          "secondary": {
-            "light": "#33456b",
-            "dark": "#fafafa"
-          },
-          "tertiary": {
-            "light": "#405273",
-            "dark": "#75e6f5"
-          },
-          "caption": {
-            "light": "#526789",
-            "dark": "#2de8eb"
-          }
-        },
-        "themeDarkSeparate": false,
-        "themeSize": {},
-        "themeWeight": {},
-        "themeFamily": {},
-        "globalFamily": "",
-        "componentFonts": {}
-      }
-    },
-    "theme": {
-      "preference": "dark"
-    }
-  }
+  "assets": {}
 }
