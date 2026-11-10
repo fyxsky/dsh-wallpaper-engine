@@ -2,17 +2,16 @@
  * preset-store.js — 玻璃预设的**客户端通道**：清单与正文住宿主文件
  *（`glass-presets/<id>.json`，两层：随包只读 + 用户层），应用走 settings 通道。
  *
- * ADR-0011 起，预设是**整机配置快照**（四段：settings 总是带 + 字体/吉祥物/头像按需携带），
+ * ADR-0011 起，预设是**整机配置快照**（两段：settings 总是带 + 字体按需携带），
  * 见 docs/adr/0011-preset-full-snapshot.md 的 D1 / D3 / D4 / D7。本文件的四条主路：
- *   · **应用**（applyPreset）：读回正文 → settings 段一次合并 → 资产走宿主 `install-assets`
- *     拿回 `applied`（文件名 / 显示盒 / 字体值 —— **图片本体只在宿主侧进出 base64**，
- *     浏览器不碰）→ persistSelection() → reapplyAll() → emit()。
+ *   · **应用**（applyPreset）：读回正文 → settings 段一次合并 → 字体段走宿主 `install-assets`
+ *     拿回 `applied`（字体值）→ persistSelection() → reapplyAll() → emit()。
  *   · **保存**（saveGlassPreset）：POST create 只带 `embed` 名单（勾了哪些资产段），
  *     不上传任何图片 —— 内嵌由宿主按名单从本机数据目录取。
  *   · **导入**（importGlassPreset）：本地预检三道（读不出 / 非 JSON / tag 不对）后把
  *     导出正文原样 POST 给宿主权威校验；**导入 ≠ 立刻应用**。
  *   · **导出**（exportGlassPresetUrl）：普通链接（宿主带 Content-Disposition 应答），
- *     `assets=` 查询参数就是勾选名单；不引入 blob / showSaveFilePicker。
+ *     `assets=` 查询参数就是勾选名单（当前只有 `font`）；不引入 blob / showSaveFilePicker。
  *
  * 契约（构建期由 scripts/build-client.mjs 内联进 bundle 的工厂作用域，"外部作用域" =
  * 同一 prelude / src/client.js 的顶层；函数声明提升 ⇒ client.js 的函数可在调用期使用）：
@@ -56,13 +55,8 @@
  *     selection；且 settings 段是**一次** `Object.assign`，资产应用失败时按合并前的
  *     快照原样滚回（此刻还没有任何落盘）—— 失败保留现状并给出可判定原因，绝不"改了一半"。
  *   · **两段的"缺席"语义相反，别写反**（ADR-0011 D4）：settings 段是完整快照（缺键补默认，
- *     由 sanitizePresetValues 保证）；资产段是**四态** —— ① 段不出现 = **一个键都不碰**
- *     （不是回落默认）：正文没有 assets、或宿主 `applied` 里没有那一段，对应的现值原样保留；
- *     ② 段是 `null` = **显式声明无**：那一族回内置默认（宿主删掉本机文件并回
- *     `{ cleared: true }`，这里把键置空）；③ 段是**字符串** = **指向出厂自带形态**（只 mascot 有：
- *     宿主同样删掉本机立绘族、回 `{ form }`，这里额外把 `ropeForm` 钉成它）；
- *     ④ 段是对象 = 携带。少了 ②，一份"范围小"的预设就撤销不了前一份预设装上的资产
- *     （实测 7 套出厂预设两两 A→B→A：42 个有序对里 30 个不收敛）。
+ *     由 sanitizePresetValues 保证）；字体段是**四态** —— ① 段不出现 = **一个键都不碰**；
+ *     ② `null` = 显式声明无；③ 字符串 = 指向出厂自带；④ 对象 = 携带。
  *   · **字体键不住 settings blob**：字体值经 `setFontValues` 写进 selection 并落盘到
  *     `fontsets/<活动 id>.json`；直接 Object.assign 进 selection 会"屏上变了、重启被回滚"。
  *   · **应用走设置通道**：合并之后只调 `persistSelection()`（debounce PUT + 本地缓存）。
@@ -72,8 +66,8 @@
  *   · **保存前先消毒**：交给宿主的 settings 段先过 `sanitizePresetValues`（客户端、宿主
  *     两端同一套消毒 ⇒ 用户看到要存的和实际存下的永远一致）；宿主那边还会再消毒一次
  *     （权威），两头同源不会打架。
- *   · **base64 不进浏览器**：保存只传 `embed` 名单；应用只调 `install-assets` 拿文件名 /
- *     显示盒 / 字体值。这是刻意的设计（浏览器不处理大 payload，也不新增第二条落盘通道）。
+ *   · **base64 不进浏览器**：保存只传 `embed` 名单；应用只调 `install-assets` 拿字体值。
+ *     这是刻意的设计（浏览器不处理大 payload，也不新增第二条落盘通道）。
  *   · 本文件必须保持浏览器安全（无 import / Node API），且**不得有顶层可执行语句**读
  *     外层 const（会被内联到 bundle 顶部，撞 TDZ）—— 因此 BASE 只在函数体里读。
  */
@@ -174,10 +168,6 @@ async function refreshGlassPresets() { return loadGlassPresets(); }
  *
  * ⚠️ 判据是"`applied` **里有没有**这一段"：宿主没回的段**一个键都不碰** —— 那正是
  * "缺席 = 保持现值"的语义；正文没有 assets 时调用方根本不会进来（见 applyPreset）。
- * ⚠️ 段里的 `{ cleared: true }` = **显式声明无**（D4 第三态）：宿主已删掉本机文件，这里把
- * 那一族的键清空（吉祥物两个键 / 头像两侧一起）；`{ form: 'phoebe' }` = **指向出厂自带形态**
- * （D4 第四态）：同一件清空之外，还要把 `ropeForm` 钉成 `form`。两者与"没回这一段"必须区别
- * 对待。
  * 返回 "" = 全部落位；非空 = 可判定的失败原因（形状不对 = 宿主契约被破坏，要说出来）。
  */
 async function applyPresetAssets(applied) {
@@ -195,48 +185,12 @@ async function applyPresetAssets(applied) {
       return weT(selection.fontSetError || "宿主不可达（请求未完成）");
     }
   }
-  const mascot = applied.mascot;
-  if (mascot && typeof mascot === "object" && !Array.isArray(mascot)) {
-    if (typeof mascot.form === "string" && mascot.form) {
-      // 「指向出厂自带形态」（D4 第四态）：宿主已清掉本机立绘族，这里**两件事一起做** ——
-      // ① 把 `ropeForm` 钉成内置的那只（少了它，这一态就退化成"声明无"：形态交回 settings 段）；
-      // ② 两个自定义键置空（图已被删掉，键还指着那个不存在的文件名 ⇒ 渲染仍走自定义分支、
-      //    屏上那只直接消失）。
-      setSetting("ropeForm", mascot.form);
-      setSetting("mascotImage", "");
-      setSetting("mascotImageBox", "");
-    } else if (mascot.cleared === true) {
-      // 「显式声明无」：宿主已把本机立绘文件删掉，这里把那两个键也清空 —— 与"宿主没回
-      // 这一段"**必须**区别开：没回 = 一个键都不碰，回了 cleared = 明确要求回到内置立绘。
-      setSetting("mascotImage", "");
-      setSetting("mascotImageBox", "");
-    } else {
-      setSetting("mascotImage", typeof mascot.file === "string" ? mascot.file : "");
-      setSetting("mascotImageBox", typeof mascot.box === "string" ? mascot.box : "");
-    }
-  }
-  const avatar = applied.avatar;
-  if (avatar && typeof avatar === "object" && !Array.isArray(avatar)) {
-    if (avatar.cleared === true) {
-      // 整族声明无 ⇒ 两侧一起清（只清一侧会让另一侧接着用旧图，"声明无"就不成立了）。
-      setSetting("avatarUserImage", "");
-      setSetting("avatarAiImage", "");
-    } else {
-      // 两张头像各自独立：宿主只落了哪张就写哪张，另一张保持现值（缺席 = 不碰）。
-      if (avatar.user && typeof avatar.user === "object") {
-        setSetting("avatarUserImage", typeof avatar.user.file === "string" ? avatar.user.file : "");
-      }
-      if (avatar.ai && typeof avatar.ai === "object") {
-        setSetting("avatarAiImage", typeof avatar.ai.file === "string" ? avatar.ai.file : "");
-      }
-    }
-  }
   return "";
 }
 
 /**
- * **整批重应用**（ADR-0011 D3）：`emit()` 的订阅链只覆盖 syncLayers / applyEffects /
- * syncFxLayer / syncParallaxLayer / syncAvatarLayer；下面这几件**不在**订阅链里、也不在
+ * **整批重应用**（ADR-0011 D3）：`emit()` 的订阅链只覆盖 syncLayers / applyEffects
+ * （以及子包自己登记的层钩子）；下面这几件**不在**订阅链里、也不在
  * syncLayers 体内（源码核实），漏掉就是"轮播开关变了但定时器没重排 / 场景音频没人管"：
  *   · syncLayers()        场景层重建（sceneLive 开关 / fps 档 / liveSrc 键都进层键）
  *   · syncRotationTimer() 轮播定时器按新的开关与间隔重排
@@ -320,7 +274,7 @@ function newGlassPresetId() {
 
 /**
  * 保存时的资产勾选**提示语**（ADR-0011 D4 三态的客户端半边）。
- * `checks` 是三个布尔（字体 / 吉祥物 / 头像）。口径：
+ * `checks` 目前只有字体一个布尔。口径：
  *   · **勾上** = "按本机现状声明这一族" —— 本机没有自定义图 ⇒ 落盘的就是 `null`（**显式
  *     声明无**），套用它的人回到内置默认；宿主侧对"勾了但没有"就是这样落的，不需要客户端拦。
  *   · **不勾** = "这一族我不管" —— 段根本不出现，对方的现值一个键都不碰。
@@ -329,10 +283,8 @@ function newGlassPresetId() {
  * 客户端半边）。改成"照存 + 一句人话"，出路写在提示里（想带上就先导入一张 / 不想动对方就取消勾选）。
  * @returns "" = 无需提示；非空 = 给用户的一句人话（**不阻断保存**）
  */
-function presetSaveChecks(checks, mascotPoint) {
+function presetSaveChecks(checks) {
   const c = checks && typeof checks === "object" ? checks : {};
-  // 吉祥物族的**指向**（第四态）：非空 ⇒ 这一族存的是"指向出厂自带的那一只"，不是"无"也不带图。
-  const point = ROPE_FORM_VALUES.includes(mascotPoint) ? mascotPoint : "";
   const notes = [];
   if (c.font === true) {
     const f = pickPresetFontValues();
@@ -341,15 +293,6 @@ function presetSaveChecks(checks, mascotPoint) {
     if (!hasFontTweaks) {
       notes.push(weT("字体这一族会按本机现状存成「无」（当前字体集还是全默认）—— 套用它的人回到内置字体；想带上自己的就先在字体页调好，或取消勾选「字体」（不勾 = 不动对方的字体）"));
     }
-  }
-  if (c.mascot === true && point) {
-    // 有指向 ⇒ 上面那条"会存成「无」"不成立（这正是第四态要消掉的那个歧义），改说这一族存的是什么。
-    notes.push(weT("吉祥物这一族存的是「指向出厂自带的「{name}」」（不占体积、不带图）—— 套用它的人换回那一只，他自己导入的立绘会先被清除", { name: ROPE_FORMS[point].label }));
-  } else if (c.mascot === true && !selection.mascotImage) {
-    notes.push(weT("吉祥物这一族会按本机现状存成「无」（本机没有自定义立绘）—— 套用它的人回到内置立绘；想带上自己的就先在「系统」页签导入一张，或取消勾选「吉祥物」（不勾 = 不动对方的立绘）"));
-  }
-  if (c.avatar === true && !selection.avatarUserImage && !selection.avatarAiImage) {
-    notes.push(weT("头像这一族会按本机现状存成「无」（本机没有自定义会话头像）—— 套用它的人回到内置默认头像；想带上自己的就先在「扩展」页签导入，或取消勾选「头像」（不勾 = 不动对方的头像）"));
   }
   return notes.join(" ");
 }
@@ -363,10 +306,8 @@ function presetSaveChecks(checks, mascotPoint) {
 async function saveGlassPreset(name) {
   const checks = (selection.glassPresetAssetChecks && typeof selection.glassPresetAssetChecks === "object")
     ? selection.glassPresetAssetChecks : {};
-  const embeds = ["font", "mascot", "avatar"].filter((k) => checks[k] === true);
-  // 指向出厂自带（第四态）与"内嵌这一族"互斥：那一段没有字节可带，正文里只存指向字符串。
-  const point = ROPE_FORM_VALUES.includes(checks.mascotPoint) ? checks.mascotPoint : "";
-  return savePresetWithEmbeds(name, embeds.filter((k) => !(k === "mascot" && point)), point);
+  const embeds = ["font"].filter((k) => checks[k] === true);
+  return savePresetWithEmbeds(name, embeds);
 }
 
 /**
@@ -374,33 +315,24 @@ async function saveGlassPreset(name) {
  * 勾选写进 selection 后经 saveGlassPreset 进来）。
  * 成功后回读清单（新那一片就是反馈）。重名（宿主 409）⇒ 原因进 `selection.glassPresetError`。
  * @param {string} name 预设名
- * @param {string[]} embeds 'font' | 'mascot' | 'avatar' 的子集
- * @param {string} mascotPoint 吉祥物族的**指向**（第四态）："" = 按本机现状；形态值 = 只存指向
+ * @param {string[]} embeds 资产勾选名单（当前只有 'font'）
  */
-async function savePresetWithEmbeds(name, embeds, mascotPoint) {
+async function savePresetWithEmbeds(name, embeds) {
   const trimmed = typeof name === "string" ? name.trim() : "";
   if (!trimmed) {
     setPresetError(weT("先给预设起个名字"));
     return "";
   }
-  const list = Array.isArray(embeds) ? embeds.filter((k) => k === "font" || k === "mascot" || k === "avatar") : [];
-  // 有指向时这一族**照样算"带上了"**（只是带的是指向而不是字节）—— 提示语据此二选一。
-  const point = ROPE_FORM_VALUES.includes(mascotPoint) ? mascotPoint : "";
-  const hasMascotSeg = list.includes("mascot") || Boolean(point);
+  const list = Array.isArray(embeds) ? embeds.filter((k) => k === "font") : [];
   // 提示语（**不阻断保存**）：勾了但本机没有 ⇒ 这一族会被**显式声明为「无」**，先把后果说清。
-  const assetNote = presetSaveChecks({ font: list.includes("font"), mascot: hasMascotSeg, avatar: list.includes("avatar") }, point);
-  // settings 段里的 `ropeForm` 与资产段的指向**必须是同一只**：宿主 `installAssets` 在 settings 合并
-  // **之后**跑，`assets.mascot` 的字符串会覆盖 `ropeForm` —— 两处不一致只会让"只读 values 的读者"
-  // （导出正文 / 手工查看）看到另一只吉祥物。
+  const assetNote = presetSaveChecks({ font: list.includes("font") });
   const values = pickPresetValues();
-  if (point) values.ropeForm = point;
   try {
     const res = await gpFetch(glassPresetCreateUrl(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: trimmed, values, id: newGlassPresetId(), embed: list,
-        ...(point ? { point: { mascot: point } } : {}),
       }),
     });
     if (!res.ok) {
@@ -422,15 +354,13 @@ async function savePresetWithEmbeds(name, embeds, mascotPoint) {
 /**
  * 导出链接（ADR-0011 D7）：**普通链接** —— 调用方把它交给 `<a href>` / 锚点点击导航，
  * 宿主以 `Content-Disposition: attachment` 应答。不引入 blob / showSaveFilePicker。
- * `embeds`（勾选名单）走 `assets=` 查询参数，逗号分隔；`mascotPoint`（第四态）走 `point=mascot:<形态>`
- * —— 与 `assets=` 里的 `mascot` **互斥**（有指向时那一段没有字节可带，宿主按声明写字符串）。
+ * `embeds`（勾选名单，当前只有 `font`）走 `assets=` 查询参数，逗号分隔。
  */
-function exportGlassPresetUrl(id, embeds, mascotPoint) {
+function exportGlassPresetUrl(id, embeds) {
   if (!isGlassPresetId(id)) return "";
-  const list = Array.isArray(embeds) ? embeds.filter((k) => k === "font" || k === "mascot" || k === "avatar") : [];
+  const list = Array.isArray(embeds) ? embeds.filter((k) => k === "font") : [];
   const q = [];
   if (list.length) q.push("assets=" + encodeURIComponent(list.join(",")));
-  if (ROPE_FORM_VALUES.includes(mascotPoint)) q.push("point=" + encodeURIComponent("mascot:" + mascotPoint));
   return glassPresetUrl(id) + "/export" + (q.length ? "?" + q.join("&") : "");
 }
 

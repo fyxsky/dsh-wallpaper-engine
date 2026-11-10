@@ -17,7 +17,7 @@
  *    `fontsets/<id>.json`；本包裹走的只是**渲染器与描述符** ⇒ 本包**不持键、不持久化、
  *    不注册 `settings.section`**，读值一律经主包构造的渲染 ctx（或本文件声明的 `host` 面）。
  *
- * 两条加载路径共用这一个实现（与 packages/about-notice/lib/index.js 同形）：
+ * 两条加载路径共用这一个实现（与 packages/glass、packages/media-bridge 的宿主半边同形）：
  *   ① 宿主按 patch 行（cordis.patch.yml）当独立 plugin 加载 ⇒ `apply(ctx, config)`（拆出后**唯一**
  *      的加载路径：主包门面已不再有字体路由的调用点）。
  *   ② 两条路由族自己的 `registerXxxRoutes(webServer, c)` 也可以被别的调用点直接驱动 —— `c` 由本文件拼齐。
@@ -64,7 +64,7 @@ export const inject = ['webServer', 'wallpaperEngineHost'];
  */
 export function apply(ctx, _config) {
   let webServer = ctx && ctx.webServer;
-  // provider 缺席（主包没起 / 没有 webServer）：与 about-notice 同口径 —— 静默退回空拆卸，
+  // provider 缺席（主包没起 / 没有 webServer）：与别的子包同口径 —— 静默退回空拆卸，
   // 不抛异常炸掉整行（行级失败静默）。
   if (!webServer || typeof webServer.register !== 'function') return () => {};
 

@@ -3,9 +3,9 @@
  * 的承接收（原段逐字搬来），经 `registerLayerHooks('glass', { sync, dispose })` 挂进主包的
  * 既有节拍：主包 `subscribe(applyEffects)` 同一条 emit 链上，注册表把本层 sync 也 subscribe
  * 上（src/client.js 的 attachLayer）⇒ **每次设置变动本函数重跑一次**，与搬迁前 applyEffects
- * 里的执行时机逐位等价（订阅序：syncLayers → applyEffects → fx → parallax → glass）。
+ * 里的执行时机逐位等价（订阅序：syncLayers → applyEffects → glass）。
  *
- * 与 fx / parallax 的层同形：sync 无参、现读 `selection`（host 键是活绑定）。
+ * 与 fonts / media-bridge 的层同形：sync 无参、现读 `selection`（host 键是活绑定）。
  * sync 幂等 —— 全部写入都是"按当前 selection 重算"的 setProperty / setAttribute，
  * 迟到注册（attacher 立刻补接 + emit）与重复 emit 都安全。
  *

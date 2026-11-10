@@ -4,7 +4,7 @@
  * 四刀出户（每刀独立可验收，全部落地）：
  *   第一刀：host-only 空壳 —— 行、键表、宿主自检登记；
  *   第二刀：设置面板节（glass-panel.js）随包走 —— `exports['./client']` + `client.build.json`
- *     + 主包 HOST_BRIDGE_BINDINGS 玻璃段（pet-link 收口先例）；
+ *     + 主包 HOST_BRIDGE_BINDINGS 玻璃段（子包收口先例）；
  *   第三刀：玻璃运行时（glass.js / glass-surfaces.js / glass-extra.js / glass-layer.js）随包走
  *     （registerLayerHooks 行为层 + registerGlassStatus 状态回传）；
  *   第四刀：玻璃 CSS（glass-css.js）随包走 ⇒ 停用本行 = 玻璃样式表与行为层整体退场，
@@ -14,7 +14,7 @@
  * 行级开关在桌面宿主的运行中页面不触发客户端重载 ⇒ 已加载的玻璃浏览器半边需要一条
  * **自观测通道**才能即时中性化：路由的存在性 = 本行启用（行停用 ⇒ fiber prune ⇒ 路由 404），
  * 浏览器半边每 3 秒探测一次，按结果自行挂载 / 中性化（行级开关即时生效，无需重启宿主）。
- * 形态 = pet-link 同款（inject webServer + runComponent + handOffTeardown + 自带路由族）。
+ * 形态 = 子包同款（inject webServer + runComponent + handOffTeardown + 自带路由族）。
  *
  * ⚠️ **跨包纪律（ADR-0014 S5.1/S5.2，判据 verify-subpackage-purity）**：零主包说明符、
  * 零相对路径逃出本包；宿主能力一律经 `ctx.wallpaperEngineHost` 的键视图取。

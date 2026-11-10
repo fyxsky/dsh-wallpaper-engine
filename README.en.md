@@ -50,14 +50,8 @@ Bring local **Wallpaper Engine** Scene, Web and Video wallpapers into DSH, with 
         <li><a href="#support">Support</a> · <a href="#community">Community</a></li>
       </ul>
     </td>
-    <td width="30%" align="center" valign="middle">
-      <a href="assets/readme/mascot-eating-rice-1280x1784.jpg">
-        <img src="assets/readme/mascot-eating-rice-1280x1784.jpg" alt="Mascot illustration" width="320">
-      </a>
-    </td>
     <td id="support" width="30%" align="center" valign="middle">
-      <a href="assets/about/sponsor-fish.png"><img src="assets/about/sponsor-fish.png" alt="Sponsor QR code" width="260" height="260"></a>
-      <br><strong>Sponsor QR code</strong>
+      <strong>Sponsor</strong>
       <br><sub>The project is open source; donations are entirely optional and never affect installation, usage or issue support.</sub>
     </td>
   </tr>

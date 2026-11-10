@@ -57,7 +57,7 @@ const {
 // 主包 src/panel-tabs.js 的 `renderAppearanceTab(ctx)` 画完五个内置节之后，按注册表续接本包登记的节
 // （`wePanelSectionsOf('appearance')`，见 src/extension-registry.js）。两个硬口径：
 //   ① `title` 必须是 **getter**：注册发生在 bundle 求值期，那时 i18n 表/`weT` 都还没到位，
-//      注册期读词会把 `weT` 拉到求值期（fx/parallax 的 `title` getter 同款理由）。
+//      注册期读词会把 `weT` 拉到求值期（别的子包的 `title` getter 同款理由）。
 //   ② 不写 `order` ⇒ 落到默认位 100，排在**所有显式 order 的节之后**：今天屏上就是这个位置
 //      （五个内置节都在本节的上面）。搬包**不改变屏上顺序**，顺序判据见 src/panel-tabs.js。
 registerPanelSection('appearance', 'fonts', {

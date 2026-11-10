@@ -19,7 +19,7 @@
  */
 
 // ── 客户端文案（src/**）──────────────────────────────────────────────────────
-// 表体按域拆到同族模块（i18n-copy-core.js · i18n-copy-font.js · i18n-copy-live.js · i18n-copy-panel.js · i18n-copy-picker.js · i18n-copy-ext.js · i18n-copy-glass.js · i18n-copy-pet-link.js），
+// 表体按域拆到同族模块（i18n-copy-core.js · i18n-copy-font.js · i18n-copy-live.js · i18n-copy-panel.js · i18n-copy-picker.js · i18n-copy-glass.js），
 // 本文件只按 INLINE_MODULES 顺序展开组装。⚠️ 域模块必须排在 composer 之前（构建期内联进同一
 // 作用域，顶层读受 TDZ 约束）；展开顺序 = 键插入序，守卫逐条比对（test/verify-i18n.mjs）。
 
@@ -29,9 +29,7 @@ const WE_I18N_EN = {
   ...WE_I18N_EN_LIVE,
   ...WE_I18N_EN_PANEL,
   ...WE_I18N_EN_PICKER,
-  ...WE_I18N_EN_EXT,
   ...WE_I18N_EN_GLASS,
-  ...WE_I18N_EN_PET_LINK,
 };
 
 // ── 宿主文案（lib/** 里由客户端显示的那些原文）────────────────────────────────

@@ -8,7 +8,7 @@
  *   · 200 `{ enabled: true }` —— 行启用（fiber 活着，路由才注册得上）；
  *   · 404 —— 行被停用（fiber 已被宿主 prune，路由随 fiber 消失）⇒ 浏览器半边据此
  *     **自行中性化**（撤样式表 + 跑 dispose + 设置节停渲染），无需重启。
- * 路由的存在性即信号，与 about-notice「停行 ⇒ 路由整族 404」是同一条宿主语义。
+ * 路由的存在性即信号，与别的组件行「停行 ⇒ 路由整族 404」是同一条宿主语义。
  *
  * 纪律（ADR-0014 S5.1/S5.2，判据 verify-subpackage-purity）：零主包说明符，宿主能力
  * 一律经 `ctx.wallpaperEngineHost` 的键视图；`sendJson` 经 `http` 面注入。

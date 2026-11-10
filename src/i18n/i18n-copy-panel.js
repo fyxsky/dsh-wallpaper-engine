@@ -226,25 +226,6 @@ const WE_I18N_EN_PANEL = {
   "壁纸音轨": "Wallpaper audio",
   "关闭=静音（保留音量数值）· 开启时音量 0 自动 50%": "Off = mute (volume value is kept) · when on, a volume of 0 becomes 50%",
   "视频壁纸与场景壁纸（内嵌 MP4 音轨 / 包内独立音频）共用；默认静音，开启时若音量为 0 会自动提到 50%": "Shared by Video and Scene wallpapers (embedded MP4 track / standalone audio in the package); muted by default, and when enabled a volume of 0 is raised to 50%",
-  "聊天吉祥物": "Chat mascot",
-  "显示吉祥物": "Show mascot",
-  "关闭后隐藏吉祥物与壁纸仓库抽屉": "Hides the mascot and the wallpaper-library drawer when off",
-  "关闭后隐藏吉祥物与壁纸仓库抽屉；可随时在本页重新开启": "Hides the mascot and the wallpaper-library drawer when off; turn it back on here anytime",
-  "吉祥物形态": "Mascot form",
-  // ⚠️ 删掉四条**只服务已删 UI 的**词条（不改文案、直接删）：
-  //    · 「自定义立绘生效中：…点其他立绘可换…」与「拖一拖、按 ‹ ›、…」—— 两句都是**提示行**
-  //      的文案，而提示行按用户口径「上面文案去掉」整行删了（它还写着按 ‹ ›，而 ‹ › 同一轮
-  //      被删 —— 留着等于指导用户去点不存在的东西）；
-  //    · 「上一个形态 / 下一个形态」—— 两个箭头的 aria-label / title，箭头已删。
-  //    词表判据（零孤儿键）会立刻抓出留着不删的：实测留下时一次红 4 条。
-  "改用「{name}」（会先清除自定义立绘）": "Switch to “{name}” (clears the custom artwork first)",
-  "改用「{name}」需要先清除自定义立绘（清除不可恢复），继续吗？": "Switching to “{name}” requires clearing the custom artwork first (clearing cannot be undone). Continue?",
-  // 圆点（3D 环）：10 只内置时一只一只翻太笨，圆点给直接跳任意一只的路。
-  "切换到「{name}」": "Switch to “{name}”",
-  // 屏读播报（转盘）：形态一变就念一次。轮播控件不能只靠视觉。
-  "{name}，第 {n} 个，共 {m} 个": "{name}, {n} of {m}",
-  "替换图片…（再导入会覆盖上一次）": "Replace image… (importing again overwrites the previous one)",
-  "吉祥物大小": "Mascot size",
   "还没有启用壁纸": "No wallpaper enabled yet",
   "选择一款壁纸后，可在这里调整模糊、亮度、适配、倍速等效果": "Pick a wallpaper to adjust blur, brightness, fit, speed and other effects here",
   "画面": "Picture",
@@ -345,20 +326,13 @@ const WE_I18N_EN_PANEL = {
   "重置本模块": "Reset this module",
   "把这一块的参数恢复为默认值（不需要确认）": "Restore this module's settings to their defaults (no confirmation needed)",
   "全部重置": "Reset everything",
-  "把全部设置恢复为出厂默认值；导入的头像与吉祥物图片、字体集不受影响。此操作不可撤销。": "Restore all settings to their factory defaults. Imported avatars, mascot artwork and font sets are not affected. This cannot be undone.",
+  "把全部设置恢复为出厂默认值；导入的字体集不受影响。此操作不可撤销。": "Restore all settings to their factory defaults. Imported font sets are not affected. This cannot be undone.",
   "确定要将所有设置恢复为默认吗？此操作不可撤销。": "Restore all settings to their defaults? This cannot be undone.",
   "重置本页": "Reset this tab",
   "把这一页的设置恢复为默认值；其他页签与导入的图片不受影响。": "Restore this tab's settings to their defaults. Other tabs and imported images are not affected.",
   "确定要把这一页的设置恢复为默认吗？此操作不可撤销。": "Restore this tab's settings to their defaults? This cannot be undone.",
 
   // ── 上传裁切（issue #191 问题 1）────────────────────────────────────────────
-  "裁切头像": "Crop avatar",
-  "拖动调整位置、滚轮或滑块缩放；框内这一块会作为头像（方形）。": "Drag to reposition, scroll or use the slider to zoom; the area inside the frame becomes the avatar (square).",
-  "确认并导入": "Confirm and import",
-  "没有待裁的图片": "No image is waiting to be cropped",
-  "没有可用的画布": "No canvas available",
-  "裁切失败": "Cropping failed",
-  "读不出图片尺寸": "Could not read the image dimensions",
 
 };
 

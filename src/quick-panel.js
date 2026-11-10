@@ -2,18 +2,17 @@
  * quick-panel.js — 快捷播放面板（侧边栏的**唯一**内容）：当前壁纸 + 轮播 + 三档页签
  * （壁纸 / 外观 / 播放）+ 设置入口。
  *
- * 为什么单独一个文件：它是两个宿主位置的**同一份**内容 —— ① 官方右侧栏的 tab
- * （harness ≥0.1.5，`sidebar.right.pane.tab` 座位）；② 低版本宿主的右滑抽屉
- * （RopeDock 的 `.we-repo-panel`）。UI 重构后侧栏不再是"设置页的副本"，只放日常
+ * 为什么单独一个文件：它是官方右侧栏 tab 的**唯一**内容（harness ≥0.1.5，
+ * `sidebar.right.pane.tab` 座位；没有该座位的宿主上没有入口）
+ * 。UI 重构后侧栏不再是"设置页的副本"，只放日常
  * 高频操作；「外观」「播放」两页是**用户点名**要的例外 —— 它们与设置页同名页签
  * **共用同一批渲染器**（`renderAppearanceTab` / `renderEffectsTab` / `renderAudioTab`，
  * 侧栏档由 `ctx.surface === "sidebar"` 少画设置页专属的分组），于是两处永远是同一份
- * 控件、同一份状态（改哪边另一边都跟着变，不会有第二份值）。同一份面板画在两个壳里，
- * 壳的差异只有根类修饰（`dock`）。
+ * 控件、同一份状态（改哪边另一边都跟着变，不会有第二份值）。壳的差异只有根类修饰（`dock`）。
  *
  * 契约（构建期由 scripts/build-client.mjs 内联进 bundle 的工厂作用域，"外部作用域" =
  * 同一 prelude / src/client.js 的顶层）：
- *   · 这是一个**组件**（同 WallpaperPicker / RopeDock 一类），不是纯渲染器：直接
+ *   · 这是一个**组件**（同 WallpaperPicker 一类），不是纯渲染器：直接
  *     `useStore()` 读 store，直呼模块级处理器（播放控制那几个，以及 `onAccent` /
  *     `onScrim` / `onGlassAlpha` / `onWallpaperOpacity` … 这批与设置页共用的
  *     「外观 / 画面处理器」）与模块级工具（applySelection / setSetting / setTransient /
@@ -44,9 +43,8 @@
   const QP_CARD_MIN = 130; // .we-qp__list--cards 的 minmax 下限（还没画出卡片时的列数兜底）
   const QP_VP_OVERSCAN = 6; // 视口外上下各多渲染几**行**（快速滚动不露白）
   const QP_VP_FIRST = 30;   // 首帧还没量到滚动容器 / 列数时先画的**条目数**（量完立刻收窄）
-  /** 找实际滚动容器：官方档是列表自己（`.we-qp--official .we-qp__list` overflow-y:auto），
-      抽屉档是祖先 `.we-repo-panel__body`（整个面板滚、列表不叠第二层滚）。列表自身
-      滚得动就选自己；一路都不滚返回 null（内容不足一屏，无需虚拟化）。 */
+  /** 找实际滚动容器：列表自己（`.we-qp--official .we-qp__list` overflow-y:auto）滚得动就用它；
+      一路都不滚返回 null（内容不足一屏，无需虚拟化）。 */
   function qpFindScroller(el) {
     for (let node = el; node && node !== document.body; node = node.parentElement) {
       let oy = "";
@@ -58,12 +56,11 @@
   /** 可视窗口 {start, end, cols, cards, tag}：start/end 是条目下标 [start, end)，
       cols = 卡片档的实测列数（列表档恒 1），cards = 测量时的视图档（渲染侧用它识别
       "换视图瞬间的旧窗口"），tag = 调用方自定义的形态戳（同样用于识别旧窗口；不给
-      即 undefined）。两种壳同一个测量式：官方档（列表自己滚）取 scrollTop /
-      clientHeight；抽屉档（祖先滚）取「列表顶被滚出滚动容器顶多少」+ 容器可视高。
+      即 undefined）。测量式：官方档（列表自己滚）取 scrollTop / clientHeight。
       窗口先把 hidden→可视底这段折成网格行（行距 = 卡高 + gap），再乘 cols 摊回条目。
       滚动事件 rAF 合并；窗口没变不触发重渲染；官方档在 deps 变化（换视图 / 条数变化）
       时 scrollTop 归零 —— 旧行距下的位置在新几何里指向别处，还会先被临时高度钳一把，
-      不如回顶重测，语义可预期（抽屉档是祖先在滚，不动它）。meta 走 ref 进闭包，
+      不如回顶重测，语义可预期。meta 走 ref 进闭包，
       滚动重测不因一次输入而重挂监听。 */
   function qpVirtWindow(ref, count, itemH, gap, cards, tag) {
     const [win, setWin] = React.useState(() => ({ start: 0, end: QP_VP_FIRST, cols: 0, cards: false, tag }));
@@ -499,8 +496,6 @@
       detailOpen: ui.detailOpen, onToggleDetailSection: ui.onToggleDetailSection,
       glassUiOpen: ui.glassUiOpen, onToggleGlassUiSection: ui.onToggleGlassUiSection,
       cornersOpen: ui.cornersOpen, onToggleCornersSection: ui.onToggleCornersSection,
-      // ── 吉祥物 3D 环的等比缩放基准（见 QuickPanel 里 paneW 那段）──
-      paneWidth: ui.paneWidth,
       // ── 全局字体节（**本档**默认收起；三次修订后该节两档都画，设置页那份
       //    用它自己的 `picker-font-open` 键。原 setting-only 占位器早已摘掉）──
       fontOpen: ui.fontOpen, onToggleFontSection: ui.onToggleFontSection,
@@ -699,7 +694,7 @@
     // 语言切换：面板自己订阅（它挂在两个宿主壳里，都不保证会因语言而重渲染）。
     useWeLocale();
     const sel = useStore();
-    const dock = (props && props.dock) || "drawer";
+    const dock = (props && props.dock) || "official";
     // 「壁纸属性」面板渲染器与开关读数/动作都是**模块级**的（见 client.js 顶部）——
     // 本文件当自由变量用。⚠️ 它绝不能是 `apply()` 里的闭包：`src/sidebar-right.js` 是
     // **prelude**（在 `apply()` 之前求值），它注册的那个渲染回调引用不到 apply 的作用域，
@@ -741,31 +736,6 @@
       setGlassDetailOpen(next);
       writeQpOpen(QP_GLASS_DETAIL_KEY, next);
     };
-    // ── 吉祥物 3D 环的「面板宽度」（「左右拉宽、顶格」）──────────────────────
-    // 与设置页那侧同形（见 client.js 的 paneW effect）：环要随可用宽度等比放大才填得满，
-    // 而渲染器是纯函数、拿不到宽度 ⇒ 在本档量一次、经 ctx 传下去。
-    // 量的是 `.we-picker__mascot-carousel`（width:100% 的 flex 行）—— 它的宽度不随窗口
-    // 的 max-width 变，所以拿它当"可用宽度"不会自我指涉。侧栏通常 s≈1（设计档就是按它标定的），
-    // 但面板可被用户拉宽 ⇒ 仍然值得量。
-    const qpPaneRef = React.useRef(null);
-    const [paneW, setPaneW] = React.useState(0);
-    React.useEffect(() => {
-      const root = qpPaneRef.current;
-      if (!root) return undefined;
-      const measure = () => {
-        const el = root.querySelector(".we-picker__mascot-carousel");
-        const w = el && el.clientWidth ? el.clientWidth : 0;
-        setPaneW((prev) => (Math.abs(prev - w) < 2 ? prev : w));
-      };
-      measure();
-      const ro = typeof ResizeObserver === "function" ? new ResizeObserver(measure) : null;
-      if (ro) ro.observe(root);
-      window.addEventListener("resize", measure);
-      return () => {
-        if (ro) ro.disconnect();
-        window.removeEventListener("resize", measure);
-      };
-    }, [qpTab]);
     // ── 本机字体清单（本档的触发点；三次修订后字体节两档都画 ⇒ 设置页那侧
     //    也有一条同形 effect，见 src/client.js 的 pickerFontOpen 那段）──
     // 停在外观页 + 字体节**展开** + 「字体自定义」开着 ⇒ 才去要一次（宿主那次扫描
@@ -883,7 +853,7 @@
       // 外观 / 播放：与设置页同名页签**同一批渲染器**（surface 档少画设置页专属分组）；
       // 壁纸：列表 + 声音（声音与播放页那份同源 —— 同一状态、同一处理器、同一份渲染器）。
       // 属性下钻：打开时整区换成面板（先于其它分支 —— 反过来就被列表顶掉）。
-      React.createElement("div", { className: tabBodyClass, ref: qpPaneRef },
+      React.createElement("div", { className: tabBodyClass },
         qpTab === "wallpaper" && userPropsPanelOpen() && propsAvailable
           && React.createElement("div", { className: "we-qp__propsview we-qp__propsview--drill" }, renderUserPropsPanel()),
         !(qpTab === "wallpaper" && userPropsPanelOpen() && propsAvailable) && (qpTab === "appearance"
@@ -894,9 +864,6 @@
             detailOpen, onToggleDetailSection: toggleDetailSection,
             glassUiOpen, onToggleGlassUiSection: toggleGlassUiSection,
             cornersOpen, onToggleCornersSection: toggleCornersSection,
-            // ⚠️ 状态变量叫 `paneW`；这里传给渲染器的字段名是 `paneWidth`（**不能写简写** ——
-            //    写成 `paneWidth,` 会引用一个不存在的变量，实测当场 `paneWidth is not defined`）。
-            paneWidth: paneW,
           })
           : qpTab === "playback"
             ? qpRenderPlaybackPane(sel, switchQpTab)

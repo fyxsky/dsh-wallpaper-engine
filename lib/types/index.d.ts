@@ -6,11 +6,9 @@
  * them on unload; `docs/ROUTE-INDEX.md` is the generated table of those routes
  * and stays authoritative for their paths and handlers.
  *
- * Exactly one of those routes leaves the machine: `GET /wallpaper-engine/star-count`
- * fetches the repository's star count from the public GitHub API (read-only, no
- * credentials, 10-minute cache plus an on-disk fallback). Everything else serves
- * local data — including `GET /wallpaper-engine/about-qr/<file>`, which hands out
- * the two contact QR codes shipped in `lib/about/` (whitelisted names only).
+ * Everything these routes serve is local data — the plugin makes no outbound request
+ * on the wallpaper path (the slim branch also dropped the about / update-notice routes,
+ * so there is no star-count leg any more).
  *
  * `webServer` is a HARD dependency, declared by `inject` below: the Loader waits
  * for the HTTP server to mount before running this plugin, and a profile with no
@@ -184,7 +182,7 @@ export declare const COMPONENT_GATE: { file: string; symbol: string };
 /**
  * "Load by component" entry point (the component rows in `cordis.patch.yml` reach the
  * same implementations through their own `apply`). `component` is the sub-path segment
- * of the row name (`'about-notice'` / `'mascot-avatar'` / `'wallpaper'`); unknown
+ * of the row name (`'media-bridge'`); unknown
  * names throw. Returns the implementation's disposer.
  */
 export declare function applyComponent(

@@ -50,14 +50,8 @@
         <li><a href="#赞赏">赞赏</a> · <a href="#联系方式">联系方式</a></li>
       </ul>
     </td>
-    <td width="30%" align="center" valign="middle">
-      <a href="assets/readme/mascot-eating-rice-1280x1784.jpg">
-        <img src="assets/readme/mascot-eating-rice-1280x1784.jpg" alt="吉祥物干饭插画" width="320">
-      </a>
-    </td>
     <td id="赞赏" width="30%" align="center" valign="middle">
-      <a href="assets/about/sponsor-fish.png"><img src="assets/about/sponsor-fish.png" alt="生鱼的赞赏码" width="260" height="260"></a>
-      <br><strong>生鱼的赞赏码</strong>
+      <strong>赞赏</strong>
       <br><sub>项目保持开源，赞赏完全自愿，不影响安装、使用或问题反馈。</sub>
     </td>
   </tr>

@@ -311,8 +311,8 @@ async function loadPersisted() {
     if (!stale) Object.assign(selection, readPersisted());
   }
 
-  // Settings applied (host or fallback). Mark loaded so gated UI — the one-time
-  // notice — knows the persisted noticeSeen is final before it renders.
+  // Settings applied (host or fallback). Mark loaded so gated UI knows the
+  // persisted settings are final before it renders.
   selection.hostLoaded = true;
   applyEffects();
   emit();

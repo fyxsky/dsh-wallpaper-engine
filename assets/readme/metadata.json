@@ -1,5 +1,5 @@
-[
-  {
+{
+  "0": {
     "path": "assets/readme/hero-light.png",
     "kind": "image",
     "channel": "code",
@@ -15,14 +15,13 @@
     "sourceSelector": ".hero",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / CDP: actual HTML element screenshot.",
     "notes": "Original theme layout retained; Node.js requirement updated to 22.12+. Runtime artwork unchanged."
   },
-  {
+  "1": {
     "path": "assets/readme/key-lang-zh-light.png",
     "kind": "image",
     "channel": "code",
@@ -38,14 +37,13 @@
     "sourceSelector": ".key[data-id=\"lang-zh\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "2": {
     "path": "assets/readme/key-lang-en-light.png",
     "kind": "image",
     "channel": "code",
@@ -61,14 +59,13 @@
     "sourceSelector": ".key[data-id=\"lang-en\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "3": {
     "path": "assets/readme/key-lang-start-light.png",
     "kind": "image",
     "channel": "code",
@@ -84,14 +81,13 @@
     "sourceSelector": ".key[data-id=\"lang-start\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "4": {
     "path": "assets/readme/key-get-light.png",
     "kind": "image",
     "channel": "code",
@@ -107,14 +103,13 @@
     "sourceSelector": ".key[data-id=\"get\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "5": {
     "path": "assets/readme/key-setup-light.png",
     "kind": "image",
     "channel": "code",
@@ -130,14 +125,13 @@
     "sourceSelector": ".key[data-id=\"setup\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "6": {
     "path": "assets/readme/key-docs-light.png",
     "kind": "image",
     "channel": "code",
@@ -153,14 +147,13 @@
     "sourceSelector": ".key[data-id=\"docs\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "7": {
     "path": "assets/readme/key-release-light.png",
     "kind": "image",
     "channel": "code",
@@ -176,14 +169,13 @@
     "sourceSelector": ".key[data-id=\"release\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "8": {
     "path": "assets/readme/section-intro-light.png",
     "kind": "image",
     "channel": "code",
@@ -199,14 +191,13 @@
     "sourceSelector": ".section[data-id=\"intro\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "9": {
     "path": "assets/readme/section-start-light.png",
     "kind": "image",
     "channel": "code",
@@ -222,14 +213,13 @@
     "sourceSelector": ".section[data-id=\"start\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "10": {
     "path": "assets/readme/section-index-light.png",
     "kind": "image",
     "channel": "code",
@@ -245,14 +235,13 @@
     "sourceSelector": ".section[data-id=\"index\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "11": {
     "path": "assets/readme/section-features-light.png",
     "kind": "image",
     "channel": "code",
@@ -268,14 +257,13 @@
     "sourceSelector": ".section[data-id=\"features\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "12": {
     "path": "assets/readme/section-formats-light.png",
     "kind": "image",
     "channel": "code",
@@ -291,14 +279,13 @@
     "sourceSelector": ".section[data-id=\"formats\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "13": {
     "path": "assets/readme/section-usage-light.png",
     "kind": "image",
     "channel": "code",
@@ -314,14 +301,13 @@
     "sourceSelector": ".section[data-id=\"usage\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "14": {
     "path": "assets/readme/section-compat-light.png",
     "kind": "image",
     "channel": "code",
@@ -337,14 +323,13 @@
     "sourceSelector": ".section[data-id=\"compat\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "15": {
     "path": "assets/readme/section-develop-light.png",
     "kind": "image",
     "channel": "code",
@@ -360,14 +345,13 @@
     "sourceSelector": ".section[data-id=\"develop\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "16": {
     "path": "assets/readme/section-community-light.png",
     "kind": "image",
     "channel": "code",
@@ -383,14 +367,13 @@
     "sourceSelector": ".section[data-id=\"community\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "17": {
     "path": "assets/readme/section-credits-light.png",
     "kind": "image",
     "channel": "code",
@@ -406,14 +389,13 @@
     "sourceSelector": ".section[data-id=\"credits\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "18": {
     "path": "assets/readme/section-stars-light.png",
     "kind": "image",
     "channel": "code",
@@ -429,14 +411,13 @@
     "sourceSelector": ".section[data-id=\"stars\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "19": {
     "path": "assets/readme/hero-dark.png",
     "kind": "image",
     "channel": "code",
@@ -452,14 +433,13 @@
     "sourceSelector": ".hero",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / CDP: actual HTML element screenshot.",
     "notes": "Original theme layout retained; Node.js requirement updated to 22.12+. Runtime artwork unchanged."
   },
-  {
+  "20": {
     "path": "assets/readme/key-lang-zh-dark.png",
     "kind": "image",
     "channel": "code",
@@ -475,14 +455,13 @@
     "sourceSelector": ".key[data-id=\"lang-zh\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "21": {
     "path": "assets/readme/key-lang-en-dark.png",
     "kind": "image",
     "channel": "code",
@@ -498,14 +477,13 @@
     "sourceSelector": ".key[data-id=\"lang-en\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "22": {
     "path": "assets/readme/key-lang-start-dark.png",
     "kind": "image",
     "channel": "code",
@@ -521,14 +499,13 @@
     "sourceSelector": ".key[data-id=\"lang-start\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "23": {
     "path": "assets/readme/key-get-dark.png",
     "kind": "image",
     "channel": "code",
@@ -544,14 +521,13 @@
     "sourceSelector": ".key[data-id=\"get\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "24": {
     "path": "assets/readme/key-setup-dark.png",
     "kind": "image",
     "channel": "code",
@@ -567,14 +543,13 @@
     "sourceSelector": ".key[data-id=\"setup\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "25": {
     "path": "assets/readme/key-docs-dark.png",
     "kind": "image",
     "channel": "code",
@@ -590,14 +565,13 @@
     "sourceSelector": ".key[data-id=\"docs\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "26": {
     "path": "assets/readme/key-release-dark.png",
     "kind": "image",
     "channel": "code",
@@ -613,14 +587,13 @@
     "sourceSelector": ".key[data-id=\"release\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "27": {
     "path": "assets/readme/section-intro-dark.png",
     "kind": "image",
     "channel": "code",
@@ -636,14 +609,13 @@
     "sourceSelector": ".section[data-id=\"intro\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "28": {
     "path": "assets/readme/section-start-dark.png",
     "kind": "image",
     "channel": "code",
@@ -659,14 +631,13 @@
     "sourceSelector": ".section[data-id=\"start\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "29": {
     "path": "assets/readme/section-index-dark.png",
     "kind": "image",
     "channel": "code",
@@ -682,14 +653,13 @@
     "sourceSelector": ".section[data-id=\"index\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "30": {
     "path": "assets/readme/section-features-dark.png",
     "kind": "image",
     "channel": "code",
@@ -705,14 +675,13 @@
     "sourceSelector": ".section[data-id=\"features\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "31": {
     "path": "assets/readme/section-formats-dark.png",
     "kind": "image",
     "channel": "code",
@@ -728,14 +697,13 @@
     "sourceSelector": ".section[data-id=\"formats\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "32": {
     "path": "assets/readme/section-usage-dark.png",
     "kind": "image",
     "channel": "code",
@@ -751,14 +719,13 @@
     "sourceSelector": ".section[data-id=\"usage\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "33": {
     "path": "assets/readme/section-compat-dark.png",
     "kind": "image",
     "channel": "code",
@@ -774,14 +741,13 @@
     "sourceSelector": ".section[data-id=\"compat\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "34": {
     "path": "assets/readme/section-develop-dark.png",
     "kind": "image",
     "channel": "code",
@@ -797,14 +763,13 @@
     "sourceSelector": ".section[data-id=\"develop\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "35": {
     "path": "assets/readme/section-community-dark.png",
     "kind": "image",
     "channel": "code",
@@ -820,14 +785,13 @@
     "sourceSelector": ".section[data-id=\"community\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "36": {
     "path": "assets/readme/section-credits-dark.png",
     "kind": "image",
     "channel": "code",
@@ -843,14 +807,13 @@
     "sourceSelector": ".section[data-id=\"credits\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   },
-  {
+  "37": {
     "path": "assets/readme/section-stars-dark.png",
     "kind": "image",
     "channel": "code",
@@ -866,11 +829,10 @@
     "sourceSelector": ".section[data-id=\"stars\"]",
     "inputs": [
       "icon.png",
-      "assets/rope/phoebe.png",
       "assets/readme/Jersey20-Regular.ttf"
     ],
     "reference": "https://github.com/Mai-with-u/MaiBot",
     "renderer": "Microsoft Edge / Playwright：实际 HTML 元素截图，不是生成式图片。",
     "notes": "不使用 MaiBot 角色、鱼形装饰、装机遥测或趋势排名；不修改运行时角色原图。"
   }
-]
+}

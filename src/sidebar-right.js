@@ -4,22 +4,23 @@
  * 干什么：
  *   ① 能力门：`ctx.slots.inject("sidebar.right.pane.tab", cb)` —— 该座位只有
  *      harness ≥0.1.5（带官方右侧栏）才会声明，回调跑没跑就是**天然的分支点**：
- *      跑了 → 官方态（面板融进右侧栏 tab）；没跑 → 抽屉态（吉祥物拉出右滑抽屉）。
- *      不调版本号判定（座位存在性 = 功能存在性，少一个漂移源）。
+ *      跑了 → 官方态（面板融进右侧栏 tab）；没跑 → 本插件在那台宿主上没有侧栏入口
+ *      （快捷键 resolve 走 pass，不吞按键）。不调版本号判定（座位存在性 = 功能存在性，
+ *      少一个漂移源）。
  *   ② 官方态的两段注册（与 better-sidebar 0.19 / documentpreview 同一条公开路径）：
  *      tab 类型（`ctx.sidebarRightTabs.register`）+ tab 身体（`ctx.slots.register`
  *      { name: 'sidebar.right.pane.tab', key: id }）。两个服务都是**可选服务**，
  *      用 `ctx.get` 轮询拿（同 pollThemeService 模式 —— 写进 inject 会在低版本
  *      宿主把插件 park 死）。
- *   ③ 模式真源 `sidebarRightMode()` / `sidebarRightOpen()`：RopeDock 的吉祥物
- *      点击按它路由（官方态 → openTab 展开右侧栏聚焦本 tab；抽屉态 → 开抽屉）。
+ *   ③ 模式真源 `sidebarRightMode()` / `sidebarRightOpen()`：快捷键与底部入口按它路由
+ *      （官方态 → openTab 展开右侧栏聚焦本 tab）。
  *   ④ 「壁纸引擎设置」入口（openSettingsSection）：官方没有公开的"打开设置对话框"
  *      可编程面 —— 走 DOM：点宿主左栏的设置触发钮（aria-haspopup="dialog"），
  *      对话框挂上 body 后再点我们自己的 nav 行（label 是我们注册的，最稳定的锚）。
  *      任一步找不到就静默收尾（用户手动开设置也一样到）。
  *      可选参数 `tabId` = 深链到设置页的某一页签（快捷面板底栏那两颗按钮用）：
  *      写一个瞬态请求（`settingsTabRequest`）就走，落地在 WallpaperPicker 的 effect 里。
- *   ⑤ 调试开关 `?we-sidebar=drawer`：官方宿主上强制抽屉态（验证低版本形态用）。
+ *   ⑤ 调试开关 `?we-sidebar=drawer`：官方宿主上强制非官方态（验证低版本宿主形态用）。
  *
  * 契约（构建期由 scripts/build-client.mjs 内联进 bundle 的工厂作用域）：
  *   · 本文件必须保持浏览器安全（无 import / require / Node API），且**不得有顶层
@@ -28,10 +29,10 @@
  */
 
 // ── 侧边栏触达模式（唯一真源）────────────────────────────────────────────────
-// "drawer"（默认：吉祥物 → 右滑抽屉）| "official"（吉祥物 → 官方右侧栏 tab）。
+// "drawer"（默认：宿主没有官方右侧栏 ⇒ 没有侧栏入口）| "official"（官方右侧栏 tab）。
 // 只能从 installSidebarRight 的注册/清理路径翻转，别处只读。
 let weSidebarMode = "drawer";
-let weSidebarOpenFn = null; // 官方态的 openTab 调用（抽屉态为 null）
+let weSidebarOpenFn = null; // 官方态的 openTab 调用（非官方态为 null）
 let weSidebarCtrl = null;   // 官方态控制器（isExpanded/active/toggleExpanded 的宿主面）
 const WE_SIDEBAR_KIND = "wallpaper-library";
 const WE_SIDEBAR_ID = "dsh-plugin-wallpaper-engine/library";
@@ -39,7 +40,7 @@ const WE_SIDEBAR_ID = "dsh-plugin-wallpaper-engine/library";
 function sidebarRightMode() {
   return weSidebarMode;
 }
-/** 官方态下展开右侧栏并聚焦「壁纸」tab；抽屉态/服务丢失时返回 false（调用方回落开抽屉）。 */
+/** 官方态下展开右侧栏并聚焦「壁纸」tab；非官方态/服务丢失时返回 false。 */
 function sidebarRightOpen() {
   if (weSidebarMode !== "official" || !weSidebarOpenFn) return false;
   try { weSidebarOpenFn(); return true; } catch { return false; }
@@ -54,7 +55,7 @@ function sidebarRightOursActive() {
 }
 /**
  * 官方态「点一下开关切换」：展开且正显示「壁纸」⇒ 收起；否则展开并聚焦本 tab。
- * 返回 false = 非官方态（调用方回落抽屉）。这是吉祥物点击与快捷键共用的语义。
+ * 返回 false = 非官方态。这是快捷键与底部入口共用的语义。
  */
 function sidebarRightToggle() {
   if (weSidebarMode !== "official" || !weSidebarCtrl) return false;
@@ -69,7 +70,7 @@ function sidebarRightToggle() {
 }
 /**
  * 官方态关闭：仅当展开且正显示「壁纸」时收起 —— 不替用户关掉别人的 tab。
- * 官方态一律返回 true（"已处理"——没有可关的也不回落到抽屉）；非官方态返回 false。
+ * 官方态一律返回 true（"已处理"——没有可关的也算处理过）；非官方态返回 false。
  */
 function sidebarRightClose() {
   if (weSidebarMode !== "official" || !weSidebarCtrl) return false;
@@ -82,41 +83,25 @@ function sidebarRightClose() {
   } catch { return false; }
 }
 
-// ── 壁纸侧栏的统一开关（吉祥物点击 / 快捷键共用；两个宿主形态都覆盖）─────────
-// 抽屉态的开关由 RopeDock 组件注册进来：drawer 的 open 状态是组件内部 state，
-// 模块层只能经这一组回调改它（注册/撤销见 client.js 的 RopeDock effect）。
-// eslint-disable-next-line prefer-const -- 跨片段写入：client.js 的 `RopeDock` effect
-let ropeDrawerControl = null; // { toggle, open, close } | null（RopeDock 隐藏/卸载时为 null）
-/** 开：官方态展开并聚焦本 tab；抽屉态开抽屉。两边都不可用返回 false。 */
+// ── 壁纸侧栏的统一开关（快捷键 / 底部入口共用）──────────────────────────────
+/** 开：官方态展开并聚焦本 tab；不可用返回 false。 */
 function wallSidebarOpen() {
-  if (sidebarRightOpen()) {
-    if (ropeDrawerControl) ropeDrawerControl.close();
-    return true;
-  }
-  if (ropeDrawerControl) { ropeDrawerControl.open(); return true; }
-  return false;
+  return sidebarRightOpen();
 }
-/** 关：官方态按「正显示本 tab 才收」收；抽屉态关抽屉。 */
+/** 关：官方态按「正显示本 tab 才收」收；不可用返回 false。 */
 function wallSidebarClose() {
-  if (sidebarRightClose()) return true;
-  if (ropeDrawerControl) { ropeDrawerControl.close(); return true; }
-  return false;
+  return sidebarRightClose();
 }
-/** 开/关切换（吉祥物点击、快捷键共用）。不可用（如吉祥物被隐藏且非官方态）返回 false。 */
+/** 开/关切换（快捷键与底部入口共用）。不可用（宿主没有官方右侧栏）返回 false。 */
 function wallSidebarToggle() {
-  if (sidebarRightToggle()) {
-    if (ropeDrawerControl) ropeDrawerControl.close();
-    return true;
-  }
-  if (ropeDrawerControl) { ropeDrawerControl.toggle(); return true; }
-  return false;
+  return sidebarRightToggle();
 }
 /** 侧栏此刻有没有可开的形态（快捷键 resolve 据此决定 handled / pass）。 */
 function wallSidebarAvailable() {
-  return weSidebarMode === "official" || Boolean(ropeDrawerControl);
+  return weSidebarMode === "official";
 }
 
-/** 强制抽屉态（官方宿主上验证低版本形态的调试开关）。两种入口：
+/** 强制非官方态（官方宿主上验证低版本宿主形态的调试开关）。两种入口：
  *  · `?we-sidebar=drawer` —— 冷启动地址；
  *  · `localStorage.weSidebarTest === "drawer"` —— 宿主会把 query 洗成裸 `/`
  *    （token 消费后跳转），地址参数会被剥掉；存储键走 reload 即可（同
@@ -132,7 +117,7 @@ function sidebarForcedDrawer() {
 }
 
 // 定时器一律走 window.* 且带存在性守卫（bundle 在测试沙箱里跑时裸全局
-// setTimeout/clearTimeout 不存在；守卫缺席 = 不再重试，安静落回抽屉态）。
+// setTimeout/clearTimeout 不存在；守卫缺席 = 不再重试，安静停在当前态）。
 function scheduleWeTimeout(fn, ms) {
   if (typeof window === "undefined" || typeof window.setTimeout !== "function") return 0;
   return window.setTimeout(fn, ms);
@@ -197,7 +182,7 @@ function installSidebarRight(ctx) {
           () => React.createElement(QuickPanel, { dock: "official" }),
         );
       } catch {
-        // 注册被拒（id 撞车 / 形态不符）：不进入官方态，安静落回抽屉。
+        // 注册被拒（id 撞车 / 形态不符）：不进入官方态，安静停在非官方态。
         try { if (disposeTabs) disposeTabs(); } catch { /* ignore */ }
         try { if (disposeBody) disposeBody(); } catch { /* ignore */ }
         return;
@@ -205,7 +190,7 @@ function installSidebarRight(ctx) {
       weSidebarMode = "official";
       weSidebarCtrl = ctrl;
       weSidebarOpenFn = () => ctrl.openTab(WE_SIDEBAR_KIND);
-      emit(); // RopeDock 重读模式（吉祥物行为切换）
+      emit(); // 面板重读模式（侧栏入口行为切换）
       off = () => {
         try { disposeBody(); } catch { /* ignore */ }
         try { disposeTabs(); } catch { /* ignore */ }
@@ -223,7 +208,7 @@ function installSidebarRight(ctx) {
 //   · 与官方既有默认无重叠（page.close 桌面是 primary+W、web 才是 primary+alt+W；
 //     sidebar.right.toggle 是 primary+alt+B —— 已按宿主全量默认绑定清单核对）；
 //   · web 档故意不设默认（浏览器里 Cmd+Shift+W 是关窗口，不该抢），有需要自行绑定。
-// resolve：没有可开的侧栏形态（吉祥物被隐藏且非官方态）时 pass —— 不吞按键。
+// resolve：没有可开的侧栏形态（宿主没有官方右侧栏）时 pass —— 不吞按键。
 function installWallSidebarShortcut(ctx) {
   if (!ctx || typeof ctx.get !== "function") return null;
   if (typeof document === "undefined") return null;
@@ -482,7 +467,6 @@ function openSettingsSection(tabId) {
 
 export {
   sidebarRightMode,
-  ropeDrawerControl,
   wallSidebarOpen,
   wallSidebarClose,
   wallSidebarToggle,

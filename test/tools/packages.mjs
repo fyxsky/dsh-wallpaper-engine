@@ -1,8 +1,9 @@
 /**
  * 包发现层（ADR-0014 S8 / P-B 基石）。
  *
- * 本仓从「一个包」拆成「主包 + 8 个 standalone 子包」后（P-F 收口、`lib/components/` 已删 ⇒ 发现层
- * 当前只有 standalone 形态；包数以 `FLOORS` 与磁盘为准，本文件不写死任何包名），
+ * 本仓从「一个包」拆成「主包 + standalone 子包」后（P-F 收口、`lib/components/` 已删 ⇒ 发现层
+ * 当前只有 standalone 形态；瘦身分支之后是**主包 + 3 个子包**（fonts / glass / media-bridge）；
+ * 包数以 `FLOORS` 与磁盘为准，本文件不写死任何包名），
  * "有哪些包、每包的清单 / patch / 浏览器半边产物 / 主 patch 行"这几张脸散落在 build 与
  * 各守卫里各写一遍，已经开始互相漂移。这里把它们收敛成**一份数据模型**：
  *
@@ -16,7 +17,7 @@
  *   export function parseRows(patchText)    → [{ id, name }]，按文件顺序。
  *   export function discoverPackages(root=ROOT) → 模型（见下）。
  *   export function enumerateViolations(model, io) → string[]（**纯函数**，io 注入）。
- *   export const FLOORS = { packages: 8, clientArtifacts: 7, rows: 9 }
+ *   export const FLOORS = { packages: 3, clientArtifacts: 4, rows: 4 }
  *   CLI: `node test/tools/packages.mjs selftest`（退出码 0/1，逐条打印 ✓/✗）、
  *        可选 `--json`（打印模型）、无参（打印摘要，有违规则退出码 1）。
  *
@@ -47,12 +48,13 @@ import { fileURLToPath } from 'node:url';
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 /**
- * 地板取当前实测值：主包 + 8 个独立子包，主 patch 共 9 行。
- * 浏览器半边产物 7 份：主包（src/client.js）、fx、parallax、fonts、pet-link、media-bridge、glass。
+ * 地板取当前实测值（瘦身分支 slim/remove-extra-features 之后：删掉 about-notice / mascot-avatar /
+ * pet-link / fx / parallax 五个包）：主包 + 3 个独立子包，主 patch 共 4 行。
+ * 浏览器半边产物 4 份：主包（src/client.js）、fonts、media-bridge、glass。
  * ⚠️ `clientArtifacts` 与 `test/verify-client-sync.mjs` 的产物面地板**共用这一个常量**（那边 import 它）
  * ⇒ 抬地板是**一处改动**，两边的正/负对照自动同批跟着走。
  */
-export const FLOORS = { packages: 8, clientArtifacts: 7, rows: 9 };
+export const FLOORS = { packages: 3, clientArtifacts: 4, rows: 4 };
 
 // ── 路径小工具（模型一律根相对 POSIX）─────────────────────────────────────────
 
@@ -596,28 +598,23 @@ function runSelftest() {
 
   const clone = (m) => JSON.parse(JSON.stringify(m));
   const abs = (rel) => absOf(ROOT, rel);
-  // P-F 批 1c 起三格组件也已出户 ⇒ 发现层不再有任何 `kind === 'subpath'` 的包；"没有浏览器半边的包"
-  // 改从**任意** kind 里找（today = about-notice / mascot-avatar 两个 standalone ——
-  // 原名 wallpaper 的那格早已改名 media-bridge 且自出产物，不再是无产物包）。
-  // 负对照不许依赖"盘面上恰好有某个形态的包"（≥ P-C 那次 `subNoClient` 崩掉的教训）。
-  const subNoClient = base.packages.find((p) => p.clientArtifact === null);
-  if (!subNoClient) throw new Error('[selftest] 负对照 ③/⑦ 需要至少一个不带浏览器半边的包（main 之外的任一形态）');
+  // 瘦身分支之后盘上**已经不存在**"不带浏览器半边的包"（3 个子包 fonts / glass / media-bridge 全都有产物），
+  // 而 ③/⑥/⑨ 需要在内存里合成"清单与模型不一致"的那一格。
+  // 负对照不许依赖"盘面上恰好有某个形态的包"（≥ P-C 那次 `subNoClient` 崩掉的教训）⇒
+  // 改为取**任一**子包，同时覆盖它的模型项（`clientArtifact: null`）与清单文本（去 exports / 改名 / 坏 JSON），
+  // 不变量 3 的"三处漂移"因此仍由同一条判据点名。
+  const manifestVictim = base.packages[0];
+  if (!manifestVictim) throw new Error('[selftest] 负对照 ③/⑥/⑨ 需要至少一个子包');
   const standaloneClient = base.packages.find((p) => p.kind === 'standalone' && p.clientArtifact !== null);
 
   // ① 模型里删掉一个包（挑带浏览器半边的 standalone：删它同时摘掉 clientPackages 一项 ⇒
-  //    产物数 7→6 低于地板 7 —— "删包"这一个缺陷的因果链里因此同时含产物地板，
+  //    产物数 4→3 低于地板 4 —— "删包"这一个缺陷的因果链里因此同时含产物地板，
   //    预期标签已含 floor/clientArtifacts）。
-  //    ⚠️ 曾经这里挑的是"不带浏览器半边的 standalone"（当时的 host-only 包）；P-C 之后字体包
-  //    也有产物了、本仓已无这种真实包 ⇒ 该写法会 `undefined.dir` 崩掉。负对照不许依赖
-  //    "盘面上恰好有某个形态的包"这种会随重构漂移的前提（否则重构一落地，判据自己先烂）。
-  //    ✅ 已收（P-F 批 1c，）：`FLOORS.clientArtifacts` 已抬到 4（main+fonts+fx+parallax）；
-  //    pet-link 收口（PR #5，）再 4→5（+ packages/pet-link/lib/client.pet-link.js），
-  //    且 `test/verify-client-sync.mjs` 的产物地板**直接 import 同一个常量** ⇒ 两处不会再一高一低
+  //    ⚠️ 曾经这里挑的是"不带浏览器半边的 standalone"（当时的 host-only 包）；字体包 P-C 之后
+  //    也有产物了、瘦身分支更是**一个无产物包都不剩** ⇒ 该写法会 `undefined.dir` 崩掉。
+  //    负对照不许依赖"盘面上恰好有某个形态的包"这种会随重构漂移的前提（否则重构一落地，判据自己先烂）。
+  //    `test/verify-client-sync.mjs` 的产物地板**直接 import 同一个常量** ⇒ 两处不会一高一低
   //    （它那边的"地板 − 1 份 ⇒ 不达标"负对照也自动跟着走）。
-  //    P-D S3a再 5→6（+ packages/media-bridge/lib/client.media-bridge.js：
-  //    壁纸子包浏览器半边「自定义壁纸」节的产物）。
-  //    ADR-0016 第四刀再 6→7（+ packages/glass/lib/client.glass.js：玻璃包的浏览器
-  //    半边）；`FLOORS.clientArtifacts` 现为 7 ⇒ 本负对照的"7→6 低于地板 7"始终差 1。
   {
     const m = clone(base);
     const victim = m.packages.find((p) => p.kind === 'standalone' && p.clientArtifact !== null);
@@ -636,11 +633,16 @@ function runSelftest() {
   }
 
   // ③ 声明 dsh.client 但没有 exports['./client']
+  //   ⚠️ 瘦身分支之后盘上已无"不带浏览器半边的包"⇒ 缺陷在内存里合成：模型项 clientArtifact
+  //   置 null（当成无产物包）+ 清单文本去 exports 加 dsh.client（不变量 3 的两侧同时漂移）。
   {
     const m = clone(base);
-    const rel = subNoClient.manifestPath;
+    const victim = m.packages.find((p) => p.dir === manifestVictim.dir);
+    victim.clientArtifact = null;
+    const rel = manifestVictim.manifestPath;
     const text = io.readText(abs(rel));
     const mf = JSON.parse(text);
+    delete mf.exports;
     mf.dsh = Object.assign({}, mf.dsh, { client: { platform: 'web', immediately: true } });
     control("\u2462 负对照：清单声明 dsh.client 但无 exports['./client'] ⇒ 违规",
       m, ioWith(io, { readText: { [abs(rel)]: JSON.stringify(mf, null, 2) } }), ['client/dsh-client-vs-export']);
@@ -661,12 +663,12 @@ function runSelftest() {
   }
 
   // ⑥ 清单名改成主包名 ⇒ 清单名规则（连带：行按 `name` 认领 ⇒ 改名后该包的行失配/被主包重复认领）
-  //   P-F 批 1c 起 `subNoClient` 已是 standalone 形态（发现层不再有 subpath 包）⇒ 命中的是
-  //   `name/rule-standalone`（"standalone 必须用自身真名"），不再是 `name/rule-subpath`；
-  //   改名同时把行认领关系打散 ⇒ 一次性断言整条因果链（staleRow / dupClaim / deadRow）。
+  //   发现层的包一律 standalone 形态（没有任何 subpath 包）⇒ 命中的是 `name/rule-standalone`
+  //   （"standalone 必须用自身真名"），不是 `name/rule-subpath`；改名同时把行认领关系打散
+  //   ⇒ 一次性断言整条因果链（staleRow / dupClaim / deadRow）。
   {
     const m = clone(base);
-    const rel = subNoClient.manifestPath;
+    const rel = manifestVictim.manifestPath;
     const mf = JSON.parse(io.readText(abs(rel)));
     mf.name = base.main.name;
     control('\u2465 负对照：非主包清单名改成主包名 ⇒ 清单名规则违规（连带行认领打散）',
@@ -706,12 +708,15 @@ function runSelftest() {
   }
 
   // ⑨ 清单坏 JSON ⇒ 不可解析（连带：认不出真名 ⇒ 那一行没人认领，同一缺陷的因果链）
+  //   连带标签 `client/export-vs-artifact`：清单读不出来 ⇒ 判据这一侧拿不到 exports，而模型里
+  //   仍有 clientArtifact（磁盘发现时读到的）⇒ 不变量 3 的"两处漂移"同时命中。
+  //   （瘦身之前这里挑的是"无产物包"，坏 JSON 时两侧同为 null，故只命中前两个标签。）
   {
     const m = clone(base);
-    const rel = subNoClient.manifestPath;
+    const rel = manifestVictim.manifestPath;
     control('\u2468 负对照：清单不是合法 JSON ⇒ 地板（JSON.parse）违规（连带该行无人认领）',
       m, ioWith(io, { readText: { [abs(rel)]: '{ this is not json' } }),
-      ['floor/manifestParse', 'rows/deadRow']);
+      ['floor/manifestParse', 'client/export-vs-artifact', 'rows/deadRow']);
   }
 
   // ⑩ 非 main 包的行指针为 null ⇒ staleRow（该挂没挂）

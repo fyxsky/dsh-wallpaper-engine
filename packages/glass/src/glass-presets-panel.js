@@ -45,11 +45,10 @@
  *     重新保存一份"），用户层 = 文件坏了/被清空了；不能只给笼统的"读不出来"（ADR-0011 D6）；
  *   · 失败态给**可判定原因**（selection.glassPresetError，宿主原话 + weT 查英文表）。
  *
- * 保存 / 导出的**资产勾选对话框**（ADR-0011 D4，非模态）：三个勾选项各带一行
- * **不勾的后果**说明 —— 不勾字体 ⇒ 回落接收方当前那份；不勾吉祥物 ⇒ 回落内置
- * whale/phoebe/DeepSeek；不勾头像 ⇒ 回落内置默认头像。数值键（开关/尺寸/圆角）恒在 settings 段，
- * 不受勾选影响。默认值：字体 ✅ / 吉祥物 ✅ / 头像 ❌（D4：头像体积翻倍、与"分享一份
- * 外观配置"关系最弱）。勾选状态是视图态（ctx.assetChecks + onAssetToggle）。
+ * 保存 / 导出的**资产勾选对话框**（ADR-0011 D4，非模态）：每个勾选项带一行
+ * **不勾的后果**说明 —— 不勾字体 ⇒ 回落接收方当前那份。数值键（开关/尺寸/圆角）恒在 settings 段，
+ * 不受勾选影响。默认值：字体 ✅。（瘦身分支：吉祥物立绘 / 会话头像两族随组件一起移除，
+ * 只剩字体一族。）勾选状态是视图态（ctx.assetChecks + onAssetToggle）。
  * **保存与导出都先过这道对话框**（ADR 修订版第③条）：保存 = 名字行 → 勾选 → 「保存预设」；
  * 导出 = 每行「导出」→ 同一组勾选 → 「下载 .json」。勾选的每一项只在**本机确实有那份
  * 资产**时才可勾（宿主按名单内嵌，没有的东西内嵌不出段；行的说明会写明）。
@@ -67,7 +66,7 @@ let gpImportInput = null;
 function renderGlassPresetsBlock(gp) {
   const {
     presets, loading, error, note, saving, draftName, armedId,
-    saveTarget, exportTargetId, assetChecks, onAssetToggle, onMascotPoint, onExportCommit, onSaveCommit2,
+    saveTarget, exportTargetId, assetChecks, onAssetToggle, onExportCommit, onSaveCommit2,
     onApply, onOpenSave, onOpenExport, onExportTargetChange, onDraftName, onSaveCommit, onCancelSave,
     onArmDelete, onDisarm, onDelete,
     onImportFile,
@@ -92,14 +91,12 @@ function renderGlassPresetsBlock(gp) {
   // 每行 = 胶囊开关（复用 switchRow）+ 一行**三态后果**（D4）。
   // 口径：**勾上 = 按本机现状声明这一族**（有就带上；没有就**显式声明「无」**），
   // **不勾 = 不动对方的这一族**。所以开关**不再按 available 禁用** —— 旧版禁用导致"本机没有
-  // 自定义立绘"的用户永远无法声明「无」，那一族只能靠出厂预设的 null 来清（本次缺陷的客户端半边）。
-  // available 只决定提示文案（说清"勾上会存成无"还是"勾上会把这张带过去"）。
+  // 自定义字体"的用户永远无法声明「无」，那一族只能靠出厂预设的 null 来清（本次缺陷的客户端半边）。
+  // available 只决定提示文案（说清"勾上会存成无"还是"勾上会把这份带过去"）。
+  // 瘦身分支（slim/remove-extra-features）：立绘（rope）与会话头像两个组件整体移除 ⇒
+  // 它们的勾选项、以及「吉祥物 · 指向」第四态段（只对 `ROPE_FORM_VALUES` 有意义）一并删掉，
+  // 资产勾选只剩**字体**一族。
   const fontAvailable = checks.fontAvailable === true;
-  const mascotAvailable = checks.mascotAvailable === true;
-  const avatarAvailable = checks.avatarAvailable === true;
-  // 吉祥物族的**指向**（第四态，用户口径）：`""` = 按本机现状（老行为），任一形态
-  // id（`ROPE_FORM_VALUES`，10 只）= 这一段只存"指向出厂自带的那一只"（零字节）。
-  const mascotPoint = typeof checks.mascotPoint === "string" ? checks.mascotPoint : "";
   const assetRows = React.createElement(React.Fragment, null,
     switchRow(weT("字体"), has("font"), (e) => onAssetToggle("font", e.target.checked), {
       key: "pa-font",
@@ -107,52 +104,6 @@ function renderGlassPresetsBlock(gp) {
         ? weT("勾上：把当前字体带进预设（不勾 = 不动对方的字体，保持它当前那份）")
         : weT("本机字体还是全默认 —— 勾着存 = 声明「无」，套用它的人回到内置字体（不勾 = 不动对方的字体）"),
       tooltip: weT("把当前活动字体集的颜色角色 / 排版 / 字族 / 组件字体一并存进预设"),
-    }),
-    switchRow(weT("吉祥物立绘"), has("mascot"), (e) => onAssetToggle("mascot", e.target.checked), {
-      key: "pa-mascot",
-      hint: mascotAvailable
-        ? weT("勾上：把自定义立绘带进预设（不勾 = 不动对方的立绘，保持它当前那张）")
-        : weT("本机没有自定义立绘 —— 勾着存 = 声明「无」，套用它的人回到内置立绘（Deepseek_Pro / 菲比啾比）；不勾 = 不动对方的立绘"),
-      tooltip: weT("把自定义吉祥物立绘的图片与显示盒一并存进预设（默认勾选）"),
-    }),
-    // ── 吉祥物族的**指向**（ADR-0011 D4 第四态，用户口径）──────────────────
-    // 勾上这一族才有意义（不勾 = 不动对方那一族，指向无处可落）。两种选择：
-    //   ·「本机现状」= 老行为：有自定义立绘就带上它（内嵌字节），没有就声明「无」；
-    //   · 选一只出厂自带 = 正文里只存**指向**（`assets.mascot` 字符串，零字节），套用它的人
-    //     换回那一只 —— 这是"自己存的预设也能指定出厂自带"的唯一入口（旧版只能存"我的图"
-    //     或"无"两态，想让人换回内置那一只只能用出厂预设）。
-    has("mascot") && React.createElement("div", {
-      className: "we-picker__ctl we-picker__ctl--wrap", key: "pa-mascot-point",
-    },
-      ctlText(weT("吉祥物 · 指向"), mascotAvailable
-        ? weT("「本机现状」= 把这台的自定义立绘带进预设；选一只出厂自带 = 只存「指向它」（不占体积），套用它的人换回那一只")
-        : weT("本机没有自定义立绘 —— 「本机现状」会存成「无」；也可以直接选一只出厂自带，让套用它的人换回那一只")),
-      // （并入 #180 后形态 3 → 11，「小女仆」除名后为 10）：最多 1 + 10 = 11 个键。段控件的基样式
-      // 是「等分、不换行」，11 个键在 564px 内容宽下会被压成同样的窄格、标签互相截断 ⇒ 走 chips 变体
-      // （换行 + 每键取内容宽，见 src/styles/settings.js 里 .we-picker__seg--chips 的注释，#253）。
-      React.createElement("div", { className: "we-picker__seg we-picker__seg--chips", role: "group", "aria-label": weT("吉祥物 · 指向") },
-        React.createElement("button", {
-          key: "own",
-          type: "button",
-          className: "we-picker__btn we-picker__rate" + (mascotPoint ? "" : " we-picker__rate--active"), "aria-pressed": mascotPoint ? "false" : "true",
-          title: weT("按本机现状存这一族：有自定义立绘就连图带显示盒一起存，没有就声明「无」（套用的人回到内置立绘）"),
-          onClick: () => onMascotPoint(""),
-        }, weT("本机现状")),
-        ROPE_FORM_VALUES.map((k) => React.createElement("button", {
-          key: k,
-          type: "button",
-          className: "we-picker__btn we-picker__rate" + (mascotPoint === k ? " we-picker__rate--active" : ""), "aria-pressed": mascotPoint === k ? "true" : "false",
-          title: weT("预设里只存「指向出厂自带的「{name}」」（不内嵌图片；套用它的人换回那一只，本机自己的立绘不动）", { name: ROPE_FORMS[k].label }),
-          onClick: () => onMascotPoint(k),
-        }, ROPE_FORMS[k].label)),
-      ),
-    ),
-    switchRow(weT("会话头像"), has("avatar"), (e) => onAssetToggle("avatar", e.target.checked), {
-      key: "pa-avatar",
-      hint: avatarAvailable
-        ? weT("勾上：把两张自定义头像带进预设（不勾 = 不动对方的头像；头像体积翻倍，默认不勾）")
-        : weT("本机没有自定义头像 —— 勾着存 = 声明「无」，套用它的人回到内置默认头像（不勾 = 不动对方的头像）"),
-      tooltip: weT("把自定义会话头像的两张图一并存进预设（默认不勾：体积翻倍，与分享一份外观配置关系最弱）"),
     }),
     React.createElement("div", { className: "we-picker__hint", key: "pa-note" },
       weT("数值配置（开关 / 尺寸 / 圆角 / 颜色等）总是完整保存，不受勾选影响 —— 勾选只决定图片与字体要不要一并带走；不勾的那一族一个字都不动对方，勾了而本机没有 = 声明「无」（对方回到内置）。")),
@@ -340,7 +291,7 @@ function renderGlassPresetsBlock(gp) {
     : null;
   return React.createElement(React.Fragment, null,
     React.createElement("div", { className: "we-picker__ctl we-picker__ctl--wrap" },
-      ctlText(weT("预设方案"), weT("一键套用整套配置（出厂七套 + 你自己存的，上限 8 个）：观感、行为与勾选的字体 / 立绘 / 头像一起生效，应用后可继续微调")),
+      ctlText(weT("预设方案"), weT("一键套用整套配置（出厂七套 + 你自己存的，上限 8 个）：观感、行为与勾选的字体一起生效，应用后可继续微调")),
     ),
     loading ? React.createElement("div", { className: "we-picker__hint" }, weT("正在处理…")) : null,
     // ⚠️ reason 必须再过一次 weT：它可能来自宿主回包（lib/routes/presets.js 的中文 error），

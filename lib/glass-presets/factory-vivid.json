@@ -101,9 +101,6 @@
     "sidebarColor": "#ffffff",
     "sidebarContentAlpha": 38,
     "sidebarContentColor": "",
-    "ropeShown": true,
-    "ropeForm": "deepseek",
-    "ropeScale": 1,
     "fontCustom": false,
     "caretColor": "",
     "uiColorCustom": false,
@@ -113,37 +110,9 @@
     "uiColorTab": "",
     "uiColorDeepDiving": "",
     "themeFollow": false,
-    "fxEnabled": false,
-    "fxClick": true,
-    "fxClickStyle": "ripple",
-    "fxClickSize": 140,
-    "fxClickGlow": 60,
-    "fxTrail": true,
-    "fxTrailStyle": "comet",
-    "fxTrailLength": 420,
-    "fxTrailWidth": 3,
-    "fxTrailGlow": 60,
-    "fxOpacity": 85,
-    "fxBlend": "screen",
-    "fxColorMode": "accent",
-    "fxColor": "#4f8cff",
-    "parallaxEnabled": false,
-    "parallaxBg": 1,
-    "parallaxMascot": true,
-    "parallaxUi": false,
-    "parallaxPlugin": false,
-    "parallaxUiChatDepth": 1.2,
-    "parallaxUiComposerDepth": 1.8,
-    "parallaxUiSidebarDepth": 1.6,
-    "parallaxUiBubbleDepth": 1.4,
-    "parallaxSmooth": 85,
     "layerPositionX": 50,
     "layerPositionY": 50,
-    "layerScale": 100,
-    "avatarEnabled": false,
-    "avatarSize": 40,
-    "avatarRadius": 100,
-    "avatarAiRepeatRows": 6
+    "layerScale": 100
   },
   "assets": {
     "font": {
@@ -157,7 +126,6 @@
         "globalFamily": "",
         "componentFonts": {}
       }
-    },
-    "mascot": "deepseek"
+    }
   }
 }

@@ -1,14 +1,14 @@
 /**
  * styles-settings.js —— 样式域模块 **SETTINGS**。
  *
- * 内容：设置行与导航 —— 预设方案圆角表格 · 原生下拉弹层 · 视觉分组 divider · 可折叠节头 · 侧栏窄栏兜底 · 页签栏分段式 · 统一设置行 32px。
+ * 内容：设置行与导航 —— 预设方案圆角表格 · 原生下拉弹层 · 视觉分组 divider · 可折叠节头 · 侧栏窄栏兜底 · 页签栏分段式 · 统一设置行 32px · 模块级重置按钮与重置节标题（原 styles-ext.js 的三条共用规则）。
  *
- * 拼装契约（样式族 7 个域模块共享，组装点见 src/styles.js）：
+ * 拼装契约（样式族 6 个域模块共享，组装点见 src/styles.js）：
  *   · 构建期按 INLINE_MODULES 顺序把族内文件**原样内联进同一工厂作用域**，模块之间不 import，靠扁平符号协作
  *     （见 docs/CODE-STRUCTURE.md §3）；
  *   · 本段模板的开引号紧跟本段首行（不另起一行）；段间那一个换行由上一段的收尾换行提供；
  *     本段自身以换行收尾（下一段接着写）；
- *   · 主包样式 = 7 个域模块按 BASE → SHELL → CHROME → SETTINGS → PANEL → QUICK → EXT 相加，
+ *   · 主包样式 = 6 个域模块按 BASE → SHELL → CHROME → SETTINGS → PANEL → QUICK 相加，
  *     组装点 = src/styles.js；玻璃 CSS 不在这条链上 —— 它住 packages/glass/src/glass-css.js
  *     （CSS_GLASS），由玻璃包自注入；两份样式表是**双工件**（守卫按「主包产物 + 玻璃产物」拼接读取）。
  *
@@ -358,7 +358,7 @@ const CSS_SETTINGS = `  /* ── 预设方案：两行四列的圆角表格（�
      说明可以是长句（max-content 会吃满整行），若控件仍用 flex:1（basis 0）就只能分到
      「剩余宽度」⇒ 三元组被压成几像素宽的窄格、文字互相截断。两条口径：
        · 普通段（2~5 键：播放速度 / 帧率档 / 圆角）：按内容等分，整组靠右，不被说明挤扁；
-       · chips 段（11 键的「吉祥物 · 指向」）：换行 + 每键取内容宽（见 glass-panel.js 的类名）。
+       · chips 段（键多的族）：换行 + 每键取内容宽（见 glass-panel.js 的类名）。
      ⚠️ 限定在 .we-picker__ctl--wrap 直接子级：非 wrap 的行（开关行等）布局不变。 */
   .we-picker__ctl--wrap > .we-picker__seg {
     display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px;
@@ -391,6 +391,38 @@ const CSS_SETTINGS = `  /* ── 预设方案：两行四列的圆角表格（�
   }
   .we-picker__ctl-side { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
   .we-picker__swatches { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+
+  /* ── 模块级重置按钮（issue #192）↺：外观各节的节头共用同一枚。
+     margin-left: auto 把它推到行尾（两者都是 flex 行）。
+     ⚠️ 与折叠三角同排时**必须让位**（见下面那条相邻选择器）：三角也靠 margin-left: auto
+     推右，两个 auto 在同一 flex 行里会**均分**剩余空间 —— ↺ 于是停在行中间，而"主题"
+     （那个节头没有 caret）的 ↺ 贴在最右端，同一批模块两种位置（用户报的正是
+     这个）。现在的次序是 标签 → 三角 → ↺，三角吃掉剩余空间、↺ 紧跟其后贴在最右一列。
+     ⚠️ 本段注释不许出现反引号：整套样式文本是模板字符串，一个反引号就拼断 JS。 */
+  .we-mod-reset {
+    margin-left: auto; flex: 0 0 auto;
+    width: 24px; height: 24px; padding: 0; line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1em; cursor: pointer;
+    border-radius: 999px; corner-shape: round;
+    border: 1px solid var(--dsw-alias-border-l2, rgba(128, 128, 128, 0.28));
+    background: transparent; color: var(--dsw-alias-label-secondary, inherit);
+  }
+  /* 有折叠三角同排 ⇒ 由三角独占那个 auto（它已是 margin-left: auto），↺ 只留一段间距。
+     两者因此成组贴在行尾：…… [▾] [↺]。 */
+  .we-picker__section-caret + .we-mod-reset { margin-left: 8px; }
+  .we-mod-reset:hover { color: var(--dsw-alias-label-primary, inherit); }
+  /* 破坏性动作的用色（「全部重置」）：与别的按钮同形，只在描边与文字上给警示色
+     （不填底色 —— 填了在浅色主题下会压过旁边的说明文字）。 */
+  .we-picker__btn--danger {
+    border-color: color-mix(in srgb, #e5534b 55%, transparent);
+    color: #e5534b;
+  }
+  /* 重置节的标题（页签级「重置本页」/ 全局「重置」）—— 与设置分组卡同字形，但用**独立类名**：
+     它是**操作区**不是分组卡（语义更准），同时那些按"分组卡位置"取窗口的判据不会被它干扰。 */
+  .we-picker__section-reset-label {
+    font-size: 0.85em; font-weight: 600; color: var(--we-ink, inherit);
+  }
 
 `;
 

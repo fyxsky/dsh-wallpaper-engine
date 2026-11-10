@@ -1,14 +1,14 @@
 /**
  * styles-quick.js —— 样式域模块 **QUICK**。
  *
- * 内容：Rope dock 与快捷播放面板 QuickPanel（含软件渲染回退，upstream #95）。
+ * 内容：快捷播放面板 QuickPanel（含软件渲染回退，upstream #95）。
  *
- * 拼装契约（样式族 7 个域模块共享，组装点见 src/styles.js）：
+ * 拼装契约（样式族 6 个域模块共享，组装点见 src/styles.js）：
  *   · 构建期按 INLINE_MODULES 顺序把族内文件**原样内联进同一工厂作用域**，模块之间不 import，靠扁平符号协作
  *     （见 docs/CODE-STRUCTURE.md §3）；
  *   · 本段模板的开引号紧跟本段首行（不另起一行）；段间那一个换行由上一段的收尾换行提供；
  *     本段自身以换行收尾（下一段接着写）；
- *   · 主包样式 = 7 个域模块按 BASE → SHELL → CHROME → SETTINGS → PANEL → QUICK → EXT 相加，
+ *   · 主包样式 = 6 个域模块按 BASE → SHELL → CHROME → SETTINGS → PANEL → QUICK 相加，
  *     组装点 = src/styles.js；玻璃 CSS 不在这条链上 —— 它住 packages/glass/src/glass-css.js
  *     （CSS_GLASS），由玻璃包自注入；两份样式表是**双工件**（守卫按「主包产物 + 玻璃产物」拼接读取）。
  *
@@ -18,197 +18,7 @@
  * 契约：需要的外界**无**；对外提供本域的样式表常量。不变量：浏览器安全（无 import / require / Node API）、
  * 不得有顶层可执行语句去读宿主状态（内联位置早于 client.js 正文）、整体是**纯数据**。
  */
-const CSS_QUICK = `  /* ── Rope dock: chibi pull-cord + glass repo drawer ────────────────────────
-     The rope floats over the chat (fixed, body-child → immune to ancestor
-     transforms/backdrop-filters, same policy as the picker modal). It snaps to
-     the TOP edge on release (any horizontal spot); the settle class animates
-     that snap via top/left (tiny element, release-only). Dragging removes the
-     settle class so the rope follows the pointer 1:1. Pulling it DOWN draws
-     out the repo panel, which descends from the top like a drawer. Z-order:
-     repo panel 995 < rope 996 (the rope stays grabbable/clickable as the
-     panel's handle while it is out). ── */
-  body[data-we-modal-blocked] :is(.we-rope,.we-repo-panel,.we-update-notice) {
-    visibility: hidden !important; pointer-events: none !important;
-  }
-  .we-rope {
-    position: fixed;
-    z-index: 996;
-    width: 52px; height: 57px;
-    box-sizing: border-box;
-    cursor: grab;
-    touch-action: none;              /* keep the pointer stream unbroken */
-    user-select: none; -webkit-user-select: none;
-    outline-offset: 2px;
-  }
-  .we-rope:focus-visible {
-    outline: 2px solid var(--we-accent, #4f8cff);
-    border-radius: 12px;
-  }
-  .we-rope--dragging { cursor: grabbing; }
-  .we-rope--settle {
-    transition:
-      top 280ms var(--we-ease, cubic-bezier(0.16, 1, 0.3, 1)),
-      left 280ms var(--we-ease, cubic-bezier(0.16, 1, 0.3, 1));
-  }
-  /* Art box holds the chibi <img>. The PNG is transparent-backed, and
-     object-fit: contain keeps its aspect ratio (no stretch) inside the box.
-     No CSS filter here: a permanent drop-shadow on a fixed element over the
-     wallpaper forces a filter layer that Chromium re-rasterises on any repaint
-     (click/typing) and can momentarily flash white. The chibi's own outline
-     keeps it readable, so we skip the filter entirely. */
-  .we-rope__art {
-    width: 100%; height: 100%;
-    transition: transform var(--we-dur-fast, 120ms) var(--we-ease, ease);
-  }
-  .we-rope:hover .we-rope__art { transform: scale(1.06); }
-  .we-rope__art img {
-    display: block; width: 100%; height: 100%;
-    object-fit: contain;
-    pointer-events: none; /* drag/capture stays on the .we-rope box */
-  }
-
-  /* One-time update notice — a floating glass toast (bottom-center) that tells
-     immersive/kiosk-window users about the white flash and its one fix. High
-     z-index so it sits above the chat; buttons reuse the flat picker style.
-     底板跟着主题底色走（max(下限, 82%) 的衬底）：明主题白衬黑字、暗主题深蓝衬白字。 */
-/* ADR-0016 第四刀：基础层**无门**（几何 + 面板色实底）—— 玻璃行停用时公告仍是
-   一块可读的实底浮层，而不是裸文本叠在壁纸上；玻璃皮（门内）叠加时以玻璃配方覆盖底色。 */
-.we-update-notice {
-    position: fixed; left: 50%; bottom: 26px; z-index: 1100;
-    transform: translateX(-50%);
-    width: min(600px, 92vw);
-    /* 条目增多后（6 条 16pt 大字）总高会顶出矮视口 ⇒ 面板自身限高 + 正文区滚动。
-       max-height 用 dvh（移动端地址栏伸缩时 vh 会虚高），并给「知道了」留出底部空间：
-       按钮在滚动容器**之外**，永远可点 —— 内容再长也不会把关闭键挤出屏幕。
-       ⚠️ 本段在模板字符串里：注释里的反引号会**提前闭合模板**（实测：后面整片 CSS
-       变成 JS 代码，i18n 守卫当场判成裸中文）。写 CSS 属性名一律不加反引号。 */
-    max-height: min(78dvh, 720px);
-    box-sizing: border-box;
-    display: flex; flex-direction: column; gap: 10px;
-    padding: 16px 18px; border-radius: 14px;
-    background-color: var(--we-panel-color, #ffffff);
-    border: 1px solid rgba(128, 128, 128, 0.28);
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
-    color: inherit;
-    animation: we-notice-in 240ms var(--we-ease, cubic-bezier(0.16, 1, 0.3, 1));
-  }
-  /* 玻璃皮（data-we-glass-floaters 门内）：底色换玻璃配方、加雾化与玻璃描边。
-     依赖的按面变量（--we-floaters-*）由玻璃包行为层写出（ADR-0016 第三刀），
-     门在则变量必在（零兜底契约不变）；玻璃行停用 ⇒ 门失效 ⇒ 上面那条基础层兜住。 */
-  body[data-we-glass-floaters] .we-update-notice {
-    background-color: color-mix(in srgb, var(--we-surface-tint-light, #ffffff) calc(var(--we-floaters-alpha) * 90%), var(--we-readability-base) calc(max(var(--we-readability-floor), 0.82) * 100%));
-    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03) 40%, rgba(255, 255, 255, 0.01));
-    -webkit-backdrop-filter: blur(var(--we-floaters-blur)) saturate(1.2);
-    backdrop-filter: blur(var(--we-floaters-blur)) saturate(1.2);
-    border-color: var(--dsw-alias-border-l2, rgba(128, 128, 128, 0.22));
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  }
-  @keyframes we-notice-in { from { opacity: 0; transform: translate(-50%, 12px); } }
-  .we-update-notice__title { font-weight: 600; font-size: 0.95em; flex: 0 0 auto; }
-  /* 正文区是**唯一**可滚动的那一块（面板限高后条目再多也不顶出屏幕）；min-height: 0
-     是 flex 子项能真正缩小/滚动的前提 —— 少了它 overflow-y: auto 永远不触发
-     （与侧栏列表那处踩过的坑同形）。配图在正文区里一起滚。 */
-  .we-update-notice__body { font-size: 0.82em; line-height: 1.5; opacity: 0.92; overflow-y: auto; min-height: 0; overscroll-behavior: contain; }
-  .we-update-notice__body p { margin: 0 0 6px; }
-  .we-update-notice__hint { font-size: 0.78em; opacity: 0.6; }
-  .we-update-notice__btn { align-self: flex-end; }
-  /* 公告配图：随包 JPEG，/about-qr 路由直出。方图不能全宽吃满 600px 面板（正文条目加起来
-     已经很高，小窗口会顶出视口）——限高 26vh、宽度跟随、居中（用户口径：38vh 在 1080p 下
-     ≈410px，几乎独占半屏，压到 26vh 给正文让位）。发丝边 + 投影让它贴着玻璃面板的既有语言，
-     而不是一块浮贴的截图。 */
-  .we-update-notice__art { display: block; margin: 0 auto; width: auto; max-width: 100%; max-height: 26vh; border-radius: 10px; border: 1px solid var(--dsw-alias-border-l2, rgba(128, 128, 128, 0.22)); box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
-    /* 面板限高后允许配图先让位（min-height: 0 是 img 能在 flex 里缩小的前提：
-       img 的固有尺寸会当 min-content，不给 0 就永远不缩）；正文区随后才滚动。 */
-    flex: 0 1 auto; min-height: 0; }
-  .we-update-notice__art-cap { font-weight: 600; font-size: 0.85em; text-align: center; flex: 0 0 auto; }
-  /* 大字提示（用户口径）：用户总忽略公告 ⇒ 「侧边栏只是简略版」这一段用 16pt（≈21px，
-     约正文两倍）放大喊话。pt 是绝对单位，不吃正文 0.82em 的缩放，行高单独给 1.45
-     免得大字挤成一团。 */
-  .we-update-notice__callout { font-size: 16pt; line-height: 1.45; }
-  @media (prefers-reduced-motion: reduce) { .we-update-notice { animation: none !important; } }
-
-
-  /* Glass library side drawer — docked right, 360px (capped at 92vw), full
-     height, slides in from the right edge, inner body scrolls. Same liquid-glass
-     recipe as the settings window: reads the very same --we-blur / --we-saturate /
-     --we-glass-alpha / --we-surface-tint-light/dark / --we-glass-brightness knobs, so the
-     玻璃 sliders in settings retint this panel live. Open/close = transform +
-     opacity fade, token-driven; closed keeps visibility hidden (delayed so the
-     fade-out finishes first) with pointer-events off. 只在低版本宿主使用 ——
-     官方右侧栏已接管同一份内容（见 src/sidebar-right.js）。 */
-/* ADR-0016 第四刀：抽屉本体**无门**（几何/关闭态/面板色底）—— 玻璃行停用时抽屉
-   仍是一块可用的实底滑出面板；玻璃皮只留在 --open 态那条门内规则里。 */
-.we-repo-panel {
-    position: fixed; top: 0; right: 0;
-    width: 360px; max-width: 92vw;
-    height: 100vh; height: 100dvh;
-    z-index: 995;
-    display: flex; flex-direction: column;
-    padding: 14px;
-    box-sizing: border-box;
-    background-color: var(--we-panel-color, #1e1f26);
-    transform: translateX(102%);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition:
-      transform 640ms cubic-bezier(0.32, 0.72, 0.24, 1),
-      opacity 480ms ease,
-      visibility 0s linear 640ms;
-  }
-  /* Native caption buttons overlay the top edge; inset the whole drawer content. */
-  html[data-windows-titlebar] .we-repo-panel {
-    padding-top: calc(14px + var(--dsh-windows-titlebar-height, 40px));
-  }
-  /* The glass (backdrop-filter + tint + shadow) lives ONLY on the open state:
-     while closed the panel is off-screen and must not allocate a full-viewport
-     backdrop-filter compositing layer (a fixed, always-present backdrop-filter
-     layer is a known Chromium white-flash-on-repaint source). */
-/* 打开态的**布局与可见性**无门（玻璃行停用时抽屉照常开合）；背景保留基础层
-   的面板色实底。玻璃皮单独留在下面的门内规则。 */
-.we-repo-panel--open {
-    border-left: 1px solid var(--dsw-alias-border-l2, rgba(128, 128, 128, 0.22));
-    transform: translateX(0);
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transition:
-      transform 640ms cubic-bezier(0.32, 0.72, 0.24, 1),
-      opacity 480ms ease,
-      visibility 0s;
-  }
-  /* 玻璃皮（门内）：可读性下限配方 + 雾化 + 玻璃描边（变量由玻璃包行为层写出）。 */
-  body[data-we-glass-floaters] .we-repo-panel--open {
-    /* 插件自己的抽屉同样是文字面 → 同一层可读性下限。 */
-    background-color: color-mix(in srgb,
-      var(--we-readability-base) calc(var(--we-readability-floor) * 100%),
-      color-mix(in srgb, var(--we-surface-tint-light, #ffffff) calc(var(--we-floaters-alpha) * 72%), transparent) calc((1 - var(--we-readability-floor)) * 100%));
-    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05) 38%, rgba(255, 255, 255, 0.02));
-    -webkit-backdrop-filter: blur(var(--we-floaters-blur)) saturate(var(--we-saturate, 1.8)) brightness(var(--we-glass-brightness, 1.04)) contrast(1.01);
-    backdrop-filter: blur(var(--we-floaters-blur)) saturate(var(--we-saturate, 1.8)) brightness(var(--we-glass-brightness, 1.04)) contrast(1.01);
-    box-shadow:
-      inset 1px 0 0 rgba(255, 255, 255, var(--we-glass-highlight, 0.32)),
-      inset 0 1px 0 rgba(255, 255, 255, 0.14),
-      -18px 0 44px rgba(0, 0, 0, 0.22);
-  }
-.we-repo-panel__head {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 8px; flex: 0 0 auto;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--dsw-alias-border-l2, rgba(128, 128, 128, 0.22));
-  }
-  .we-repo-panel__title { font-weight: 600; font-size: 0.95em; white-space: nowrap; }
-  /* Body: THE scroll container（内容 = QuickPanel 快捷播放面板）。 */
-.we-repo-panel__body {
-    flex: 1; min-height: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;   /* wheel doesn't bleed into the chat behind */
-    scrollbar-gutter: stable;
-    display: flex; flex-direction: column;
-    padding-top: 10px;
-  }
-
-  /* ── 快捷播放面板（QuickPanel）：官方右侧栏 tab 与低版本抽屉共用同一份 ──
+const CSS_QUICK = `  /* ── 快捷播放面板（QuickPanel）：官方右侧栏 tab 的内容 ──
      控件全部复用 .we-picker__*（btn/select/switch/slider/ctl），这里只补布局与
      面板特有的零件；控件 token（高度/圆角/墨色）与设置面板同一份。 */
   .we-qp {
@@ -227,8 +37,7 @@ const CSS_QUICK = `  /* ── Rope dock: chibi pull-cord + glass repo drawer �
      会被裁掉且任何祖先都不滚（宿主契约：每类 tab 自己管内部滚动）。所以：
      ① 面板限高 100% 自己兜底滚；② 常驻区（当前壁纸 / 轮播 / 页签栏 / 底栏）不滚，
      滚动只发生在页签内容区（.we-qp__tabbody）里 —— 快捷面板滚 100 行列表去够音量、
-     或翻到播放页去够「下一张」都是不可用的。抽屉档（.we-repo-panel__body 已是滚动
-     容器）不叠第二层滚。 */
+     或翻到播放页去够「下一张」都是不可用的。 */
   .we-qp--official { height: 100%; overflow-y: auto; overscroll-behavior: contain; }
   .we-qp--official .we-qp__current,
   .we-qp--official .we-qp__section,
@@ -344,8 +153,7 @@ const CSS_QUICK = `  /* ── Rope dock: chibi pull-cord + glass repo drawer �
   /* 属性下钻的滚动：官方档的页签内容区是「固定高 + overflow:hidden」（宿主契约，见上面
      .we-qp--official 那段），壁纸档还挂 --library 特意不自己滚（滚动交给列表）。而属性
      下钻这一屏**没有列表** —— 面板必须自带滚动，否则属性多的壁纸下半截被裁掉、任何祖先
-     都滚不动（用户实测：壁纸属性点开时显示不全）。抽屉档的滚动由 .we-repo-panel__body
-     承担，这里不叠第二层滚，故只作用在 --official 档。 */
+     都滚不动（用户实测：壁纸属性点开时显示不全）。故滚动只作用在 --official 档。 */
   .we-qp--official .we-qp__propsview--drill {
     overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable;
   }
@@ -384,8 +192,8 @@ const CSS_QUICK = `  /* ── Rope dock: chibi pull-cord + glass repo drawer �
   .we-qp__viewtabs .we-tabs__tab { flex: 0 0 auto; padding: 0 10px; }
   /* 卡片网格：**最窄两列、向后自动加列**（auto-fill 铺最小 130px 的列轨，画满一行
      再换行）。130 的取法：两个「最窄形态」都必须恰为 2 列 —— 官方右栏最小 300px
-     （宿主 clampWidth(rightbar, 300, …)，内容 276 ∈ (2×130+8, 3×130+16]）、抽屉固定
-     360（内容 336 同样恰好 2 列）；再宽自动 3/4/5 列（约 430 → 3、570 → 4）。
+     （宿主 clampWidth(rightbar, 300, …)，内容 276 ∈ (2×130+8, 3×130+16]）；
+     再宽自动 3/4/5 列（约 430 → 3、570 → 4）。
      选中项 accent 描边 + 「当前」徽标。 */
   .we-qp__list--cards {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -464,14 +272,6 @@ const CSS_QUICK = `  /* ── Rope dock: chibi pull-cord + glass repo drawer �
   .we-qp input:focus-visible, .we-qp [role="option"]:focus-visible {
     outline: 2px solid var(--we-accent, #4f8cff);
     outline-offset: 2px;
-  }
-  /* No backdrop-filter support: near-opaque tinted surface, same policy as the
-     settings-window/sidebar fallbacks, so panel text stays readable. */
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-body[data-we-glass-floaters] .we-repo-panel {
-      background-color: color-mix(in srgb, var(--we-surface-tint-light, #ffffff) 92%, transparent);
-      backdrop-filter: none; -webkit-backdrop-filter: none;
-    }
   }
 
 `;

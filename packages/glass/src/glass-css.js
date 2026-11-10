@@ -656,8 +656,8 @@ const CSS_GLASS = `
   }
   /* Note (anti-flicker): the composer/bubbles keep ONLY the backdrop-filter
      glass — no always-on transform/will-change/contain layers, which add
-     compositing layers without stopping the white flash. The flash comes from a
-     permanent CSS filter on the rope, so the rope must carry no filter. */
+     compositing layers without stopping the white flash. The flash came from a
+     permanent CSS filter on a composited layer, so these surfaces carry none. */
 
   /* Reasoning and file bars are fully clear; message fences and tool
      results use glass plates. Inner bodies never stack another background. */
@@ -1586,7 +1586,7 @@ const CSS_GLASS = `
      于是玻璃开着时它仍是一块不透明板。这里只补霜，底色仍归宿主（不重声明
      --dsw-alias-bg-layer-2，免得与注册表内部那些面板色打架）。
      模糊半径读「浮层玻璃」这条子项的私有量 --we-floaters-blur（glass.js 的浮层接线无条件写出，
-     取不到时退回全局模糊），与 .we-update-notice / .we-repo-panel 同档。 */
+     取不到时退回全局模糊），与 .we-repo-panel 同档。 */
   body[data-we-glass-floaters] [data-install-registry] {
     -webkit-backdrop-filter: blur(var(--we-floaters-blur)) saturate(var(--we-saturate, 1.8)) brightness(var(--we-glass-brightness, 1.04)) contrast(1.01);
     backdrop-filter: blur(var(--we-floaters-blur)) saturate(var(--we-saturate, 1.8)) brightness(var(--we-glass-brightness, 1.04)) contrast(1.01);
@@ -1744,14 +1744,8 @@ const CSS_GLASS = `
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
-  /* 一次性通知：底色本身已经接近不透明（82% 深色底衬），不需要换配方，
-     只把永远不生效的 backdrop-filter 关掉。 */
-  body[data-we-glass-fallback] .we-update-notice {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
   @media (prefers-reduced-motion: reduce) {
-    .we-rope--settle, .we-repo-panel { transition: none !important; }
+    .we-repo-panel { transition: none !important; }
   }
 
   /* ── 侧栏全透明（issue #137，设置键 sidebarFullClear，默认关）──────────────

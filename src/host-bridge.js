@@ -37,16 +37,14 @@ const HOST_BRIDGE_BINDINGS = {
   SliderRow: () => SliderRow,
   ctlText: () => ctlText,
   swatchRow: () => swatchRow,
-  FX_BLEND_VALUES: () => FX_BLEND_VALUES,
-  // 两个注册入口（子包在上面的契约里要的就是这两个名字，不是 we* 前缀的内名）。
-  registerExtensionModule: () => weRegisterExtensionModule,
+  // 注册入口（子包在上面的契约里要的就是这个名字，不是 we* 前缀的内名）。
   registerLayerHooks: () => weRegisterLayerHooks,
   // ── 字体半边（packages/fonts）的显式键集（ADR-0014 S5.1 / S5.4）──────────────────────
   // 来源 = 被搬渲染器里的**自由标识符**逐个点名（键集真源 = 本表；子包侧解构名单
   // 由 verify-subpackage-client-half 与本表对账，产物里的申报表由构建期派生）。
   // 判据：命中「留在主 bundle 的文件在工厂作用域声明」才在这里登记（0 个未归类）。
   // 反面同样严格：这里每多一个键就是多一条没人维护的隐式契约（多一个都不给）。
-  // React / weT / ctlText / switchRow 是 fx 那半已经要过的四个键，fonts 复用它们、**不重复登记**
+  // React / weT / ctlText / switchRow 是通用段已经给过的四个键，fonts 复用它们、**不重复登记**
   // （重复键在对象字面量里是静默覆盖 —— `eslint no-dupe-keys` 会判红）。
   sectionHead: () => sectionHead,
   moduleResetButton: () => moduleResetButton,
@@ -63,16 +61,9 @@ const HOST_BRIDGE_BINDINGS = {
   COMPONENT_FONT_TARGETS: () => COMPONENT_FONT_TARGETS,
   componentFontDefaults: () => componentFontDefaults,
   registerPanelSection: () => weRegisterPanelSection,
-  // ── 桌宠联动半边（packages/pet-link）的显式键集 ─────────────────────────────────────
-  // 来源 = 被搬文件里的**自由标识符**逐个点名（与 fonts 同一条纪律：只登记活绑定 getter）。
-  // 反向（主包要**调**子包）只有一个键：registerPetLink = 登记槽 + 缓冲补做（见正文的门面）。
-  // 反面同样严格：这里每多一个键就是多一条没人维护的隐式契约（多一个都不给）。
+  // ── 请求层键（子包要自己打宿主路由时用）─────────────────────────────────────────
   apiUrl: () => apiUrl,
   apiFetch: () => apiFetch,
-  wallSidebarOpen: () => wallSidebarOpen,
-  wallSidebarClose: () => wallSidebarClose,
-  wallSidebarToggle: () => wallSidebarToggle,
-  registerPetLink: () => petLinkRegister,
   // ── 壁纸子包浏览器半边（packages/media-bridge）的显式键集 ────────────────────────────
   // 来源 = 被搬渲染器（packages/media-bridge/src/*.js）里的**自由标识符**逐个点名。
   // 动作体全留主包（ADR-0013 D20）：这里给的是活绑定 getter，不是值拷贝。
@@ -103,17 +94,16 @@ const HOST_BRIDGE_BINDINGS = {
   FPS_CAP_VALUES: () => FPS_CAP_VALUES,
   codecLabel: () => codecLabel,
   // ── 玻璃半边（packages/glass，ADR-0016 第二刀）的显式键集 ───────────────────────────
-  // 来源 = packages/glass/src/glass-panel.js 与 glass-presets-panel.js 的**自由标识符**逐个点名（S3 起预设块在后者；键集真源 = 本表；
+  // 来源 = packages/glass/src/glass-panel.js 与 glass-presets-panel.js 的**自由标识符**逐个点名（键集真源 = 本表；
   // 子包侧解构名单由 verify-subpackage-client-half 与本表对账，产物里的申报表由构建期派生）。
   // React / weT / switchRow / SliderRow / swatchRow / ctlText / sectionHead / renderConfirmRow
-  // 是 fx / fonts / media-bridge 已登记过的键，glass 复用、**不重复登记**。新增七键如下（另有 `apiUrl` 已在通用键段登记，玻璃行状态轮询依赖它）；
+  // 是 fonts / media-bridge 已登记过的键，glass 复用、**不重复登记**。新增键如下（另有 `apiUrl`
+  // 已在通用键段登记，玻璃行状态轮询依赖它）；
   // 反面同样严格：多一个键就是多一条没人维护的隐式契约（多一个都不给）。
   moduleResetButtonNode: () => moduleResetButtonNode,
   GLASS_CHILDREN: () => GLASS_CHILDREN,
   childGlassKey: () => childGlassKey,
   GLASS_COLOR_PRESETS: () => GLASS_COLOR_PRESETS,
-  ROPE_FORMS: () => ROPE_FORMS,
-  ROPE_FORM_VALUES: () => ROPE_FORM_VALUES,
   panelGlassPair: () => panelGlassPair,
   // 第三刀（运行时随包走）新增六键 + registerGlassStatus 一个登记入口（registerLayerHooks 是早已登记的键）：
   //   · skinYieldActive —— 让路态判定（applyGlass 门控与思考块/侧栏跟随共用）；

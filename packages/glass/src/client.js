@@ -22,7 +22,7 @@
  * glass-presets-panel.js）的**自由标识符**逐个点名（fonts 同款 acorn 取证）：
  *   · 面板半边（第二刀）：React×65 · weT×176 · SliderRow×14 · switchRow×15 · swatchRow×6 · ctlText×5
  *     · sectionHead×2 · moduleResetButtonNode×1 · renderConfirmRow×1 · GLASS_CHILDREN×2
- *     · childGlassKey×1 · GLASS_COLOR_PRESETS×6 · ROPE_FORMS×2 · ROPE_FORM_VALUES×1 · panelGlassPair×1
+ *     · childGlassKey×1 · GLASS_COLOR_PRESETS×6 · panelGlassPair×1
  *     （panelGlassPair 原是 glass-panel 的本地副本；第二刀发现主包写路径也要它 ⇒ 归位
  *     lib/settings-schema.js 的显示口径，与 readGlassColors 同族，经桥接取同一份防漂移。）
  *   · 运行时半边（第三刀）：selection · skinYieldActive · weClampSurfaceColor · glassColorOf
@@ -58,7 +58,6 @@ const {
   React, weT, SliderRow, switchRow, swatchRow, ctlText, sectionHead,
   moduleResetButtonNode, renderConfirmRow,
   GLASS_CHILDREN, childGlassKey, GLASS_COLOR_PRESETS, panelGlassPair,
-  ROPE_FORMS, ROPE_FORM_VALUES,
   selection, skinYieldActive, weClampSurfaceColor, glassColorOf,
   sanitizeExtraGlassSelectors, GLASS_SATURATE, useLegacySaturateCoupling, apiUrl,
   registerPanelSection, registerLayerHooks, registerGlassStatus,
@@ -432,7 +431,7 @@ registerPanelSection('appearance', 'glass', {
 
 /* ===== 跨包登记 #2：玻璃行为层（ADR-0016 第三刀）===== */
 
-// 与 fx / parallax 同形（packages/fx/src/client.js 的 registerLayerHooks 那行）：sync 挂进
+// 与别的子包的层钩子同形（registerLayerHooks 那一行）：sync 挂进
 // 主包的 emit 订阅链（每次设置变动重跑，现读 selection 活绑定）、dispose 交主包拆卸期。
 // applyGlassLayer / disposeGlassLayer 在本包 client.build.json 的 inline[] glass-layer.js 里
 // （同工厂作用域，裸名可达）。sync 幂等：全量按当前 selection 重写，迟到注册由主包
@@ -448,7 +447,7 @@ registerLayerHooks('glass', {
 /* ===== 跨包登记 #3：表面策略状态投影（回传主包）===== */
 
 // 外观 ctx 的 surfaceStatus 组装点在主包（renderActiveTab），而 weGlassSurfaceStatus 的真实现
-// 在本包 glass-surfaces.js ⇒ 与 petLink 的 registerPetLink 同款反向通道：求值期把只读投影
+// 在本包 glass-surfaces.js ⇒ 与别的子包同款的反向通道：求值期把只读投影
 // 送回主包槽位（缺席 = 空列表，缺的是状态不是页面）。迟到登记的兜底：本包同一次求值里的
 // registerLayerHooks 已触发注册表 listener ⇒ 主包 emit() 重画，状态自然补上。
 registerGlassStatus({ status: () => (glassRowDisabled ? [] : weGlassSurfaceStatus()) });

@@ -306,8 +306,8 @@ function applyGlass(selection, s) {
 
   // ── 插件自身浮层的**按面**釉层变量 ───────────────────────────────────────────
   // 该面的 CSS 现在读 `var(--we-floaters-<x>, <原全局表达式>)`（src/styles/quick.js 的
-  // `.we-update-notice` 与 `.we-repo-panel--open` 两条规则）⇒ 这一组变量就是它的来源。
-  // 涉及两处玻璃面：**更新提示**（自己一块面板）与**壁纸仓库抽屉**（打开态才画玻璃）。
+  // `.we-repo-panel--open` 规则）⇒ 这一组变量就是它的来源。
+  // 瘦身分支：原先另一处玻璃面「更新提示」随 one-shot notice 一起移除，只剩**壁纸仓库抽屉**。
   //
   // ⚠️ 只写**两项**（模糊 / 透明度）：`--we-saturate` / `--we-glass-brightness` 不是可配置
   //    参数（常量）、`--we-surface-tint-*` 是 E2 配方文本、`--we-readability-*` 被判据锁定

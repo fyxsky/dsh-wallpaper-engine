@@ -14,8 +14,8 @@ import type { Context } from '@deepseek-ai/cordis';
 export declare const inject: string[];
 
 /**
- * Mounts the wallpaper layers, the settings section and the floating rope dock
- * on the client context. Returns nothing; teardown rides the fiber's effects.
+ * Mounts the wallpaper layers and the settings section on the client context.
+ * Returns nothing; teardown rides the fiber's effects.
  * The client runtime merges the `slots` service into this context.
  */
 export declare function apply(ctx: Context): void;

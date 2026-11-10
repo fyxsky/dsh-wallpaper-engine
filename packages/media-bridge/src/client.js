@@ -62,7 +62,7 @@ const {
 // 主包 src/panel-tabs.js 的 `renderWallpaperTab(ctx)` 本身不再内置任何一节，只按注册表续接本包
 // 登记的节（`wePanelSectionsOf('library')`，见 src/extension-registry.js）。三个硬口径：
 //   ① `title` 必须是 **getter**：注册发生在 bundle 求值期，那时 i18n 表 / `weT` 都还没到位，
-//      注册期读词会把 `weT` 拉到求值期（字体包 / fx / parallax 的 title getter 同款理由）。
+//      注册期读词会把 `weT` 拉到求值期（字体包 / 玻璃包的 title getter 同款理由）。
 //   ② order：current=10 / transition=20 / rotation=30 / uploads=40 —— 与搬前组装点里的调用序逐位
 //      相同（S3c 起 current 也走注册表；主包组装点本身只画注册节，不再内置任何一节）。
 //      顺序由 order 决定、不靠求值顺序。

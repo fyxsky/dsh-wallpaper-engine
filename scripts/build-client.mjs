@@ -30,7 +30,7 @@
  * Usage:  node scripts/build-client.mjs
  */
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -51,25 +51,17 @@ const id = pkg.name;
  */
 const INLINE_MODULES = [
   {
-    // 纯数据、零依赖 ⇒ 放最前：后面任何模块都能直接读（也不可能有 TDZ 交互）。
-    file: 'src/about-assets.js',
-    why: '「关于」页签与更新公告的静态数据：仓库地址 + 随包图的路由路径（图本体在 lib/about/，见 lib/routes/about-qr.js 白名单）',
-    markers: ['const ABOUT_REPO_URL = "https://github.com/elysia395/dsh-wallpaper-engine"',
-      'const ABOUT_QR_QQ_PATH = "/about-qr/qq-group.png"',
-      'const ABOUT_QR_DOUYIN_PATH = "/about-qr/douyin-group.png"',
-      'const NOTICE_ART_PATH = "/about-qr/update-notice.jpg"'],
-  },
-  {
-    // 零依赖的纯工具 ⇒ 紧随纯数据之后：三个层模块（fx / parallax / avatar）都要读，
-    // 排在它们之前即可（本身无依赖，何处都无 TDZ 交互）。
+    // 零依赖的纯工具 ⇒ 排最前：后面任何模块都能直接读（也不可能有 TDZ 交互）。
     file: 'src/we-base.js',
     why: '浏览器半边的最小地基：三枚到处都用的纯工具（唯一实现）—— 钳位 `weClampTo` · 单调时钟 `weNow` · body 根 `weBody`；零依赖 + 零顶层可执行语句，故可排在内联清单最前',
     markers: ['function weClampTo(', 'function weNow(', 'function weBody('],
   },
   {
-    // 词表域模块（8 个）必须排在组装点 `src/i18n/i18n-copy.js` **之前**：构建期内联进同一工厂作用域，
+    // 词表域模块（6 个）必须排在组装点 `src/i18n/i18n-copy.js` **之前**：构建期内联进同一工厂作用域，
     // 组装点顶层读它们是 TDZ 的正面用法。域划分 = 文案归属的界面域（表体一行未改、顺序未动）；
     // 顺序即键插入序，守卫 test/verify-i18n.mjs 按 INLINE_MODULES 顺序逐条比对。
+    // 瘦身分支（slim/remove-extra-features）：`i18n-copy-ext.js`（扩展/关于/更新公告）与
+    // `i18n-copy-pet-link.js`（桌宠联动）随功能整体删除，域表从 8 份减到 6 份。
     file: 'src/i18n/i18n-copy-core.js',
     why: '英文词表域：客户端外壳（adapter / client / 更新公告）',
     markers: ['const WE_I18N_EN_CORE = {', '"自动检测": "Auto-detect",'],
@@ -95,19 +87,9 @@ const INLINE_MODULES = [
     markers: ['const WE_I18N_EN_PICKER = {', '"返回": "Back",'],
   },
   {
-    file: 'src/i18n/i18n-copy-ext.js',
-    why: '英文词表域：扩展页签 · 关于页签 · 更新公告（ext-* · panel-tabs）',
-    markers: ['const WE_I18N_EN_EXT = {', '"扩展模块": "Extension modules",'],
-  },
-  {
     file: 'src/i18n/i18n-copy-glass.js',
     why: '英文词表域：玻璃预设与外观细项（思考块 · 系统字体 · 预设 · 侧栏圆角）',
     markers: ['const WE_I18N_EN_GLASS = {', '"思考块液态玻璃": "Thinking-block liquid glass",'],
-  },
-  {
-    file: 'src/i18n/i18n-copy-pet-link.js',
-    why: '英文词表域：桌宠联动（pet-link 的浏览器半边文字；源在包内时属"停在主 bundle"的域表，收口后按 fonts 惯例归主包 src/）',
-    markers: ['const WE_I18N_EN_PET_LINK = {'],
   },
   {
     file: 'src/i18n/i18n-copy.js',
@@ -145,23 +127,18 @@ const INLINE_MODULES = [
   },
   {
     file: 'src/styles/panel.js',
-    why: '样式域 panel（原 styles.js 2168–2925）：吉祥物 3D 圆环转盘 · 圆点跳转 · 效果空态 · 黑胶 · 当前壁纸卡 · 壁纸属性面板 · 库下钻 · 目录浏览器',
-    markers: ['const CSS_PANEL = `', '/* ── 吉祥物形态'],
+    why: '样式域 panel（原 styles.js 2168–2925）：播放空态 · 黑胶 · 当前壁纸卡 · 壁纸属性面板 · 库下钻 · 目录浏览器（瘦身分支删掉吉祥物 3D 圆环与圆点跳转两段）',
+    markers: ['const CSS_PANEL = `', '/* ── Vinyl record'],
   },
   {
     file: 'src/styles/quick.js',
-    why: '样式域 quick（原 styles.js 2926–3357）：Rope dock · 快捷播放面板 QuickPanel',
-    markers: ['const CSS_QUICK = `', '/* ── Rope dock'],
-  },
-  {
-    file: 'src/styles/ext.js',
-    why: '样式域 ext（ADR-0016 第四刀玻璃段出户后）：「关于」页签 · 扩展槽位与三号模块',
-    markers: ['const CSS_EXT = `', '/* ── 「关于」页签：静态页'],
+    why: '样式域 quick（原 styles.js 2926–3357）：快捷播放面板 QuickPanel（瘦身分支删掉 Rope dock 段）',
+    markers: ['const CSS_QUICK = `', '/* ── 快捷播放面板（QuickPanel）'],
   },
   {
     file: 'src/styles.js',
     why: '样式族**组装点**（域模块按本清单顺序相加；ADR-0016 第四刀起玻璃段住 packages/glass/src/glass-css.js 的 CSS_GLASS，由玻璃包自注入）',
-    markers: ['const CSS = CSS_BASE + CSS_SHELL + CSS_CHROME + CSS_SETTINGS + CSS_PANEL + CSS_QUICK + CSS_EXT;',
+    markers: ['const CSS = CSS_BASE + CSS_SHELL + CSS_CHROME + CSS_SETTINGS + CSS_PANEL + CSS_QUICK;',
       'export { CSS };'],
   },
   {
@@ -275,40 +252,11 @@ const INLINE_MODULES = [
   //    **已迁出主 bundle**，住 packages/glass，由该包自己的 client.build.json 出产物
   //    packages/glass/lib/client.glass.js；主包只留 panel-tabs 里那枚按 id 取渲染器的**注册表占位桩**
   //    （屏上位置不变：主题 → 细节 → 玻璃 UI → 侧栏圆角 → 全局 UI 配色 → 全局字体）。
-  //    迁出的等价性证据与 fx/parallax 同款：逐字节相同（`git diff --no-index` 可复核），
+  //    迁出的等价性证据：逐字节相同（`git diff --no-index` 可复核），
   //    差量只有 outline 的 host 绑定与空 apply/inject。
-  // ── P-A 起：点击拖尾与 3D 两份「画布层 + 描述符」**已迁出主 bundle**，各自住自己的包
-  //    （packages/fx、packages/parallax），由各包自己的 `client.build.json` 配方各出一份产物；主包只留
-  //    `src/extension-registry.js` 这张收件箱（谁登记了什么只能问它）。
-  //    迁出的等价性证据：两个子包产物里的 fx-layer/ext-fx/parallax-layer/ext-parallax 与迁出前
-  //    逐字节相同（`git diff --no-index` 可复核），差量只有 outline 的 host 绑定与空 apply/inject。
-  {
-    // 头像导入的两道闸 + 零解码尺寸探针（#185 后续）。**纯函数**，因此是本仓少数几个
-    // 能被守卫**直接执行**的模块之一（用真字节喂真函数 —— 位域读错一位那种错，
-    // "源码里有没有这行字"测不出来）。排在 avatar-layer / ext-avatar / client 正文之前：
-    // 那几处的调用点直接按名引用这些常量与函数。
-    file: 'src/avatar-import.js',
-    why: '头像导入的两道闸（边长 1024 / 体积 4 MiB）、零解码的文件头尺寸探针（PNG/JPEG/GIF/BMP/WebP/SVG）与两层 MIME 清单（直传 / 仅光栅化）',
-    markers: ['const AVATAR_IMPORT_MAX_EDGE = ', 'const AVATAR_IMPORT_MAX_BYTES = ',
-      'const IMAGE_DIRECT_ACCEPT = ', 'const IMAGE_RASTER_ACCEPT = ',
-      'function parseBitmapHeaderSize(', 'function parseSvgSize(',
-      'async function probeImageSize(', 'function avatarImportLimit('],
-  },
-  {
-    // 「扩展」页签**一号模块**（自定义会话头像）：与前面两份不同 —— 它的"本体"既不是画布层
-    // 也不是纯变量层，而是**会话界面上的 DOM 补丁**（给宿主的消息行补头像节点 + 一个
-    // 观察者），所以行为层是 src/avatar-layer.js。排在 panel-tabs 之前（它要在渲染时取
-    // 得到 AVATAR_EXTENSION_MODULE 与那几张默认头像的零件表）。
-    file: 'src/avatar-layer.js',
-    why: '「自定义会话头像」的装饰层：按 data-chat-flow-kind 给消息行补头像节点（观察者 + 就地更新；基座模块：只读 selection、零 ctx），并供面板预览复用同一条 URL 与同一张默认头像零件表',
-    markers: ['const AVATAR_FLOW_SIDES = ', 'const AVATAR_GLYPH_PARTS = ',
-      'function syncAvatarLayer()', 'function disposeAvatarLayer()'],
-  },
-  {
-    file: 'src/ext-avatar.js',
-    why: '「扩展」页签第一个模块的描述符（渲染该扩展岛；动作一律经 ctx 里的具名 on* 处理器）',
-    markers: ['const AVATAR_EXTENSION_MODULE = {', 'function renderAvatarIsland(ctx)'],
-  },
+  // 瘦身分支（slim/remove-extra-features）：`src/avatar-import.js` / `src/avatar-layer.js` /
+  // `src/ext-avatar.js` 三个内联件随「自定义会话头像」一起删除（`packages/fx`、`packages/parallax`
+  // 也已删包）。
   {
     file: 'src/system-fonts.js',
     why: '本机字体清单的客户端通道：宿主那次进程扫描的唯一读者（清单 / 缓存 / 失败文案 / 本浏览器能否匹配的探针），与字体集通道同形',
@@ -317,26 +265,22 @@ const INLINE_MODULES = [
       'function filterUsableSystemFonts('],
   },
   {
-    // ── P-A 起：跨包「扩展模块 / 层钩子」注册表（src/extension-registry.js）。三项扩展里
-    //    有**两项**（点击拖尾 packages/fx、3D packages/parallax）从 P-A 起各自住在自己的包
-    //    里，三份 bundle 的求值顺序不保证 ⇒ 谁登记了什么只能落在一张共享注册表上：
-    //    panel-tabs 只问它（屏上顺序 = (order, 注册序)）、client.js 只问它（挂载期接 sync /
-    //    拆卸期交 dispose）。零依赖、浏览器安全。必须排在 panel-tabs 与 client.js 正文之前。
+    // ── P-A 起：跨包「面板节 / 层钩子」注册表（src/extension-registry.js）。主包 + fonts +
+    //    glass + media-bridge 四份 bundle 的求值顺序不保证 ⇒ 谁登记了什么只能落在一张共享
+    //    注册表上：panel-tabs 只问它（屏上顺序 = (order, 注册序)）、client.js 只问它（挂载期接
+    //    sync / 拆卸期交 dispose）。零依赖、浏览器安全。必须排在 panel-tabs 与 client.js 正文之前。
+    //    瘦身分支：**扩展模块**那张表（weExtensionModuleTable / weRegisterExtensionModule /
+    //    weExtensionModules / weDiscoveredGroupsOf）随「扩展」页签整体删除，只剩面板节与层钩子。
     file: 'src/extension-registry.js',
-    why: '跨包扩展模块/层钩子注册表：登记与排序（order）扩展模块描述符、登记层的 sync/dispose、迟到注册的补接与重画回调',
-    markers: ['const weExtensionModuleTable = ', 'const weLayerHookTable = ',
-      'function weRegisterExtensionModule(', 'function weExtensionModules()',
-      'function weRegisterLayerHooks(', 'function weDiscoveredGroupsOf('],
+    why: '跨包面板节/层钩子注册表：登记与排序（order）设置面板节、登记层的 sync/dispose、迟到注册的补接与重画回调',
+    markers: ['const wePanelSectionTable = ', 'const weLayerHookTable = ',
+      'function weRegisterPanelSection(', 'function wePanelSectionsOf(',
+      'function weRegisterLayerHooks('],
   },
   {
     file: 'src/panel-tabs/appearance.js',
     why: '「外观」页签的节渲染器与字体一族（从 src/panel-tabs.js 按域拆出）',
     markers: ['function renderAppearanceThemeSection(ctx) {', '    const { onResetModule, onToggleThemeFollow, sel } = ctx;'],
-  },
-  {
-    file: 'src/panel-tabs/mascot.js',
-    why: '「吉祥物」页签的节渲染器与其模块级常量/拖拽状态（从 src/panel-tabs.js 按域拆出）',
-    markers: ['function renderMascotFormCards(sel, previewArt, previewW, previewH,', '  const MASCOT_BOX_PX = 64;'],
   },
   {
     file: 'src/panel-tabs/effects.js',
@@ -351,10 +295,8 @@ const INLINE_MODULES = [
   },
   {
     file: 'src/panel-tabs.js',
-    why: '面板页签**组装点**：只留一个页签一个 render*Tab（其中「扩展」页签只画 extensionModules() 里登记的模块）；五个域的节渲染器在 src/panel-tabs/*.js 里 —— 显式 ctx 取外界',
-    markers: ['function renderWallpaperTab(ctx) {', '    const { } = ctx;',
-      'function renderExtensionsTab(ctx) {', 'function renderAboutTab(ctx) {',
-      'renderWallpaperTab, renderAppearanceTab, renderAudioTab, renderMascotTab, renderEffectsTab, renderAdvancedTab,'],
+    why: '面板页签**组装点**：只留一个页签一个 render*Tab（瘦身分支删掉「吉祥物」「扩展」「关于」三个页签）；域的节渲染器在 src/panel-tabs/*.js 里 —— 显式 ctx 取外界',
+    markers: ['function renderWallpaperTab(ctx) {', '    const { } = ctx;'],
   },
   {
     file: 'src/picker-model.js',
@@ -498,11 +440,6 @@ const INLINE_MODULES = [
     why: 'src/client.js 正文的音频/播放桥助手（期望音量与元素音量写入、轮换音频闸、层内媒体元素枚举、live iframe 音量与场景包 BGM 起停、播放状态应用；含其顶层状态）—— 构建期内联在正文之前，同处一个扁平作用域',
     markers: ['function weApplyAudio(video) {', 'let rotationAudioGate = null;',
       'const LAYER_KEY_FIELDS = ["type", "url", "edge", "sceneVideo", "audio", "live"];'],
-  },
-  {
-    file: 'src/client/rope-dock.js',
-    why: 'src/client.js 正文的主页面吉祥物组件（RopeDock：拖拽/吸附/侧栏抽屉/气泡与走抛动画；只读正文的 ROPE_FORMS / ropeArtOf / 侧栏桥等自由名）—— 构建期内联在正文之前，同处一个扁平作用域',
-    markers: ['function RopeDock() {', 'ropeDrawerControl = {'],
   },
   {
     // 跨包浏览器半边的**显式键集契约表**（ADR-0014 S5.1 / S5.4）：71 个 getter 挂到 module.exports。
@@ -821,89 +758,6 @@ function readInlinedPrelude(modules, baseDir, bodySrc, label = '') {
 }
 
 /**
- * 立绘（rope art）载荷的**外置**与构建期对账（2026-10-30 启动性能）。
- *
- * ## 为什么不再内联
- * 10 张立绘以前在构建期以 base64 注入主产物：2,369,676 字符 = 4.2MB bundle 的 56%，
- * 而渲染主线程实测下载 178ms、`v8.compile` 25ms（DevTools trace 2026-10-30）。立绘不是
- * 启动必需数据 —— 桌面只画**当前形态**一张，其余只在吉祥物面板里出现。现在字节仍住
- * `assets/rope/<name>.png`（随 npm 包发布），由宿主只读路由
- * `/wallpaper-engine/rope-art/<name>.png` 按需直出，客户端只拿 URL（`ROPE_IMG_*`）。
- *
- * ## 本函数只剩对账（任一不成立都 exit 1）
- * 1. 声明形态必须逐字是 `const ROPE_IMG_<NAME> = BASE + "/rope-art/<name>.png";`；
- * 2. `const ROPE_IMG_` 声明数 == 命中的形态数（有人改回内联 base64 / 改错形态 → 红）；
- * 3. 声明名与文件名一致（`ROPE_IMG_WHALE` ↔ `whale.png`；改名必须两边一起改）；
- * 4. 每个声明都有对应文件，且文件是 PNG（magic 校验；路由按 .png 出 content-type）；
- * 5. `assets/rope/*.png` 里的每一张都被某个声明用到（改名只改一边会留下孤儿文件 → 红）；
- * 6. 正文里不得残留旧的 `__ROPE_ART_` 占位符（防止半迁移状态把图挂掉）。
- *
- * 图片字节本身不改：外置是"搬位置"，不是重编码。
- */
-function checkRopeArtDeclarations(text) {
-  const dir = resolve(root, 'assets', 'rope');
-  const declRe = /^const (ROPE_IMG_([A-Z0-9_]+)) = BASE \+ "\/rope-art\/([a-z0-9]+)\.png";$/gm;
-  const hits = [...text.matchAll(declRe)];
-  const declared = (text.match(/^const ROPE_IMG_/gm) || []).length;
-  if (!hits.length) {
-    console.error('[build-client] src/client.js 里一个立绘声明都没有：应写成'
-      + ' `const ROPE_IMG_<NAME> = BASE + "/rope-art/<name>.png";`（字节在 assets/rope/，见该目录 README）');
-    process.exit(1);
-  }
-  if (declared !== hits.length) {
-    console.error(`[build-client] src/client.js 里 const ROPE_IMG_ 声明有 ${declared} 条，`
-      + `符合外置形态的只有 ${hits.length} 条 —— 有一条被改回内联 base64 或写坏了`);
-    process.exit(1);
-  }
-  const names = new Set();
-  for (const m of hits) {
-    const [, decl, declName, fileStem] = m;
-    const want = declName.toLowerCase();
-    if (fileStem !== want) {
-      console.error(`[build-client] ${decl} 指向 rope-art/${fileStem}.png，但声明名要求 ${want}.png`
-        + '（文件名 = 声明名的小写形式，改名必须同时动源码与 assets/rope/）');
-      process.exit(1);
-    }
-    if (names.has(want)) {
-      console.error(`[build-client] 立绘声明重复：${want}（同一张图被声明两次）`);
-      process.exit(1);
-    }
-    names.add(want);
-    const asset = resolve(dir, `${want}.png`);
-    let bytes;
-    try {
-      bytes = readFileSync(asset);
-    } catch {
-      console.error(`[build-client] 找不到立绘载荷 ${asset} —— 声明 ${decl} 没有对应文件`);
-      process.exit(1);
-    }
-    if (bytes.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a') {
-      console.error(`[build-client] ${asset} 不是 PNG（magic 不符）—— 路由按 .png 出 content-type，`
-        + '载荷就必须真是 PNG');
-      process.exit(1);
-    }
-  }
-  let files = [];
-  try {
-    files = readdirSync(dir).filter((name) => name.toLowerCase().endsWith('.png')).map((name) => name.slice(0, -4));
-  } catch {
-    console.error(`[build-client] 读不到立绘目录 ${dir}`);
-    process.exit(1);
-  }
-  const orphans = files.filter((name) => !names.has(name));
-  if (orphans.length) {
-    console.error('[build-client] assets/rope/ 里有没被任何 ROPE_IMG_ 声明用到的孤儿文件：'
-      + orphans.map((n) => n + '.png').join(', ') + '（改名只改了一边？）');
-    process.exit(1);
-  }
-  if (/__ROPE_ART_[A-Z0-9_]+__/.test(text)) {
-    console.error('[build-client] 正文里残留旧的 __ROPE_ART_ 占位符 —— 半迁移状态会让立绘挂掉');
-    process.exit(1);
-  }
-  return text;
-}
-
-/**
  * 平铺进同一个 factory 作用域的全部代码里，**不得有两个同名顶层声明**。
  *
  * ## 为什么必须单独一条判据（现有两道都盖不住它）
@@ -1093,12 +947,16 @@ function assembleBundle({ id: bundleId, prelude, bodySrc, hostPackage = null, bo
   return outline.join('\n');
 }
 
-/** 主 bundle：立绘载荷注入只作用于它（子包没有 rope art）。 */
+/**
+ * 主 bundle（子包各走自己的配方）。
+ * 瘦身分支（slim/remove-extra-features）：原先这里的立绘（rope art）载荷对账随「拉绳吉祥物 /
+ * 桌宠联动」一起删除 —— `assets/rope/`、`lib/routes/rope-art.js`、客户端 `ROPE_IMG_*` 与
+ * `ROPE_FORMS` 全部移除（判据原文见 git 历史）。
+ */
 function buildMainBundle() {
   const source = readNormalized(resolve(root, 'src', 'client.js'));
   const { body: rawBody, codeStart: lineOffset } = stripHeader(source);
   const bodySrc = rawBody.replace(/\n+$/, '');
-  checkRopeArtDeclarations(bodySrc);
   const prelude = readInlinedPrelude(INLINE_MODULES, root, bodySrc);
   // 这两条必须在拼产物**之前**跑：撞名/重复声明的失败后果在语法解析层完全看不见，
   // 因此不能指望 `new Script(...)` 兜住（见 assertNoShadowedScopeDecls 的注释）。

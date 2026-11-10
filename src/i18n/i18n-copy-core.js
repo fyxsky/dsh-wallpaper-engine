@@ -1,5 +1,5 @@
 /**
- * i18n-copy-core.js — 英文词表域：客户端外壳（src/adapter.js · src/client.js · 更新公告）
+ * i18n-copy-core.js — 英文词表域：客户端外壳（src/adapter.js · src/client.js）
  *
  * 本域词条**原样搬自** `src/i18n/i18n-copy.js`（拆分属纯搬移：中文键与英文值一行未改、顺序未动）。
  * 组装点在同族的 `src/i18n/i18n-copy.js`（composer）；域模块必须排在 composer **之前**登记进
@@ -83,7 +83,6 @@ const WE_I18N_EN_CORE = {
   "播放": "Playback",
   "play\u0000播放": "Play",
   "系统": "System",
-  "扩展": "Extensions",
   "自定义{label}": "Custom {label}",
   "自定义": "Custom",
   "未选择壁纸": "No wallpaper selected",
@@ -101,22 +100,9 @@ const WE_I18N_EN_CORE = {
   "壁纸引擎": "Wallpaper Engine",
   "本地 Wallpaper Engine 壁纸 · 液态玻璃主题": "Local Wallpaper Engine wallpapers · liquid glass theme",
   "壁纸引擎设置分区": "Wallpaper Engine settings sections",
-  "菲比啾比": "Phoebe Jiubi",
-  // ⚠️ **八只「模型娘」的名字刻意不进词表**。原因不是"忘了翻"，而是本仓 i18n 的
-  //    模型：真源是**中文**，扫描器 `test/tools/i18n-scan.mjs` 的 `scanCjkStrings` 只提取
-  //    **含中日韩字符**的字面量 —— 纯 ASCII 的名字（Claude / DeepSeek / …）压根不进这条管线，
-  //    加进词表反而会被「零孤儿键」判据判成多余词条（实测：一次红 8 条）。
-  //    `ROPE_FORMS` 里仍写 `weT("Claude")`：查不到就**原样返回**，正好是要的结果；
-  //    留着 weT 是为了与其余形态标签走同一条取值路径（将来真要翻也有唯一入口）。
-  "壁纸库拉绳：沿顶部拖动移动位置，向下拉打开壁纸库面板": "Library pull-cord: drag along the top to move it, pull down to open the Library panel",
-  "壁纸库 · 沿顶部拖动 / 向下拉打开": "Library · drag along the top / pull down to open",
-  "壁纸库面板": "Library panel",
-  "收起": "Collapse",
   "角色": "role",
   "组件": "component",
   "字体集": "font set",
-  // ── 更新公告（旧清单条目退役；正文三条见 i18n-copy-ext.js）──
-  "知道了": "Got it",
 
 };
 

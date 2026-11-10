@@ -2,7 +2,7 @@
  * styles.js —— 样式族**组装点**（纯数据；构建期内联进 lib/client.js 的工厂作用域）。
  *
  * 主包域模块：styles/base.js · styles/shell.js · styles/chrome.js · styles/settings.js ·
- * styles/panel.js · styles/quick.js · styles/ext.js（7 个；每个模块文件头有同一份拼装契约）。
+ * styles/panel.js · styles/quick.js（6 个；每个模块文件头有同一份拼装契约）。
  * ADR-0016 第四刀起玻璃段住 packages/glass/src/glass-css.js（CSS_GLASS），由玻璃包自注入，
  * 不进本组装式；可读性下限常量（READABILITY_FLOOR / READABILITY_FLOOR_DARK）也住该文件。
  * 它不参与任何控制流，只被样式注入代码读一次（本文件底部的组装常量 → 注入处的 textContent 赋值）。
@@ -24,6 +24,6 @@
  *     插值只引用样式族自己的常量 ⇒ 不触发 TDZ。
  *   · 这是**纯数据**：逻辑（何时注入、何时移除、代际标记）留在 src/client.js。
  */
-const CSS = CSS_BASE + CSS_SHELL + CSS_CHROME + CSS_SETTINGS + CSS_PANEL + CSS_QUICK + CSS_EXT;
+const CSS = CSS_BASE + CSS_SHELL + CSS_CHROME + CSS_SETTINGS + CSS_PANEL + CSS_QUICK;
 
 export { CSS };

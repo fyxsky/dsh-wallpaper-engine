@@ -1,14 +1,14 @@
 /**
  * styles-panel.js —— 样式域模块 **PANEL**。
  *
- * 内容：插件面板 —— 吉祥物 3D 圆环转盘 · 圆点跳转 · 效果页签空态 · Vinyl record 黑胶 · 当前壁纸卡 · 壁纸属性面板 · 壁纸库下钻视图 · 目录浏览器。
+ * 内容：插件面板 —— 效果页签空态 · Vinyl record 黑胶 · 当前壁纸卡 · 壁纸属性面板 · 壁纸库下钻视图 · 目录浏览器。
  *
  * 拼装契约（样式族 7 个域模块共享，组装点见 src/styles.js）：
  *   · 构建期按 INLINE_MODULES 顺序把族内文件**原样内联进同一工厂作用域**，模块之间不 import，靠扁平符号协作
  *     （见 docs/CODE-STRUCTURE.md §3）；
  *   · 本段模板的开引号紧跟本段首行（不另起一行）；段间那一个换行由上一段的收尾换行提供；
  *     本段自身以换行收尾（下一段接着写）；
- *   · 主包样式 = 7 个域模块按 BASE → SHELL → CHROME → SETTINGS → PANEL → QUICK → EXT 相加，
+ *   · 主包样式 = 6 个域模块按 BASE → SHELL → CHROME → SETTINGS → PANEL → QUICK 相加，
  *     组装点 = src/styles.js；玻璃 CSS 不在这条链上 —— 它住 packages/glass/src/glass-css.js
  *     （CSS_GLASS），由玻璃包自注入；两份样式表是**双工件**（守卫按「主包产物 + 玻璃产物」拼接读取）。
  *
@@ -18,137 +18,7 @@
  * 契约：需要的外界**无**；对外提供本域的样式表常量。不变量：浏览器安全（无 import / require / Node API）、
  * 不得有顶层可执行语句去读宿主状态（内联位置早于 client.js 正文）、整体是**纯数据**。
  */
-const CSS_PANEL = `  /* ── 吉祥物形态**3D 圆环转盘**（四次返工；形态取自用户给的 28-3d.html）─────
-      三层，每层只干一件事：
-        .we-picker__mascot-carousel  居中的一行（**只有舞台** —— 两侧箭头已按用户口径删掉）
-        .we-picker__mascot-window    只负责**裁剪**与两端淡出遮罩
-        .we-picker__mascot-stage     3D 上下文根（perspective）+ 指针 / 键盘事件
-        .we-picker__mascot-ring      整环旋转 rotateY(−逻辑索引 · 步进)
-      每张卡：rotateY(i · 步进) translateZ(半径) —— 真 3D 排布，前后由**真实 z** 决定，
-      不靠层叠与 z-index 猜（那正是前几版"看着能点、点了却是别人"的来源）。
-      ⚠️ 裁剪（overflow / mask）**必须由祖先做**，不能加在 perspective 那一层上：
-        它们是"分组属性"，加在 3D 上下文根上会把它**压平**成 2D。参考实现同样靠更上层
-        （body）裁剪 —— 它的 stage 就是 overflow: visible。
-      ⚠️ 背面剔除靠 backface-visibility: hidden：|φ| > 90° 的卡在环的后半圈，
-        不剔会透到中间来、看着很乱（参考实现同款做法）。
-      ⚠️ **窗口高度由渲染器算好写进行内样式**（这里刻意不写 height）：3D 透视会把卡片
-        **整体**放大（前排约 1.20×），按卡高原样写高度就会切掉立绘头顶与名字底部 ——
-        用户实测的「上下有截断」正是这个。推导见 panel-tabs-mascot.js 的 FRONT_ZOOM / WINDOW_H_PX。
-      ⚠️ 只动 transform / opacity；prefers-reduced-motion 的降级是**去掉过渡、保留终态**。 */
-  .we-picker__mascot-carousel {
-    display: flex; align-items: center; justify-content: center; width: 100%;
-  }
-  .we-picker__mascot-window {
-    position: relative; flex: 0 1 auto; min-width: 0;
-    /* 宽度：width:100% + **行内的 max-width**（= 环的水平外沿，随 scale 变）。
-       窗口**贴住环**：铺满整行会在环两侧留下大片空白（"中间一小坨"的成因），
-       写死一个数又会在宽面板里显得窄。高度同样走行内（见渲染器 WINDOW_H_PX）。 */
-    width: 100%;
-    overflow: hidden;
-    /* 两端淡出：把被裁掉的档位残影收干净，看起来是"淡出"而不是"被切断"。 */
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 10%, #000 90%, transparent 100%);
-    mask-image: linear-gradient(90deg, transparent 0, #000 10%, #000 90%, transparent 100%);
-  }
-  .we-picker__mascot-stage {
-    position: absolute; inset: 0;
-    /* 透视 = 舞台上限 340 × 2.4（参考实现的公式），取整 820。 */
-    perspective: 820px;
-    perspective-origin: 50% 50%;
-    cursor: grab;
-    /* 横拖归环，纵滚仍交给面板 —— 否则手指横划会把整块面板带着滚。 */
-    touch-action: pan-y;
-    user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
-  }
-  .we-picker__mascot-stage:active { cursor: grabbing; }
-  .we-picker__mascot-stage:focus-visible { outline: 2px solid var(--we-accent, #4f8cff); outline-offset: 2px; }
-  .we-picker__mascot-ring {
-    /* 一个**零尺寸的点** = 环心；每张卡靠自己的负 margin 落在圆上。 */
-    position: absolute; left: 50%; top: 50%;
-    width: 0; height: 0;
-    transform-style: preserve-3d;
-    transition: transform var(--we-dur, 220ms) cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform;
-  }
-  /* ⚠️ 拖动期**必须**关掉过渡：否则移动时每帧写下的 rotateY 都会被 220ms 的过渡再"追"一遍，
-     手感从"跟手"变成"拖橡皮筋"（这是返工前真实存在的一个缺陷）。 */
-  .we-picker__mascot-ring.is-dragging { transition: none; }
-  /* 屏读专用（只给 aria-live 播报用）：视觉上不存在，但仍留在无障碍树里。
-     绝不能用 display: none —— 那会把它从无障碍树里摘掉，播报就永远不会发生。 */
-  .we-sr-only {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
-  }
-  .we-picker__mascot-item {
-    position: absolute; left: 0; top: 0;
-    /* 宽 / 高 / 负 margin / transform 全部**行内**写（见渲染器）—— 这里只留三维机制与观感。
-       box-sizing: border-box 是必须的：宽高由行内定死，padding 不能再把它们撑大
-       （撑大了就等于给邻卡送了一圈透明内边距 ⇒ 抢邻卡的点击，前几版的死带就是这么来的）。 */
-    box-sizing: border-box;
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px;
-    padding: 6px 0;
-    border: 1px solid transparent; border-radius: 12px;
-    background: transparent; cursor: pointer;
-    /* 绕自己的中心转 —— 环上所有卡共用一个水平轴，这样它们才排在一个圆周上。 */
-    transform-origin: 50% 50%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    /* 只列 transform / opacity / border-color / background-color —— 全是合成器或廉价属性 */
-    transition:
-      transform var(--we-dur, 220ms) cubic-bezier(0.22, 1, 0.36, 1),
-      opacity var(--we-dur, 220ms) cubic-bezier(0.22, 1, 0.36, 1),
-      border-color var(--we-dur-fast, 120ms) linear,
-      background-color var(--we-dur-fast, 120ms) linear;
-  }
-  .we-picker__mascot-item:hover:not(:disabled) { border-color: var(--dsw-alias-label-dimmed, rgba(128, 128, 128, 0.5)); }
-  .we-picker__mascot-item:focus-visible {
-    outline: 2px solid var(--we-accent, #4f8cff); outline-offset: 2px;
-  }
-  /* 中心项：选中环 + 极淡的 accent 底（选中同时由 aria-pressed 与环表达，不只靠颜色深浅） */
-  .we-picker__mascot-item--center {
-    border-color: var(--we-accent, #4f8cff);
-    background: color-mix(in srgb, var(--we-accent, #4f8cff) 10%, transparent);
-    box-shadow: 0 0 0 1px var(--we-accent, #4f8cff);
-  }
-  /* 禁用态（只有"自定义立绘正在导入"那一瞬间会用到；内置项**永不禁用**）：要看得出来点不动。
-     不淡化的禁用按钮与可点的长得一模一样，用户会当成坏了（点击无反应比灰掉更糟）。 */
-  .we-picker__mascot-item:disabled { cursor: default; }
-  .we-picker__mascot-item:disabled:hover { border-color: transparent; }
-  .we-picker__mascot-item:disabled:not(.we-picker__mascot-item--center) { opacity: 0.45 !important; }
-  /* ⚠️ 这里曾有 .we-picker__mascot-nav（‹ › 两个圆形箭头钮）。按用户口径
-     「把左右两个箭头去掉」删掉了组件与样式 —— 它们与圆点功能重叠，而圆点更强（直接跳
-     任意一只 + 显示总数）。**别把它加回来**：换形态仍有四条路（拖环 / 点圆点 / 点立绘 /
-     键盘 ← →），而箭头会把舞台挤窄、并抢走最外侧那两张卡的点击。 */
-  .we-picker__mascot-art { display: flex; align-items: flex-end; justify-content: center; }
-  .we-picker__mascot-art img { display: block; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-  .we-picker__mascot-name { font-size: 0.78em; color: var(--we-ink, inherit); white-space: nowrap; }
-  /* ── 圆点（10 只内置时"按 › 十几次"太笨 ⇒ 给直接跳任意一只的路，并回答"一共几只"）── */
-  .we-picker__mascot-dots {
-    display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px;
-    margin-top: 8px;
-  }
-  .we-picker__mascot-dot {
-    position: relative;
-    width: 7px; height: 7px; padding: 0;
-    border: 0; border-radius: 999px;
-    background: var(--dsw-alias-label-dimmed, rgba(128, 128, 128, 0.45));
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    transition:
-      width var(--we-dur, 220ms) cubic-bezier(0.22, 1, 0.36, 1),
-      background-color var(--we-dur-fast, 120ms) linear;
-  }
-  /* 命中区下限：点本体只有 7px，靠**透明的** ::after 撑到 25×25（视觉不变、手指点得中）。 */
-  .we-picker__mascot-dot::after { content: ""; position: absolute; inset: -9px; }
-  .we-picker__mascot-dot:hover { background: var(--dsw-alias-label-primary, rgba(128, 128, 128, 0.7)); }
-  .we-picker__mascot-dot:focus-visible { outline: 2px solid var(--we-accent, #4f8cff); outline-offset: 2px; }
-  .we-picker__mascot-dot.is-active { width: 20px; background: var(--we-accent, #4f8cff); }
-  /* reduced-motion 降级 = **一帧终态**：位置（行内 transform）照旧生效，只是不做过渡。
-     绝不用 display:none / opacity:0 那类"关掉即看不见"的写法 —— 那会让内容永久消失。 */
-  @media (prefers-reduced-motion: reduce) {
-    .we-picker__mascot-ring, .we-picker__mascot-item, .we-picker__mascot-dot { transition: none; }
-  }
-
-  /* ── 效果页签空态：不摆一列无效滑块，引导去选壁纸。 ── */
+const CSS_PANEL = `  /* ── 效果页签空态：不摆一列无效滑块，引导去选壁纸。 ── */
   .we-picker__empty {
     display: flex; flex-direction: column; align-items: center; gap: 10px;
     padding: 36px 16px; text-align: center;
@@ -433,8 +303,8 @@ const CSS_PANEL = `  /* ── 吉祥物形态**3D 圆环转盘**（四次返工
   }
   .we-picker__slider-row { display: flex; align-items: center; gap: 10px; }
   .we-picker__label { min-width: 28px; flex: 0 0 auto; color: var(--we-ink, inherit); font-size: 0.88em; }
-  /* 滑杆行左侧那个标签可能是**第三方自填的槽名**（别的插件注册进来的元素组，槽名就是 data-slot，
-     见 packages/parallax/src/parallax-layer.js 的插件组）：超长时不许把滑块与右侧数值挤出卡片 —— 可收缩 + 省略号。
+  /* 滑杆行左侧那个标签可能是**第三方自填的槽名**（别的插件注册进来的元素组，槽名就是 data-slot）：
+     超长时不许把滑块与右侧数值挤出卡片 —— 可收缩 + 省略号。
      只作用于滑杆行内部，其它地方的 .we-picker__label（都是宿主自己的短标签）保持原样。 */
   .we-picker__slider-row .we-picker__label {
     flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
