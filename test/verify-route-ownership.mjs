@@ -374,7 +374,7 @@ console.log('\n④ 子包行 ⇄ `packages/<dir>/package.json` 双向对账（�
   check('negative control：包在磁盘上但 patch 里没有它的行 ⇒ 同一条判据点名 "未登记行"',
     Boolean(orphanManifest) && withoutRow.some((v) => v.includes('未登记行')), withoutRow.join('；') || '（没判出来）');
   // 负对照（同一条判据）：patch 里多一条没有包认领的子包行 ⇒ "死行"。
-  const deadRow = subpackageModuleViolations([...rows, 'dsh-plugin-wallpaper-engine-ghost'], manifests, exists);
+  const deadRow = subpackageModuleViolations([...rows, 'dsh-we-slim-ghost'], manifests, exists);
   check('negative control：patch 里多一条没有包认领的子包行 ⇒ 同一条判据点名 "死行"',
     deadRow.some((v) => v.includes('死行')), deadRow.join('；') || '（没判出来）');
 

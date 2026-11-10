@@ -62,7 +62,7 @@ import { buildIndex, rowRegistrationCounts, classifyRowShape, MAIN_MODULES, SUBP
 import { createSubpackageHost, provideSubpackageHost } from '../lib/subpackage-boot.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const BARE = 'dsh-plugin-wallpaper-engine';
+const BARE = 'dsh-we-slim';
 const PATCH_REL = 'cordis.patch.yml';
 
 let failed = 0;
@@ -650,7 +650,7 @@ section('⑥ 组件行（P2-1/P2-2，逐行数据驱动）：patch 子行 ⇄ ex
     const { rel } = entrySrcOf.get(sub);
     // P2-3D（D2 硬化）：与组件侧同构 —— 具名 / 默认 / 命名空间三种导入形态都解析（旧写法只认具名表，
     // 门面改用默认或命名空间导入组件入口时这条镜像判据会静默空转）。
-    // P-F：组件出户后门面按**裸包名** import 该组件入口（`dsh-plugin-wallpaper-engine-<sub>`，与 §12 的
+    // P-F：组件出户后门面按**裸包名** import 该组件入口（`dsh-we-slim-<sub>`，与 §12 的
     // 发布形态同形）⇒ 两种写法都认，否则三格全出户后这里解析出空集、判据静默失效（本轮实测抓到）。
     componentImportNames.push(...importNamesFrom(stripComments(String(facade)), (spec) =>
       spec.startsWith('.')

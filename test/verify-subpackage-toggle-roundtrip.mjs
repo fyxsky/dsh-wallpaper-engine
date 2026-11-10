@@ -260,7 +260,7 @@ function rootExportsTarget(spec) {
 }
 /**
  * **过渡期兜底**（refactor 后行入口应为零主包说明符，见主流程的判据）：
- * 老形态的子包宿主入口按裸名 import 主包（'dsh-plugin-wallpaper-engine/subpackage-boot.js'）。
+ * 老形态的子包宿主入口按裸名 import 主包（'dsh-we-slim/subpackage-boot.js'）。
  * 真实 profile 里主包就装在 node_modules/<主包名>，本仓普通检出下 node_modules 里没有主包自己，
  * 于是裸名解析不到 —— 这里按主包 exports 把裸名映射成仓内 file:// URL。只改解析、不改被测代码；
  * 映射不到（exports 缺该子路径）就保持原样，让 import 大声失败（顺带钉住主包 exports 面）。
@@ -277,7 +277,7 @@ function specifiersOf(src) {
 /**
  * 出户的组件/子包真名 → `packages/<dir>/<main>` 的 file:// URL（映射不到返回 null）。
  *
- * P-F 起主包门面按**裸包名**静态 import 出户的组件（`lib/index.js` → `dsh-plugin-wallpaper-engine-about-notice`，
+ * P-F 起主包门面按**裸包名**静态 import 出户的组件（`lib/index.js` → `dsh-we-slim-about-notice`，
  * 见 ADR-0014 §12「主包以精确版本依赖子包」）：真实 profile 里靠 `<profile>/node_modules/<name>` 解析，
  * 而 data: URL 变异体**解析不到任何裸名** ⇒ 必须像主包裸名那样映射成仓内 file URL。
  */
@@ -628,7 +628,7 @@ if (plugins.length > 0) {
 // 四个观测面都做成纯函数（输入是量出来的集合/文本/注册表模块），负对照喂合成输入，不靠磁盘变异。
 
 const FONTS_ROW_ID = 'wallpaper-engine-fonts';
-const FONTS_PKG_NAME = 'dsh-plugin-wallpaper-engine-fonts';
+const FONTS_PKG_NAME = 'dsh-we-slim-fonts';
 const PANEL_ID = 'appearance';
 const FONTS_SECTION_ID = 'fonts';
 const FONTS_ROW = rows.filter((r) => r.id === FONTS_ROW_ID && r.name === FONTS_PKG_NAME)[0];
@@ -930,12 +930,12 @@ function fontsSectionOwnershipProblems(t) {
     // 负对照自证：把每个坏输入**被抓到的第一条原文原因**打出来（否则"没有变红"这件事在日志里
     // 只剩一句 ok，复核者无法判断它是因为目标缺陷变红、还是被别的地板顺手判红）。
     const ownNeg = [], ownCaught = [];
-    const GOOD_ART = 'const host = require("dsh-plugin-wallpaper-engine"); host.registerPanelSection("appearance", "fonts", { id: "fonts" });';
+    const GOOD_ART = 'const host = require("dsh-we-slim"); host.registerPanelSection("appearance", "fonts", { id: "fonts" });';
     const BAD_ROOT = 'x.registerPanelSection("appearance", "fonts", { id: "fonts", render: () => null });';
     const GOOD_READ = ['x', 'const secs = wePanelSectionsOf("appearance");'];
     // 每个坏输入只带**一个**缺陷：主包产物 / 外观页签源码默认给"读得到、但没内联注册"的正常文本，
     // 否则新加的覆盖面无牙地板会替别的缺陷判红，负对照就不再是"这条缺陷被抓到"的证据。
-    const GOOD_ROOT = 'window.__ModuleLoader__.load({ id: "dsh-plugin-wallpaper-engine", factory: () => {} });';
+    const GOOD_ROOT = 'window.__ModuleLoader__.load({ id: "dsh-we-slim", factory: () => {} });';
     const GOOD_APP = 'export function renderAppearanceFontSection() { return null; }';
     const base = (over) => Object.assign({
       fontsArtifactRel: 'x', rootArtifact: GOOD_ROOT, rootAppearanceSrc: GOOD_APP, panelSrcs: [GOOD_READ],

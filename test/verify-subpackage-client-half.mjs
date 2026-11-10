@@ -13,7 +13,7 @@
  * 每个声明 dsh.client 的包要求四面对齐：
  *   1. dsh.client 形状与根 package.json 的 dsh.client 一致（web / immediately / 同键集）。
  *   2. exports["./client"] 必须指向 packages/<pkg>/lib/client.<short>.js
- *      （<short> = 包名去掉 dsh-plugin-wallpaper-engine- 前缀）。
+ *      （<short> = 包名去掉 dsh-we-slim- 前缀）。
  *   3. 该产物存在、非空，且文件头里注册 window.__ModuleLoader__.load({ id: "<子包真实包名>" })。
  *   4. 该 id 只出现在恰好一个产物里，且根产物 lib/client.js 里不出现（③④）。
  *   5. 该包的行（name = 真实包名）必须被根 cordis.patch.yml 插入。
@@ -30,7 +30,7 @@ import { stripComments } from './tools/js-text.mjs';
 import { UPSTREAM_FORKS, isUpstreamFork, upstreamForkOf } from './tools/subpackage-shapes.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const SHORT_PREFIX = 'dsh-plugin-wallpaper-engine-';
+const SHORT_PREFIX = 'dsh-we-slim-';
 let failed = 0;
 function check(name, ok, detail) {
   if (ok) console.log('  ok  ' + name);
@@ -218,7 +218,7 @@ check('每个子包 manifest 可解析', usable.length === pkgs.length, pkgs.fil
 // 同属必被覆盖。
 // 棘轮（有意硬编码）：这张清单只许随契约显式改动；每个包名都必须在 packages/ 下命中真实目录，
 // 否则改名/搬家会让棘轮**静默失效**（判据变成恒真）—— 命中 0 处即红。
-const REQUIRED_CLIENT_HALF = ['dsh-plugin-wallpaper-engine-fonts', 'dsh-plugin-wallpaper-engine-media-bridge'];
+const REQUIRED_CLIENT_HALF = ['dsh-we-slim-fonts', 'dsh-we-slim-media-bridge'];
 
 const requiredDirs = [];
 for (const n of REQUIRED_CLIENT_HALF) {
@@ -372,7 +372,7 @@ check('D-7 负对照：主 bundle 少给一个被解构的键 ⇒ 判红',
     .some((s) => s.includes(declarations[0].keys[0])));
 check('D-7 负对照：子包解构了主包没有的键 ⇒ 判红',
   declaredKeyViolations({
-    declarations: [{ dir: 'packages/fake', name: 'dsh-plugin-wallpaper-engine-fake', keys: ['definitelyNotAKey'] }],
+    declarations: [{ dir: 'packages/fake', name: 'dsh-we-slim-fake', keys: ['definitelyNotAKey'] }],
     hostKeys,
   }).some((s) => s.includes('definitelyNotAKey')));
 check('D-7 负对照：产物里的派生表比解构少键 ⇒ 判红',
@@ -383,13 +383,13 @@ const okDshClient = rootDshClient || { platform: 'web', immediately: true, injec
 const PAD = '/* pad */'.repeat(200);
 const mkIn = (over) => {
   const o = {
-    name: 'dsh-plugin-wallpaper-engine-fx', dir: 'packages/fx',
-    manifest: { name: 'dsh-plugin-wallpaper-engine-fx', dsh: { client: JSON.parse(JSON.stringify(okDshClient)) }, exports: { './client': './lib/client.fx.js' } },
-    rowNames: [rootName, 'dsh-plugin-wallpaper-engine-fx'],
+    name: 'dsh-we-slim-fx', dir: 'packages/fx',
+    manifest: { name: 'dsh-we-slim-fx', dsh: { client: JSON.parse(JSON.stringify(okDshClient)) }, exports: { './client': './lib/client.fx.js' } },
+    rowNames: [rootName, 'dsh-we-slim-fx'],
     rootName,
     artifacts: {
       // 基准产物 = 真产物形状：__ModuleLoader__ 注册 + 构建期那一行 require("<主包名>")。
-      'packages/fx/lib/client.fx.js': 'window.__ModuleLoader__.load({ id: "dsh-plugin-wallpaper-engine-fx", factory: (require) => { const host = require("' + rootName + '"); return { host }; } });' + PAD,
+      'packages/fx/lib/client.fx.js': 'window.__ModuleLoader__.load({ id: "dsh-we-slim-fx", factory: (require) => { const host = require("' + rootName + '"); return { host }; } });' + PAD,
       'lib/client.js': 'window.__ModuleLoader__.load({ id: "' + rootName + '", factory: () => {} });',
     },
     rootClientRel: 'lib/client.js', rootDshClient,
@@ -406,14 +406,14 @@ const neg = (label, mutate, expectRe) => {
 neg('声明了 dsh.client 但产物没构建（缺产物文案要提示先跑 build）', (o) => { o.artifacts = { 'lib/client.js': mkIn().artifacts['lib/client.js'] }; }, /先跑 npm run build/);
 neg('exports["./client"] 落点不对判红', (o) => { o.manifest.exports['./client'] = './lib/client.js'; delete o.artifacts['packages/fx/lib/client.fx.js']; }, /必须指向|不存在/);
 neg('产物里没有该包 id 的注册判红', (o) => { o.artifacts['packages/fx/lib/client.fx.js'] = 'window.__ModuleLoader__.load({ id: "somebody-else" });' + PAD; }, /注册/);
-neg('产物像空壳判红', (o) => { o.artifacts['packages/fx/lib/client.fx.js'] = 'window.__ModuleLoader__.load({ id: "dsh-plugin-wallpaper-engine-fx" });'; }, /产物像空壳/);
+neg('产物像空壳判红', (o) => { o.artifacts['packages/fx/lib/client.fx.js'] = 'window.__ModuleLoader__.load({ id: "dsh-we-slim-fx" });'; }, /产物像空壳/);
 neg('同一注册出现两份判红', (o) => { o.artifacts['lib/client.fx.bis.js'] = mkIn().artifacts['packages/fx/lib/client.fx.js']; }, /多份产物/);
 neg('根产物里也注册了同一个包判红', (o) => { o.artifacts['lib/client.js'] = mkIn().artifacts['packages/fx/lib/client.fx.js']; }, /内联两处|多份产物/);
 neg('主 patch 里没有该行判红', (o) => { o.rowNames = [rootName]; }, /没有 name/);
 neg('dsh.client 缺根里的键判红', (o) => { delete o.manifest.dsh.client.inject; }, /缺键/);
 // P-C 契约 §2：产物里少了构建期那一行 ⇒ 键集为空，必须判红（放行面见 verify-subpackage-purity.mjs）。
 neg('产物里没有构建期的主包绑定 require("<主包名>") 判红', (o) => {
-  o.artifacts['packages/fx/lib/client.fx.js'] = 'window.__ModuleLoader__.load({ id: "dsh-plugin-wallpaper-engine-fx", factory: (require) => { return {}; } });' + PAD;
+  o.artifacts['packages/fx/lib/client.fx.js'] = 'window.__ModuleLoader__.load({ id: "dsh-we-slim-fx", factory: (require) => { return {}; } });' + PAD;
 }, /构建期的主包绑定/);
 check('负对照：产物里有那一行就 0 违反（同一判据的两向都测）',
   !clientHalfViolations(mkIn()).some((s) => /构建期的主包绑定/.test(s)));

@@ -20,7 +20,7 @@
 ### 正确的更新顺序
 
 1. **先把 DSH 内核更新到 `package.json` 的 `engines.dsh` 下限**（当前为 DSH 0.2 内核，含 0.2.0-rc.1/rc.2）：官方桌面端在「顶部导航栏 → 版本信息」检查更新，或到 [GitHub Releases](https://github.com/anywhere-labs/dsh-desktop/releases) 下载对应平台安装包；
-2. **再更新本插件**：`dsh plugin --profile web add dsh-plugin-wallpaper-engine`（或插件市场里点更新）；
+2. **再更新本插件**：`dsh plugin --profile web add dsh-we-slim`（或插件市场里点更新）；
 3. **dsh-better-sidebar 无版本要求**：装了的话建议顺手更到最新（`dsh plugin --profile web add dsh-better-sidebar@latest`）。
 
 > 💡 同时建议把**其它 DSH 插件也一并更新**：旧版插件在新内核下可能直接加载失败

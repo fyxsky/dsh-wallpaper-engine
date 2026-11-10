@@ -8,12 +8,12 @@
  * 允许的跨包面（lead 裁定，Service 口径 = 收窄后的**唯一**面）：
  *   · node: 内置（包内相对 import 照常）；
  *   · 子包宿主半边**零主包说明符**：既不 import 主包裸名，也不 import 主包任何子路径
- *     （旧叶子 specifier 'dsh-plugin-wallpaper-engine/subpackage-boot.js' 同样判红）；
+ *     （旧叶子 specifier 'dsh-we-slim/subpackage-boot.js' 同样判红）；
  *     唯一的跨包通道是 **Cordis Service**：`export const inject = ['<HOST_SERVICE_NAME>']`
  *     + 在 apply 里从 `ctx[HOST_SERVICE_NAME]` 取用（§5.1 ① / §5.2 允许清单 1）。
  *     服务名**不硬编码在判据里**：本文件动态 import lib/subpackage-boot.js 读它的
  *     `HOST_SERVICE_NAME` 导出，逐包逐字对账 —— 名字漂移即判红。
- *   · require('dsh-plugin-wallpaper-engine') 这条**浏览器侧**通道只允许出现在子包客户端产物
+ *   · require('dsh-we-slim') 这条**浏览器侧**通道只允许出现在子包客户端产物
  *     （packages/<pkg>/lib/client*.js）里，宿主半边里出现即违规；例外面不扩大。
  *     **P-C 契约 §2 收紧**（放行面 = 声明落点产物里的**那一行 require**）：
  *     ① 落点必须是本包 manifest `exports["./client"]` 指的**那一份**产物（同包另一个
@@ -205,7 +205,7 @@ function rootChannels(pkg, rootPkg, files) {
  * @returns {string[]} 违反项
  */
 function fontsCoverageProblems(pkg, files) {
-  if (!pkg) return ['packages/ 下没有 dsh-plugin-wallpaper-engine-fonts（包名漂移 => 棘轮静默失效）'];
+  if (!pkg) return ['packages/ 下没有 dsh-we-slim-fonts（包名漂移 => 棘轮静默失效）'];
   const bad = [];
   const rels = files.map((f) => relOf(f.abs));
   const src = rels.filter((r) => r.indexOf(pkg.dir + '/src/') === 0);
@@ -339,7 +339,7 @@ if (usable.length > 0) {
   check('每个子包宿主入口（manifest.main）都在扫描面内，服务名判据真的作用到它', entryMiss.length === 0, entryMiss.join('；'));
 
   // -- P-C 契约 §1/§2：字体包覆盖面地板 + 浏览器通道恰一条（判据不许真空为真）----------------
-  const fontsPkg = usable.find((p) => p.manifest.name === 'dsh-plugin-wallpaper-engine-fonts');
+  const fontsPkg = usable.find((p) => p.manifest.name === 'dsh-we-slim-fonts');
   const fontsInput = inputs.find((i) => i.pkg === fontsPkg) || null;
   const fontsProblems = fontsCoverageProblems(fontsPkg, fontsInput ? fontsInput.files : []);
   check('字体包覆盖面地板（P-C 契约 §1：src 面非空 + src/client.js 在扫描面内）',
@@ -377,9 +377,9 @@ if (usable.length > 0) {
 }
 
 // -- 负对照 ------------------------------------------------------------------
-const MOD = 'dsh-plugin-wallpaper-engine-fx';
+const MOD = 'dsh-we-slim-fx';
 const mkPkg = (name, deps) => ({ dir: 'packages/fx', abs: join(ROOT, 'packages', 'fx'), manifest: { name, dependencies: deps || {} }, error: null });
-const other = { dir: 'packages/parallax', abs: join(ROOT, 'packages', 'parallax'), manifest: { name: 'dsh-plugin-wallpaper-engine-parallax', dependencies: {} }, error: null };
+const other = { dir: 'packages/parallax', abs: join(ROOT, 'packages', 'parallax'), manifest: { name: 'dsh-we-slim-parallax', dependencies: {} }, error: null };
 const mk = (files, opts) => {
   const pkg = (opts && opts.pkg) || mkPkg(MOD, (opts && opts.deps) || {});
   return {
@@ -400,16 +400,16 @@ const negOk = (label, files, opts) => {
   check('负对照：' + label, !v.some((s) => PURITY_RE.test(s)), JSON.stringify(v));
 };
 neg('跨子包相对 import 判红', [{ rel: 'src/a.js', text: "import { x } from '../../parallax/src/parallax-layer.js';\n" }], /跨子包相对 import/);
-neg('跨子包裸包 import 判红', [{ rel: 'src/a.js', text: "import { x } from 'dsh-plugin-wallpaper-engine-parallax';\n" }], /跨子包 value import/);
+neg('跨子包裸包 import 判红', [{ rel: 'src/a.js', text: "import { x } from 'dsh-we-slim-parallax';\n" }], /跨子包 value import/);
 neg('未声明裸包 import 判红', [{ rel: 'src/a.js', text: "import { x } from 'lodash';\n" }], /未在 .* 里声明/);
-neg('自引用裸包名判红', [{ rel: 'src/a.js', text: "import { x } from 'dsh-plugin-wallpaper-engine-fx';\n" }], /自引用裸包名/);
+neg('自引用裸包名判红', [{ rel: 'src/a.js', text: "import { x } from 'dsh-we-slim-fx';\n" }], /自引用裸包名/);
 neg('逃出本包到主包的相对 import 判红', [{ rel: 'src/a.js', text: "import { x } from '../../../lib/host-boot.js';\n" }], /逃出本包/);
 neg('用了 ctx.webServer 但 inject 没声明判红', [{ rel: 'lib/index.js', text: "export const inject = [];\nexport function apply(ctx) { ctx.webServer.register({}); }\n" }], /inject 使用面/);
-neg('宿主半边 import 主包裸名判红（零主包说明符）', [{ rel: 'lib/index.js', text: "import root from 'dsh-plugin-wallpaper-engine';\n" }], /宿主半边 import 主包说明符/);
-neg('宿主半边 import 旧叶子 subpackage-boot.js 判红', [{ rel: 'lib/index.js', text: "import { subpackageKeys } from 'dsh-plugin-wallpaper-engine/subpackage-boot.js';\n" }], /宿主半边 import 主包说明符/);
-neg('宿主半边 require 旧叶子 subpackage-boot.js 判红', [{ rel: 'lib/index.js', text: "const { subpackageKeys } = require('dsh-plugin-wallpaper-engine/subpackage-boot.js');\n" }], /宿主半边 import 主包说明符/);
-neg('主包其它子路径判红', [{ rel: 'lib/a.js', text: "import { x } from 'dsh-plugin-wallpaper-engine/lib/host-boot.js';\n" }], /宿主半边 import 主包说明符/);
-negOk('客户端产物里 require("dsh-plugin-wallpaper-engine") 不判红', [{ rel: 'lib/client.fx.js', text: "const root = require('dsh-plugin-wallpaper-engine');\n" }], { pkg: (() => { const p = mkPkg(MOD); p.manifest.exports = { './client': './lib/client.fx.js' }; return p; })() });
+neg('宿主半边 import 主包裸名判红（零主包说明符）', [{ rel: 'lib/index.js', text: "import root from 'dsh-we-slim';\n" }], /宿主半边 import 主包说明符/);
+neg('宿主半边 import 旧叶子 subpackage-boot.js 判红', [{ rel: 'lib/index.js', text: "import { subpackageKeys } from 'dsh-we-slim/subpackage-boot.js';\n" }], /宿主半边 import 主包说明符/);
+neg('宿主半边 require 旧叶子 subpackage-boot.js 判红', [{ rel: 'lib/index.js', text: "const { subpackageKeys } = require('dsh-we-slim/subpackage-boot.js');\n" }], /宿主半边 import 主包说明符/);
+neg('主包其它子路径判红', [{ rel: 'lib/a.js', text: "import { x } from 'dsh-we-slim/lib/host-boot.js';\n" }], /宿主半边 import 主包说明符/);
+negOk('客户端产物里 require("dsh-we-slim") 不判红', [{ rel: 'lib/client.fx.js', text: "const root = require('dsh-we-slim');\n" }], { pkg: (() => { const p = mkPkg(MOD); p.manifest.exports = { './client': './lib/client.fx.js' }; return p; })() });
 negOk('dsh.client.inject 声明的裸包在客户端产物里不判红', [{ rel: 'lib/client.fx.js', text: "const r = require('@deepseek-ai/dsh-client-runtime');\n" }], { pkg: (() => { const p = mkPkg(MOD); p.manifest.dsh = { client: { inject: ['@deepseek-ai/dsh-client-runtime'] } }; return p; })() });
 negOk('inject 声明齐全（含服务名 + 真取用）-> 不触发', [{ rel: 'lib/index.js', text: "export const inject = ['webServer', '" + HOST + "'];\nexport function apply(ctx) { const host = ctx." + HOST + "; ctx.webServer.register({}); host.keys('fx', ctx); }\n" }]);
 negOk('服务名以 ctx["<名>"] 括号取用同样认账', [{ rel: 'lib/index.js', text: "export const inject = ['" + HOST + "'];\nexport function apply(ctx) { const host = ctx['" + HOST + "']; host.keys('fx'); }\n" }]);
@@ -424,29 +424,29 @@ neg('宿主半边 inject 里缺服务名判红', [{ rel: 'lib/index.js', text: "
 neg('宿主入口 inject 了服务名但从不取用判红', [{ rel: 'lib/index.js', text: "export const inject = ['webServer', '" + HOST + "'];\nexport function apply(ctx) { ctx.webServer.register({}); }\n" }], /没有从 ctx 取用/);
 neg('宿主入口完全没有 inject 判红', [{ rel: 'lib/index.js', text: "export function apply(ctx) { const host = ctx." + HOST + "; host.keys('fx'); }\n" }], /宿主入口没有 export const inject/);
 negOk('已声明 peer 的裸包 import 不判红', [{ rel: 'lib/a.js', text: "import { x } from 'some-peer';\n" }], { deps: {}, pkg: (() => { const p = mkPkg(MOD); p.manifest.peerDependencies = { 'some-peer': '^1.0.0' }; return p; })() });
-negOk('客户端产物不背宿主 inject 义务（服务名对账不越界）', [{ rel: 'lib/client.fx.js', text: "const root = require('dsh-plugin-wallpaper-engine');\nexport const inject = ['webServer'];\n" }], { pkg: (() => { const p = mkPkg(MOD); p.manifest.exports = { './client': './lib/client.fx.js' }; return p; })() });
+negOk('客户端产物不背宿主 inject 义务（服务名对账不越界）', [{ rel: 'lib/client.fx.js', text: "const root = require('dsh-we-slim');\nexport const inject = ['webServer'];\n" }], { pkg: (() => { const p = mkPkg(MOD); p.manifest.exports = { './client': './lib/client.fx.js' }; return p; })() });
 
 // -- P-C 契约 §1/§2 的负对照：字体包源码面 / 放行面收紧 / 覆盖面地板 -------------------------
 // 「在 packages/fonts/src/*.js 写入一句 require ⇒ 红」用**真落点路径**在内存里构造（不落盘）：
 // 本判据的写面只有 test/**，packages/fonts/** 属 fonts-pc；纯函数喂文件清单等价于那处写入。
 const mkFontsPkg = () => {
-  const p = mkPkg('dsh-plugin-wallpaper-engine-fonts');
+  const p = mkPkg('dsh-we-slim-fonts');
   p.dir = 'packages/fonts'; p.abs = join(ROOT, 'packages', 'fonts');
   p.manifest.exports = { './client': './lib/client.fonts.js' };
   return p;
 };
 neg('字体包源码面出现主包说明符判红（P-C 契约 §1：零主包说明符，真落点路径 packages/fonts/src/client.js）',
-  [{ rel: 'src/client.js', text: "const host = require('dsh-plugin-wallpaper-engine');\n" }], /宿主半边 import 主包说明符/, { pkg: mkFontsPkg() });
+  [{ rel: 'src/client.js', text: "const host = require('dsh-we-slim');\n" }], /宿主半边 import 主包说明符/, { pkg: mkFontsPkg() });
 neg('字体包其它源码文件出现主包说明符同样判红',
-  [{ rel: 'src/appearance-font-section.js', text: "const h = require('dsh-plugin-wallpaper-engine');\n" }], /宿主半边 import 主包说明符/, { pkg: mkFontsPkg() });
+  [{ rel: 'src/appearance-font-section.js', text: "const h = require('dsh-we-slim');\n" }], /宿主半边 import 主包说明符/, { pkg: mkFontsPkg() });
 negOk('同一句 require 落在字体包**声明落点产物**里不判红（放行面 = 那一行）',
-  [{ rel: 'lib/client.fonts.js', text: "const host = require('dsh-plugin-wallpaper-engine');\n" }], { pkg: mkFontsPkg() });
+  [{ rel: 'lib/client.fonts.js', text: "const host = require('dsh-we-slim');\n" }], { pkg: mkFontsPkg() });
 neg('声明落点产物里用 import 形态引用主包判红（只认构建期那一行 require）',
-  [{ rel: 'lib/client.fonts.js', text: "import root from 'dsh-plugin-wallpaper-engine';\n" }], /形态引用主包|主包说明符/, { pkg: mkFontsPkg() });
+  [{ rel: 'lib/client.fonts.js', text: "import root from 'dsh-we-slim';\n" }], /形态引用主包|主包说明符/, { pkg: mkFontsPkg() });
 neg('同包另一份 client*.js（非声明落点）里 require 主包判红（放行面恰为声明落点）',
-  [{ rel: 'lib/client.other.js', text: "const host = require('dsh-plugin-wallpaper-engine');\n" }], /不是本包 exports|主包说明符/, { pkg: mkFontsPkg() });
+  [{ rel: 'lib/client.other.js', text: "const host = require('dsh-we-slim');\n" }], /不是本包 exports|主包说明符/, { pkg: mkFontsPkg() });
 neg('声明落点产物里 require 主包**子路径**判红（放行面只有裸包名那一行）',
-  [{ rel: 'lib/client.fonts.js', text: "const h = require('dsh-plugin-wallpaper-engine/lib/host-boot.js');\n" }], /主包说明符/, { pkg: mkFontsPkg() });
+  [{ rel: 'lib/client.fonts.js', text: "const h = require('dsh-we-slim/lib/host-boot.js');\n" }], /主包说明符/, { pkg: mkFontsPkg() });
 const fontsOkInput = mk([{ rel: 'src/client.js', text: "export const x = 1;\n" }, { rel: 'src/appearance-font-section.js', text: "export const y = 2;\n" }], { pkg: mkFontsPkg() });
 check('负对照基准：字体包扫描面非空（src 面 ≥1 且有 src/client.js）时地板判据 0 违反',
   fontsCoverageProblems(mkFontsPkg(), fontsOkInput.files).length === 0

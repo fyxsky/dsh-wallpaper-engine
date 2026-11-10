@@ -30,7 +30,7 @@ Get-Process 'DeepSeek Harness','DSH Desktop' | Select-Object ProcessName,Id,Star
 
 Two easy misreadings, while we are here:
 
-- **The plugin directory is usually a junction** (`~/.dsh/profiles/<profile>/node_modules/dsh-plugin-wallpaper-engine → the workspace`),
+- **The plugin directory is usually a junction** (`~/.dsh/profiles/<profile>/node_modules/dsh-we-slim → the workspace`),
   so "the file is already new" does **not** mean "memory is new" — what matters is the **load moment**, not the file contents.
 - **The panel line "live render failed (…) fell back automatically" comes from persisted failure memory**
   (`settings.sceneLiveFailures` in `config.json`) and says nothing about whether a frame was produced *this* time.
@@ -59,7 +59,7 @@ no longer matches, so pnpm refuses to install anything into that profile.
 # 2) Remove the profile's dependency directory (only node_modules — config / installed plugin names are kept)
 Remove-Item "$env:USERPROFILE\.dsh-desktop\profiles\web\node_modules" -Recurse -Force
 # 3) Reinstall this plugin
-dsh plugin --profile web add dsh-plugin-wallpaper-engine
+dsh plugin --profile web add dsh-we-slim
 ```
 
 > Deleting just `node_modules\.modules.yaml` also works (pnpm recreates it and continues); removing
@@ -69,7 +69,7 @@ dsh plugin --profile web add dsh-plugin-wallpaper-engine
 ### Install failure: `ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED`
 
 ```text
-[ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED] ... The git-hosted package "dsh-plugin-wallpaper-engine@0.6.8"
+[ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED] ... The git-hosted package "dsh-we-slim@0.6.8"
 needs to execute build scripts but is not in the "allowBuilds" allowlist.
 ```
 
@@ -80,7 +80,7 @@ time (pnpm 11 blocks build scripts of git-hosted packages by default for supply-
 instead (the published tarball is built at packaging time; no compile-time build is needed):
 
 ```sh
-dsh plugin --profile web add dsh-plugin-wallpaper-engine
+dsh plugin --profile web add dsh-we-slim
 ```
 
 > If your plugin hub (dsh-plugin-hub) generated a `github:` command, upgrade it to **v1.4.1+** — the
@@ -113,7 +113,7 @@ meant to be bypassed.
 #    to the latest is enough). Self-check: `dsh --version` is within engines.dsh
 dsh --version
 # 2) Install again
-dsh plugin --profile web add dsh-plugin-wallpaper-engine
+dsh plugin --profile web add dsh-we-slim
 ```
 
 > "The desktop app says v0.10.0" is the **app's own** version number, not the bundled **DSH core**

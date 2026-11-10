@@ -243,12 +243,12 @@ function loadClient({
   const exportsObj = cap.handoff.factory(requireMock);
 
   // ADR-0016 第三刀：与真实 loader 同形，把玻璃子包产物也在**同一个 vm 上下文**求值掉
-  // （它的 factory 经 require('dsh-plugin-wallpaper-engine') 取主 bundle 键集，登记
+  // （它的 factory 经 require('dsh-we-slim') 取主 bundle 键集，登记
   // registerLayerHooks('glass') + registerGlassStatus）。不求值它 ⇒ apply() 挂载期玻璃层
   // 不在注册表里，sync 永不跑，A1/A2/G1 等行为判据全部以"钩子为 null"假红。
   new vm.Script(GLASS_CODE, { filename: 'client.glass.js' }).runInContext(sandbox);
   const glassHandoff = cap.handoffs ? cap.handoffs[cap.handoffs.length - 1] : null;
-  const subRequire = (spec) => (spec === 'dsh-plugin-wallpaper-engine' ? exportsObj : requireMock(spec));
+  const subRequire = (spec) => (spec === 'dsh-we-slim' ? exportsObj : requireMock(spec));
   if (glassHandoff && typeof glassHandoff.factory === 'function') glassHandoff.factory(subRequire);
 
   const disposers = [];

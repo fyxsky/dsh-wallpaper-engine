@@ -213,7 +213,7 @@ function manifestViolations({ sub, text, rootPkg, fileExists, dirExists }) {
     const clientTarget = subExports ? exportTarget(subExports['./client']) : null;
     if (!clientTarget) out.push('声明了 dsh.client 却没有 exports["./client"]（宿主按它加载浏览器半边）');
     else if (!fileExists(here + '/' + dropDot(clientTarget))) out.push('dsh.client 入口不存在：' + here + '/' + dropDot(clientTarget));
-    // #281：子包浏览器半边的工厂体在**求值期**就 `require('dsh-plugin-wallpaper-engine')` 取主包键集；
+    // #281：子包浏览器半边的工厂体在**求值期**就 `require('dsh-we-slim')` 取主包键集；
     // 宿主 client-modules 按 `dsh.client.inject` 排装载序 ⇒ 缺主包这一条，冷启动时子包工厂可能先于
     // 主包 materialize，报 `require(...) missed the module table`（1.4.0 真机：4 个入口全部不激活）。
     // 只有主包自己（m.name === rootPkg.name）不需要这条自依赖。

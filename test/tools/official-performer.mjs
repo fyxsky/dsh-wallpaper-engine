@@ -17,7 +17,7 @@ export function clientEntryFixture(built) {
     registerPetLink(value) { bridge = value; },
   };
   const plugin = registration.factory(spec => {
-    assert.equal(spec, 'dsh-plugin-wallpaper-engine'); return facade;
+    assert.equal(spec, 'dsh-we-slim'); return facade;
   });
   return { plugin, bridge, listeners };
 }

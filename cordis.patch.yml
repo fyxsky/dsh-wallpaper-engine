@@ -1,4 +1,4 @@
-# dsh-plugin-wallpaper-engine bundle patch.
+# dsh-we-slim bundle patch.
 #
 # Applied over the dsh-web-app layer. This bundle contributes FOUR host rows:
 #   - two owned by the main package: the plugin that scans Wallpaper Engine and
@@ -29,7 +29,7 @@
     # /preview, …; docs/ROUTE-INDEX.md is the authoritative table — it is generated
     # and machine-checked, so the route count is deliberately not repeated here).
     - id: wallpaper-engine
-      name: 'dsh-plugin-wallpaper-engine'
+      name: 'dsh-we-slim'
     # Second row: the `media-bridge` component's host half (third component) — the
     # system media integration (now playing / spectrum / artwork / reverse control)
     # and its backend (the media-bridge child process with the built-in fallback).
@@ -41,7 +41,7 @@
     # row `name` is now the real package name (resolved through <profile>/node_modules,
     # same as the fonts / glass rows below). The `id` is frozen.
     - id: wallpaper-engine-media-bridge
-      name: 'dsh-plugin-wallpaper-engine-media-bridge'
+      name: 'dsh-we-slim-media-bridge'
       # webServer is a hard dependency (`inject = ['webServer']` in lib/index.js):
       # the Loader waits for the HTTP server to mount, so a headless/TUI profile
       # without one does not load this bundle at all.
@@ -56,7 +56,7 @@
     # 注意（§6.1 = A / ADR-0013 D20）：随包走的只是**渲染器与描述符**；字体的键、默认值、
     # 消毒与持久化仍在主包 lib/settings-schema.js（FONTSET_KEYS）与 fontsets/<id>.json。
     - id: wallpaper-engine-fonts
-      name: 'dsh-plugin-wallpaper-engine-fonts'
+      name: 'dsh-we-slim-fonts'
     # glass：液态玻璃（ADR-0016 三刀出户）。
     #   · 第一刀（2026-10-27）：只登记行 + 键表 + 宿主自检可解析（host-only 空壳）；
     #   · 第二刀（2026-10-28）：外观页签「主题预设」+「玻璃 UI」设置节随包走（lib/client.glass.js；
@@ -69,7 +69,7 @@
     # 注意（§6.1 = A / ADR-0013 D20）：随包走的只是**渲染器**；玻璃的设置键、默认值、
     # 消毒与持久化仍在主包 lib/settings-schema.js（预设全档案快照也依赖单一 schema）。
     - id: wallpaper-engine-glass
-      name: 'dsh-plugin-wallpaper-engine-glass'
+      name: 'dsh-we-slim-glass'
     # ── 内置桌宠本体：已解耦（2026-10-20）────────────────────────────────────────
     # `packages/pet`（`dsh-we-pet-builtin`）与它的 `wallpaper-engine-pet` 行**已从本包移除**：
     # 它把 `electron`（optional）带进安装树，而 electron 42+ 在缺少 `dist/` 时会在

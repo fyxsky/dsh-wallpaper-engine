@@ -13,7 +13,7 @@
   </picture>
 </h1>
 
-[![npm Version](https://img.shields.io/npm/v/dsh-plugin-wallpaper-engine?style=flat-square&logo=npm&label=npm&color=8fd6a0&labelColor=5a544a)](https://www.npmjs.com/package/dsh-plugin-wallpaper-engine) [![Upstream Stars](https://img.shields.io/github/stars/elysia395/dsh-wallpaper-engine?style=flat-square&label=Upstream%20Stars&color=ffd84a)](https://github.com/elysia395/dsh-wallpaper-engine/stargazers) [![Upstream Release](https://img.shields.io/github/v/release/elysia395/dsh-wallpaper-engine?style=flat-square&label=Upstream%20Release&color=8fd6a0)](https://github.com/elysia395/dsh-wallpaper-engine/releases) [![npm Downloads](https://img.shields.io/npm/dm/dsh-plugin-wallpaper-engine?style=flat-square&label=npm%20Downloads&color=8fd6a0)](https://www.npmjs.com/package/dsh-plugin-wallpaper-engine)
+[![npm Version](https://img.shields.io/npm/v/dsh-we-slim?style=flat-square&logo=npm&label=npm&color=8fd6a0&labelColor=5a544a)](https://www.npmjs.com/package/dsh-we-slim) [![Upstream Stars](https://img.shields.io/github/stars/elysia395/dsh-wallpaper-engine?style=flat-square&label=Upstream%20Stars&color=ffd84a)](https://github.com/elysia395/dsh-wallpaper-engine/stargazers) [![Upstream Release](https://img.shields.io/github/v/release/elysia395/dsh-wallpaper-engine?style=flat-square&label=Upstream%20Release&color=8fd6a0)](https://github.com/elysia395/dsh-wallpaper-engine/releases) [![npm Downloads](https://img.shields.io/npm/dm/dsh-we-slim?style=flat-square&label=npm%20Downloads&color=8fd6a0)](https://www.npmjs.com/package/dsh-we-slim)
 <p>
   <a href="https://trendshift.io/repositories/170341" target="_blank"><img src="https://raw.githubusercontent.com/elysia395/dsh-wallpaper-engine/badges/trendshift-daily.svg" alt="Trendshift · JavaScript daily best rank" width="250" height="55"></a>
   <a href="https://trendshift.io/repositories/170341" target="_blank"><img src="https://raw.githubusercontent.com/elysia395/dsh-wallpaper-engine/badges/trendshift-weekly.svg" alt="Trendshift · JavaScript weekly best rank" width="250" height="55"></a>
@@ -84,7 +84,7 @@ Requires **Node.js >= 22.12.0**, a **DSH 0.2 kernel** (including `0.2.0-rc.1/rc.
 **npm (recommended)**
 
 ```sh
-dsh plugin --profile web add dsh-plugin-wallpaper-engine
+dsh plugin --profile web add dsh-we-slim
 ```
 
 Use `desktop` instead of `web` for the desktop host.

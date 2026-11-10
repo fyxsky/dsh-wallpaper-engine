@@ -8,7 +8,7 @@
  *    预设是整机快照（ADR-0011）：路由族与 preset-store 留主包，本包只画 `glassPresets` ctx 交给的卡片。
  *
  * ## 构建期形状（与 packages/fonts/src/client.js 逐条同形）
- *   · 产物 = packages/glass/lib/client.glass.js，id = 子包真实包名 dsh-plugin-wallpaper-engine-glass
+ *   · 产物 = packages/glass/lib/client.glass.js，id = 子包真实包名 dsh-we-slim-glass
  *     （与宿主 graph row 逐字相等）；入口 = 本文件，正文只取**首个块注释之后**的内容。
  *   · 本包的 INLINE_MODULES（client.build.json 的 inline[]）内联在正文之前 ⇒ 兄弟文件与入口落在
  *     **同一个工厂作用域**：互相按裸名引用，不 import、不 require、不许 `...host` 展开、不许动态键。

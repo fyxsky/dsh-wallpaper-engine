@@ -14,7 +14,7 @@
  *     开发期必须在 profile 的 `node_modules` 里放一个**指向本仓 `packages/<pkg>/` 的目录 junction**。
  *
  * 为什么用 junction（而不是改行名）：
- *   目录 junction 让 `<profile>/node_modules/dsh-plugin-wallpaper-engine-<pkg>` 与发布后 npm/pnpm
+ *   目录 junction 让 `<profile>/node_modules/dsh-we-slim-<pkg>` 与发布后 npm/pnpm
  *   hoist 出来的布局**同形** ⇒ **同一份 `cordis.patch.yml`（裸真名）开发期与发布期都成立**，
  *   不需要"开发期行名 ↔ 发布期行名"两套（§8.1 里那条"开发期写相对行名"的备选口径已作废：
  *   `./packages/<pkg>/lib/index.js` 会落到不存在的 `<profile>/packages/…`）。
@@ -38,7 +38,7 @@
  *   ② 各 profile 的 node_modules（宿主解析 patch 行名）。
  *
  * 已删除的第三个链接点：本仓 `node_modules/<主包名>` → 本仓根（主包**自链接**）。
- *   它唯一服务的是子包宿主入口里 `import … from 'dsh-plugin-wallpaper-engine/subpackage-boot.js'`
+ *   它唯一服务的是子包宿主入口里 `import … from 'dsh-we-slim/subpackage-boot.js'`
  *   这条裸说明符；跨包通道改走 **① Cordis Service**（ADR-0014 §S5.1）后，子包宿主半边
  *   **零主包说明符**（`test/verify-subpackage-purity.mjs` 的 `ROOT_SPEC_ALLOW` 已收紧为零）
  *   ⇒ 那条 `node_modules` 边不存在了，`rootSelfLink()` 与 `--no-self-link` 一并删除。

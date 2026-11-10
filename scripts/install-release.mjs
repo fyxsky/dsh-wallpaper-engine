@@ -6,8 +6,8 @@
  * 发布形态的主包把全部子包声明成**精确版本运行依赖**（`scripts/pack-release.mjs`），pnpm 会拿这些
  * 版本去 registry 解析 —— 实测（pnpm 11.22.0，隔离 profile）只装主包 tarball 必然失败：
  *
- *   ERR_PNPM_FETCH_404  GET https://registry.npmjs.org/dsh-plugin-wallpaper-engine-media-bridge
- *   This error happened while installing the dependencies of dsh-plugin-wallpaper-engine@1.3.3
+ *   ERR_PNPM_FETCH_404  GET https://registry.npmjs.org/dsh-we-slim-media-bridge
+ *   This error happened while installing the dependencies of dsh-we-slim@1.3.3
  *
  * 因此"只挂主包 tgz 的 Release"对用户是一个**装不上的包**。把整套 tarball 一起挂上去也不够：顶层
  * `file:` 依赖**不能满足**传递依赖的 registry 版本范围（同样实测 404）。唯一能让"离线九件套"装上的

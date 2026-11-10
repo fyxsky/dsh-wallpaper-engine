@@ -13,7 +13,7 @@
   </picture>
 </h1>
 
-[![npm Version](https://img.shields.io/npm/v/dsh-plugin-wallpaper-engine?style=flat-square&logo=npm&label=npm&color=8fd6a0&labelColor=5a544a)](https://www.npmjs.com/package/dsh-plugin-wallpaper-engine) [![正式主仓 Stars](https://img.shields.io/github/stars/elysia395/dsh-wallpaper-engine?style=flat-square&label=Upstream%20Stars&color=ffd84a)](https://github.com/elysia395/dsh-wallpaper-engine/stargazers)[![正式发布](https://img.shields.io/github/v/release/elysia395/dsh-wallpaper-engine?style=flat-square&label=Upstream%20Release&color=8fd6a0)](https://github.com/elysia395/dsh-wallpaper-engine/releases) [![npm 月下载量](https://img.shields.io/npm/dm/dsh-plugin-wallpaper-engine?style=flat-square&label=npm%20Downloads&color=8fd6a0)](https://www.npmjs.com/package/dsh-plugin-wallpaper-engine)
+[![npm Version](https://img.shields.io/npm/v/dsh-we-slim?style=flat-square&logo=npm&label=npm&color=8fd6a0&labelColor=5a544a)](https://www.npmjs.com/package/dsh-we-slim) [![正式主仓 Stars](https://img.shields.io/github/stars/elysia395/dsh-wallpaper-engine?style=flat-square&label=Upstream%20Stars&color=ffd84a)](https://github.com/elysia395/dsh-wallpaper-engine/stargazers)[![正式发布](https://img.shields.io/github/v/release/elysia395/dsh-wallpaper-engine?style=flat-square&label=Upstream%20Release&color=8fd6a0)](https://github.com/elysia395/dsh-wallpaper-engine/releases) [![npm 月下载量](https://img.shields.io/npm/dm/dsh-we-slim?style=flat-square&label=npm%20Downloads&color=8fd6a0)](https://www.npmjs.com/package/dsh-we-slim)
 <p>
   <a href="https://trendshift.io/repositories/170341" target="_blank"><img src="https://raw.githubusercontent.com/elysia395/dsh-wallpaper-engine/badges/trendshift-daily.svg" alt="Trendshift · JavaScript 日榜最好名次" width="250" height="55"></a>
   <a href="https://trendshift.io/repositories/170341" target="_blank"><img src="https://raw.githubusercontent.com/elysia395/dsh-wallpaper-engine/badges/trendshift-weekly.svg" alt="Trendshift · JavaScript 周榜最好名次" width="250" height="55"></a>
@@ -84,7 +84,7 @@ Application（应用）类壁纸需要启动第三方程序，**不支持**，�
 **npm（推荐）**
 
 ```sh
-dsh plugin --profile web add dsh-plugin-wallpaper-engine
+dsh plugin --profile web add dsh-we-slim
 ```
 
 桌面端把 `web` 改为 `desktop`。

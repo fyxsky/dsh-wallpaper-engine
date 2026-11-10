@@ -300,7 +300,7 @@ const facadeFontRoutes = routes
   .filter((p) => p.startsWith('/wallpaper-engine/fontsets') || p === '/wallpaper-engine/system-fonts');
 check('门面（lib/index.js）零字体族注册：两族都已出户到子包行',
   facadeFontRoutes.length === 0, facadeFontRoutes.join(' ') || '零残留');
-// junction（node_modules/dsh-plugin-wallpaper-engine-*）已通 ⇒ 子包入口的裸子路径 import 可解析。
+// junction（node_modules/dsh-we-slim-*）已通 ⇒ 子包入口的裸子路径 import 可解析。
 const fontsRowMod = await import(pathToFileURL(join(root, 'packages', 'fonts', 'lib', 'index.js')).href);
 const fontsRow = fontsRowMod.default || fontsRowMod;
 const fontsDispose = fontsRow.apply(mockCtx);

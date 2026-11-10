@@ -28,7 +28,7 @@
  */
 import { registerGlassRowRoutes } from './routes/glass-row.js';
 
-export const name = 'dsh-plugin-wallpaper-engine-glass';
+export const name = 'dsh-we-slim-glass';
 
 /**
  * 硬依赖 web 服务 + 主包宿主服务：状态路由挂在宿主 webServer 上，Loader 保证

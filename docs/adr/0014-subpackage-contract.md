@@ -52,7 +52,7 @@
   `node -e "…"` 或直接读 `cordis.patch.yml`；行 ⇄ 包的双向对账已由
   `test/verify-bundle-rows.mjs` 与 `test/tools/host-route-index.mjs` 的包发现层承担。
 - 依赖方向（谁 import 谁）：`git grep -n "from '" -- packages`（子包宿主半边**零主包说明符**）、
-  `git grep -n 'require("dsh-plugin-wallpaper-engine")' -- packages`（浏览器产物**只此一条**）。
+  `git grep -n 'require("dsh-we-slim")' -- packages`（浏览器产物**只此一条**）。
 - 清单字段全集与差异：逐个读 `packages/*/package.json` 与根 `package.json`。
 
 ## Decision
@@ -180,7 +180,7 @@
 - **S5.3 [机器判：verify-subpackage-purity.mjs]** 禁止边：子包 → 子包、子包 → 主包任何 value import、
   子包 → 共享内核的第二次持有（共享内核只许主包一份）。
   - **受控例外（宿主装载面，2026-10-16 P-F 三格出户起）**：主包门面按**行名（裸包名）** value import
-    出户组件（`lib/index.js` 的 `import { applyImpl as … } from 'dsh-plugin-wallpaper-engine-<pkg>'`）
+    出户组件（`lib/index.js` 的 `import { applyImpl as … } from 'dsh-we-slim-<pkg>'`）
     **不属**跨包通道 —— 它是门面按组件名加载实现的**宿主装载面**；跨包通道只有
     `ctx.wallpaperEngineHost`（S5.1 / S5.2）。该边规格两态承接：开发期 = 根 `devDependencies` 的
     `file:packages/<pkg>`（S8.1），发布期 = 主包 `dependencies` 的**同号精确版**（S8.2）。

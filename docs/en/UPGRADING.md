@@ -16,7 +16,7 @@ Older upgrade steps are in [`CHANGELOG.md`](./CHANGELOG.md); installation and up
 ### The correct update order
 
 1. **Bring the DSH kernel to the `engines.dsh` floor in `package.json` first** (currently the DSH 0.2 kernel, including 0.2.0-rc.1/rc.2): on the official desktop (DeepSeek Harness) check for updates via the top-bar version info, or grab the installer from [GitHub Releases](https://github.com/anywhere-labs/dsh-desktop/releases);
-2. **Then update this plugin**: `dsh plugin --profile web add dsh-plugin-wallpaper-engine` (or click update in the plugin market);
+2. **Then update this plugin**: `dsh plugin --profile web add dsh-we-slim` (or click update in the plugin market);
 3. **dsh-better-sidebar has no version requirement**: if installed, bringing it to the latest (`dsh plugin --profile web add dsh-better-sidebar@latest`) is still a good idea.
 
 > 💡 Also update your **other DSH plugins at the same time**: older plugins may fail to load outright on

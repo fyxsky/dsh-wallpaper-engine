@@ -16,7 +16,7 @@
 前置：**DSH 0.2 内核**、**Node.js ≥ 22.12.0**，以及已安装的 Wallpaper Engine（只有 WE 壁纸需要）。
 
 ```sh
-dsh plugin --profile web add dsh-plugin-wallpaper-engine
+dsh plugin --profile web add dsh-we-slim
 ```
 
 桌面端把 `web` 改为 `desktop`。安装后打开 **设置 → 壁纸引擎 → 壁纸库** 选择壁纸；聊天顶部也可以从吉祥物拉绳进入壁纸仓库。

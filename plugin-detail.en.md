@@ -16,7 +16,7 @@ Bring your local **Wallpaper Engine** Scene, Web and video wallpapers into the D
 Requirements: a **DSH 0.2 kernel**, **Node.js ≥ 22.12.0**, and Wallpaper Engine installed (only needed for WE wallpapers).
 
 ```sh
-dsh plugin --profile web add dsh-plugin-wallpaper-engine
+dsh plugin --profile web add dsh-we-slim
 ```
 
 On the desktop build, replace `web` with `desktop`. Then open **Settings → Wallpaper Engine → Wallpaper library**; you can also pull the mascot's rope at the top of the chat to open the wallpaper drawer.

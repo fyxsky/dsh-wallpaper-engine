@@ -87,14 +87,14 @@
 
 > The first release shipped as a **complete eight-package release set**: the main package and its
 > seven subpackages share one version and go up together, and the main manifest pins each child to an
-> **exact version** — so installing the single name `dsh-plugin-wallpaper-engine` pulls all eight.
+> **exact version** — so installing the single name `dsh-we-slim` pulls all eight.
 > `package.json` `version` `1.3.3` → `1.4.0` (minor: the first official release after the package split).
 > **The host half changed ⇒ restart `dsh web` after upgrading; client-only parts just need a page refresh.**
 
 #### The eight-package release set goes to npm for the first time (2026-10-22)
 
-- **`dsh-plugin-wallpaper-engine` plus its seven subpackages ship together at `1.4.0`** — the first release where "one package name installs all eight" is actually true on npm (1.3.3 and earlier published the main package only; the subpackages existed in the source tree alone). Install with `dsh plugin --profile <p> add dsh-plugin-wallpaper-engine` or `npm i dsh-plugin-wallpaper-engine`; the seven children resolve as **exact-version** runtime dependencies, so nobody installs them by hand.
-- **The order cannot be flipped**: the seven children first, the main package last. Shipping the main package while a child is missing makes a user's install fail **on their own machine** with `ERR_PNPM_FETCH_404 … installing the dependencies of dsh-plugin-wallpaper-engine@1.4.0` and roll back entirely (measured). The release loop follows `release-set.json`'s `publishOrder` and stops at the first failure.
+- **`dsh-we-slim` plus its seven subpackages ship together at `1.4.0`** — the first release where "one package name installs all eight" is actually true on npm (1.3.3 and earlier published the main package only; the subpackages existed in the source tree alone). Install with `dsh plugin --profile <p> add dsh-we-slim` or `npm i dsh-we-slim`; the seven children resolve as **exact-version** runtime dependencies, so nobody installs them by hand.
+- **The order cannot be flipped**: the seven children first, the main package last. Shipping the main package while a child is missing makes a user's install fail **on their own machine** with `ERR_PNPM_FETCH_404 … installing the dependencies of dsh-we-slim@1.4.0` and roll back entirely (measured). The release loop follows `release-set.json`'s `publishOrder` and stops at the first failure.
 - **A GitHub Release must carry all eight tarballs plus `release-set.json`**; a main-only tgz is a package nobody can install. Offline installs go through `npm run install:release -- --set <dir> --profile <name> --dsh-home <dir> --app-closed`, which pins the seven children to the sibling tarballs via profile `overrides`.
 - A new hard guard, `test/verify-release-set.mjs`, packs the set for real and inspects the eight tarballs' bytes: the main manifest must pin all seven children to their exact versions, the main tarball must carry no development directories, and every subpackage tarball must contain the browser half its own `exports['./client']` points at. The procedure lives in [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
 

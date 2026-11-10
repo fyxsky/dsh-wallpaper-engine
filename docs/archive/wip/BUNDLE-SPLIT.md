@@ -39,7 +39,7 @@
 > 行号必漂，一律不写。**状态**：进行中（住 `docs/wip/`，收口与归档见 §7.5 的 P-E）。
 
 **基线**：现行 `main` 相对 `origin/main` **behind 0**（复算：`git rev-list --left-right --count origin/main...HEAD`）。
-**拆包起点** = **单包 + 4 个插件行**（`dsh-plugin-wallpaper-engine`，即 `cordis.patch.yml` 的那四条 `insert`）；
+**拆包起点** = **单包 + 4 个插件行**（`dsh-we-slim`，即 `cordis.patch.yml` 的那四条 `insert`）；
 **现行形态**（2026-10-17，PR #5 之后）= **主包 + 7 个子包** = 3 个独立子包 `packages/{fx,parallax,fonts}` + 3 个已出户的组件包 `packages/{about-notice,mascot-avatar,wallpaper}` + 第 7 个**可选**子包 `packages/pet-link`（PR #5，merge `617b2b43`；安装器形态见 §7.10）（复算：`git ls-files 'packages/*/package.json'`，2026-10-18 = 7 条；`test/tools/packages.mjs` 的 `FLOORS.packages` = 7）⇒ patch 共**八条** `insert`
 （1 条主行 + 3 条组件包行 + 4 条子包行 = 8；复算：数根 `cordis.patch.yml` 的 `- id:`，或 `node test/tools/host-route-index.mjs`；见 §7.1 的实况块、§7.8 与 §7.10）。
 **目标形态** = **主包 + N 个子插件包**（版本一致、一次安装落地、代码各自成包、第三方代码除外）。
@@ -52,7 +52,7 @@
 
 | 包 | 职责 | 备注 |
 |---|---|---|
-| **主包** `dsh-plugin-wallpaper-engine` | 设置面板、配置文件、WE 壁纸获取、多平台识别与差异处理、**留给其它插件的钩子**、以及"大部分组件都依赖的基础模块" | 唯一被"一次安装"的名字 |
+| **主包** `dsh-we-slim` | 设置面板、配置文件、WE 壁纸获取、多平台识别与差异处理、**留给其它插件的钩子**、以及"大部分组件都依赖的基础模块" | 唯一被"一次安装"的名字 |
 | **壁纸子插件** | WE 壁纸与自定义导入壁纸的**渲染**；壁纸库 + 播放-画面里的配置项、声音、省电 | 以现在的 `packages/media-bridge`（P-F 批 1c 出户，原 `lib/components/media-bridge`）为基础，**大改** |
 | **UI 子插件** | 玻璃面板、侧边栏圆角等**前端 UI**；外观里的配置项 | **字体除外** |
 | **字体系统子插件** | 字体集 / 排版 / 应用 | 已可自成一系；**目标形态 = 整个「字体自定义」配置类**（宿主半边 + 浏览器半边 + 外观页签字体节 + 字体键所有权），**定案 A**（2026-10-15，§7.8） |
@@ -170,11 +170,11 @@ Cordis 的级联只有**一个判据**：`name in fiber.inject`（`cordis/src/re
 
 | 行 id | 行 `name`（现行 = 根 `cordis.patch.yml` 的**真名**） |
 |---|---|
-| `wallpaper-engine` | `dsh-plugin-wallpaper-engine` |
-| `wallpaper-engine-about-notice` | `dsh-plugin-wallpaper-engine-about-notice`（P-F 前 = `dsh-plugin-wallpaper-engine/about-notice`） |
-| `wallpaper-engine-mascot-avatar` | `dsh-plugin-wallpaper-engine-mascot-avatar`（P-F 前 = `…/mascot-avatar`） |
-| `wallpaper-engine-media-bridge` | `dsh-plugin-wallpaper-engine-media-bridge`（P-F 前 = `…/media-bridge`） |
-| `wallpaper-engine-pet-link` | `dsh-plugin-wallpaper-engine-pet-link`（PR #5 新增；可选行、安装器形态 `S3.8a`，见 §7.10） |
+| `wallpaper-engine` | `dsh-we-slim` |
+| `wallpaper-engine-about-notice` | `dsh-we-slim-about-notice`（P-F 前 = `dsh-we-slim/about-notice`） |
+| `wallpaper-engine-mascot-avatar` | `dsh-we-slim-mascot-avatar`（P-F 前 = `…/mascot-avatar`） |
+| `wallpaper-engine-media-bridge` | `dsh-we-slim-media-bridge`（P-F 前 = `…/media-bridge`） |
+| `wallpaper-engine-pet-link` | `dsh-we-slim-pet-link`（PR #5 新增；可选行、安装器形态 `S3.8a`，见 §7.10） |
 
 > 本表的**现行真源** = 根 `cordis.patch.yml`（共 8 条 `- id:`，复算：读该文件；`fx` / `parallax` / `fonts` 三行同用真名，
 > 因它们**从未有过子路径旧名**、不涉及兼容，未列入上表的"旧 → 新"对照）。
@@ -189,15 +189,15 @@ Cordis 的级联只有**一个判据**：`name in fiber.inject`（`cordis/src/re
    本机 desktop profile 里就有 `wallpaper-engine` 那一条 —— 见附录 D 的复算命令）。
 
 **范围勘误（2026-10-16，实测 —— 不改上面两条硬事实，只缩它们的适用范围）**：上面两条只对**已发布过的行**成立。
-已发布面**只有主行一行**：`npm view dsh-plugin-wallpaper-engine time --json`（`1.3.3` = `2026-10-15T09:27:18Z`）
-＋ `npm pack dsh-plugin-wallpaper-engine@1.3.3` 解包后 `cordis.patch.yml` 里只有 `- id: wallpaper-engine`、
+已发布面**只有主行一行**：`npm view dsh-we-slim time --json`（`1.3.3` = `2026-10-15T09:27:18Z`）
+＋ `npm pack dsh-we-slim@1.3.3` 解包后 `cordis.patch.yml` 里只有 `- id: wallpaper-engine`、
 包内**没有** `lib/components/`；三个组件真名在 registry **全 E404**（复算见 §15.7）。
 ⇒ **三条组件行从未出现在任何发行物里 ⇒ 不存在"曾关过该组件"的用户**（用户口径，2026-10-16）
 ⇒ 本节"保留 `id` 与 `name`"**对它们不适用**：§15 的搬迁可以把行 `name` 直接改成**真实包名**
 （`id` 仍按本节末尾"先把 id 定死"保持不变），**零迁移代价**成立。上面那张表里三行组件行原来的"现状（必须原样保留）"随之作废（表中已改成真名）。
 
 **✅ 已作废（2026-10-16）**：组件行**从未发布** ⇒ 无老用户 ⇒ 无兼容负担，本节上面那条"保留 `id` 与 `name`"对它们不再适用（§15.1 / §15.2 / §14 D-15）。
-三行 `name` 已直接改为真名 `dsh-plugin-wallpaper-engine-<sub>`，`id` 冻结不变（见本节末尾"先把 `id` 定死"）；主包 `exports` 的 `./<c>` 子路径三连已随 P-F 出户删除，该兼容通路不再存在。
+三行 `name` 已直接改为真名 `dsh-we-slim-<sub>`，`id` 冻结不变（见本节末尾"先把 `id` 定死"）；主包 `exports` 的 `./<c>` 子路径三连已随 P-F 出户删除，该兼容通路不再存在。
 （原文的"老用户零迁移"论证与"新行才用真实包名不采纳"一句随之作废，别再按它推演。）
 
 **新增子包**（字体 / 点击效果 / 3D / UI / 壁纸）用**真实包名**做行 `name`，且**先把 `id` 定死**（一旦发布不许改 id）。
@@ -691,7 +691,7 @@ Cordis 的级联只有**一个判据**：`name in fiber.inject`（`cordis/src/re
 
 ### 7.10 落地账 · 第七包 `pet-link`（PR #5，2026-10-17）
 
-> **位置**：**可选**桌宠联动**完整子包** `packages/pet-link/`，与 §7.1 的 P-A 子包**同形**（自带 `package.json` / `cordis.patch.yml` / `icon.png` / `locale/{en,zh}.json` / `lib/` / 浏览器产物），行 `wallpaper-engine-pet-link`（`id` 冻结，`name` = 真名 `dsh-plugin-wallpaper-engine-pet-link`）。
+> **位置**：**可选**桌宠联动**完整子包** `packages/pet-link/`，与 §7.1 的 P-A 子包**同形**（自带 `package.json` / `cordis.patch.yml` / `icon.png` / `locale/{en,zh}.json` / `lib/` / 浏览器产物），行 `wallpaper-engine-pet-link`（`id` 冻结，`name` = 真名 `dsh-we-slim-pet-link`）。
 > **不属 §7.9 的 P-F 组件行统一**：它**从来不是** `lib/components/<sub>/` 的一格，而是独立功能子包（"一功能 = 一包 + 一条行"的另一实例）；P-F 讲的三格与它无账目关系。
 
 - **历史**：功能 `ee30a85c`（2026-10-16，含 12 条 pet 判据入链）→ PR #5 merge `617b2b43`（2026-10-17）→ 浏览器半边 `491282f7`（2026-10-17）**收口成一般形态**（子包自出产物）→ `e0780de6`（合并收尾：守卫登记 / 生成物重算 / `SUBPACKAGE-GRAPH` 与 ADR 同步）→ `5f87e698`（链地板收到实测 + `test/verify-pet-link.mjs`）。
@@ -731,10 +731,10 @@ Cordis 的级联只有**一个判据**：`name in fiber.inject`（`cordis/src/re
 >    `prepareProfilePatches(…, parentURL = dirname(absoluteConfigPath) + '/')`）—— **裸名与 `./…` 相对名同底**：
 >    裸名 → `<profile>/node_modules/<name>`；相对名 → `<profile>/<相对路径>`。
 > 3. **真机解析探针**（`createRequire('<profile>/cordis.yml')`，web profile）：
->    `dsh-plugin-wallpaper-engine` → `D:\dsh-wallpaper-engine\lib\index.js` ✓；
->    `dsh-plugin-wallpaper-engine/about-notice` ✓（**这就是现有 4 行今天真能工作的机制**）；
->    `dsh-plugin-wallpaper-engine-fx` → **MODULE_NOT_FOUND** ✗；
->    `dsh-plugin-wallpaper-engine/packages/fx/lib/index.js` → **ERR_PACKAGE_PATH_NOT_EXPORTED** ✗
+>    `dsh-we-slim` → `D:\dsh-wallpaper-engine\lib\index.js` ✓；
+>    `dsh-we-slim/about-notice` ✓（**这就是现有 4 行今天真能工作的机制**）；
+>    `dsh-we-slim-fx` → **MODULE_NOT_FOUND** ✗；
+>    `dsh-we-slim/packages/fx/lib/index.js` → **ERR_PACKAGE_PATH_NOT_EXPORTED** ✗
 >    （`exports` 是**封闭映射** ⇒ 经包名的深层路径一律走不通）；
 >    `./packages/fx/lib/index.js` → 落到 `<profile>/packages/…`，**不存在** ✗。⇒ **原文那条备选口径（以及 §8.3 里
 >    照抄它的注释）是错的，作废**。
@@ -742,25 +742,25 @@ Cordis 的级联只有**一个判据**：`name in fiber.inject`（`cordis/src/re
 >    `"link:D:/dsh-wallpaper-engine": {"url":"file:///D:/dsh-wallpaper-engine","dependencies":{}}`
 >    —— **空依赖表**。⇒ 开发期 profile 的 `node_modules` **永远不会**自己出现子包真名。
 > 5. **结论 / 开发期口径：行名不改（裸真名），改用开发期 junction**。在 `<profile>/node_modules/` 下为每个
->    子包建目录 junction：`dsh-plugin-wallpaper-engine-<pkg>` → `D:/dsh-wallpaper-engine/packages/<pkg>`，
+>    子包建目录 junction：`dsh-we-slim-<pkg>` → `D:/dsh-wallpaper-engine/packages/<pkg>`，
 >    与发布后 npm/pnpm 的 hoist 布局**同形** ⇒ **同一份 `cordis.patch.yml`（裸真名）开发期与发布期都成立**，
 >    不需要"开发期行名 ↔ 发布期行名"两套。已实证：junction + `createRequire('<profile>/cordis.yml')` +
 >    真 ESM `import()` 全通（脚本 `.integration-notes/scratch/spike-junction.mjs`）。
->    **备选（不推荐）**：开发期行名写 `./node_modules/dsh-plugin-wallpaper-engine/packages/<pkg>/lib/index.js`
+>    **备选（不推荐）**：开发期行名写 `./node_modules/dsh-we-slim/packages/<pkg>/lib/index.js`
 >    —— 相对名确实绕开 `exports` 且经符号链接能到仓库，但**发布期该路径不存在**，会把 patch 劈成两套。
 >    **代价照付**：junction 不在 profile 的 `.modules.yaml` / `.package-map.json` 里 ⇒ profile 侧
 >    `pnpm install` 之后要重建（写成一条可重跑的脚本，别手点）。
 > ⇒ **P-A 的"三行都在场"现在可以当成已成立**（前提：先按第 5 条建 junction）。
 >
 > ~~**追加（2026-10-15，P-A 落盘时的实测缺口）**：`scripts/dev-link-subpackages.mjs` 只建**子包真名**的 junction；
-> 子包体内若以**裸名**引用主包（`dsh-plugin-wallpaper-engine`），Node 的**包内自引用**并不因此可用 ——
-> 仍需要一条**仓库根 self-link**（`node_modules/dsh-plugin-wallpaper-engine` → 仓库根）。这条今天没建 ⇒
+> 子包体内若以**裸名**引用主包（`dsh-we-slim`），Node 的**包内自引用**并不因此可用 ——
+> 仍需要一条**仓库根 self-link**（`node_modules/dsh-we-slim` → 仓库根）。这条今天没建 ⇒
 > `packages/fonts` 的宿主入口**在仓内不能直接跑**（`packages/fonts/lib/index.js:33` 自报同一件事）。
 > 归属：P-B（§7.8 层 1 的第三件前置）。~~ ⇒ **✅ 已作废，被紧邻的下一条取代**（同一天，通道改走 ① Cordis Service）。
 >
 > **追加（2026-10-15，已消除）**：跨包通道改走 ① **Cordis Service**（§5.1）后，子包宿主半边**零主包说明符**
 > （`test/verify-subpackage-purity.mjs` 的 `ROOT_SPEC_ALLOW` 已收紧为零）⇒ 这条 self-link 边不存在了：
-> 根 `devDependencies` 的自链 `"dsh-plugin-wallpaper-engine": "file:."` 已删，`scripts/dev-link-subpackages.mjs`
+> 根 `devDependencies` 的自链 `"dsh-we-slim": "file:."` 已删，`scripts/dev-link-subpackages.mjs`
 > 的 `rootSelfLink()` 与 `--no-self-link` 同步删除；`file:packages/<pkg>` 三条**保留**。
 
 ### 8.2 每个子包的清单（照抄用）
@@ -784,17 +784,17 @@ Cordis 的级联只有**一个判据**：`name in fiber.inject`（`cordis/src/re
 ```yaml
 - insert:
     - id: wallpaper-engine
-      name: 'dsh-plugin-wallpaper-engine'
+      name: 'dsh-we-slim'
     # 既有组件行：id 与 name 一个字都不改（§3）
     - id: wallpaper-engine-about-notice
-      name: 'dsh-plugin-wallpaper-engine/about-notice'
+      name: 'dsh-we-slim/about-notice'
     # 新子包：行名 = 真实包名，**开发期与发布期同一份**（§8.1 spike 结论：本版 DSH 不传
     # bareModuleBaseUrl ⇒ 行名一律从 <profile>/cordis.yml 旁起算；开发期靠 §8.1 第 5 条的
     # junction 让这个名字出现在 profile/node_modules 里，不要改行名）
     - id: wallpaper-engine-fonts
-      name: 'dsh-plugin-wallpaper-engine-fonts'
+      name: 'dsh-we-slim-fonts'
     - id: wallpaper-engine-fx
-      name: 'dsh-plugin-wallpaper-engine-fx'
+      name: 'dsh-we-slim-fx'
 ```
 
 ---
@@ -881,7 +881,7 @@ S5 之前"宿主半边"只有一条线：壁纸包拿 `wallpaperEngineHost` 的�
 | 13 | `test/verify-settings-schema-exports.mjs` 的**扫描面自检**（`gitViewDiff` + `allowedExtra`） | 只豁免**一个**产物 `lib/client.js` ⇒ P-A 的两个子包产物（`packages/<pkg>/lib/client.<pkg>.js`，被 `.gitignore` 排除）一律按"脏面"判红 | ✅ **已修（2026-10-15）**：豁免名单改成**从各包 `package.json` 的 `exports['./client']` 现算**，并加"逐条来自包清单（含 `dsh.client`）"自检 + "同族但不在名单里的产物名仍判红"负对照 |
 | 14 | 根清单 `dependencies`（P-A 把三条子包依赖写进清单、**没动** `package-lock.json`） | 「清单改了 lock 必须同步」才是**能装**的声明 —— `npm ci` 把清单当理想树去 registry 解析；未发布的包锁不出来 | ✅ **已修（2026-10-15）**：① 子包未发布期间**不写进 `dependencies`**，改用 `devDependencies` + `file:packages/<pkg>` 开发期链接（`npm ci` **不 omit dev** ⇒ 干净检出装出链接；dev 不进发布清单 ⇒ 用户侧看不到 `file:` 规格；发布形态仍按 §12 第 1 条）；② `test/verify-package-publish.mjs` 新增 ⑧「根清单 ⇄ `package-lock.json` 同步」判据（含覆盖面自检 + 五种漂移负对照）—— 实测把 `3842584e` 的清单放回去，⑧ 立刻红并点出三条 `锁里缺 …@1.3.3` |
 | 15 | 三条子包依赖从清单删掉后，**运行期**的启动自检在干净检出里红（`lib/subpackage-boot.js:226`「子包启动自检失败：3 个子包行解析不到」），CI `verify` 第 7 步（`test/verify-scene.mjs`）短路 | dev 期子包必须**装得进 `node_modules`**：`devDependencies` + `file:packages/<pkg>`（见 #14） |
-| 16 | 三个子包的宿主半边都 `import 'dsh-plugin-wallpaper-engine/subpackage-boot.js'`（`packages/fx/lib/index.js:22` / `packages/parallax/lib/index.js:23` / `packages/fonts/lib/index.js:40`）⇒ 干净检出里**主包自己也不在 `node_modules`**：第 32 步（`test/verify-route-index.mjs` ⑤ 真跑 `apply()`）当场 `ERR_MODULE_NOT_FOUND: Cannot find package 'dsh-plugin-wallpaper-engine' imported from packages/fonts/lib/index.js` | ✅ **已消除（2026-10-15，跨包改走 ① Cordis Service）**：子包宿主半边**零主包说明符** ⇒ 这条解析边不存在了 ⇒ 根 `devDependencies` 的 `"dsh-plugin-wallpaper-engine": "file:."` **自链已删**，`scripts/dev-link-subpackages.mjs` 的 `rootSelfLink()` 与 `--no-self-link` 开关同步删除。子包真名的 `file:packages/<pkg>` 链接**保留**（#15 的"dev 期子包必须装得进 `node_modules`"仍在） |
+| 16 | 三个子包的宿主半边都 `import 'dsh-we-slim/subpackage-boot.js'`（`packages/fx/lib/index.js:22` / `packages/parallax/lib/index.js:23` / `packages/fonts/lib/index.js:40`）⇒ 干净检出里**主包自己也不在 `node_modules`**：第 32 步（`test/verify-route-index.mjs` ⑤ 真跑 `apply()`）当场 `ERR_MODULE_NOT_FOUND: Cannot find package 'dsh-we-slim' imported from packages/fonts/lib/index.js` | ✅ **已消除（2026-10-15，跨包改走 ① Cordis Service）**：子包宿主半边**零主包说明符** ⇒ 这条解析边不存在了 ⇒ 根 `devDependencies` 的 `"dsh-we-slim": "file:."` **自链已删**，`scripts/dev-link-subpackages.mjs` 的 `rootSelfLink()` 与 `--no-self-link` 开关同步删除。子包真名的 `file:packages/<pkg>` 链接**保留**（#15 的"dev 期子包必须装得进 `node_modules`"仍在） |
 
 ### 10.2 顺序纪律
 
@@ -920,7 +920,7 @@ S5 之前"宿主半边"只有一条线：壁纸包拿 `wallpaperEngineHost` 的�
 
 ## 12. 发布与升级流程（版本一致）
 
-1. **版本**：主包与所有子包**同号**（同一个 `version`）；主包以**精确版本**依赖子包（不用 `^`）——⚠️ 这是**发布形态**：子包发布到 npm **之前**不许把这行写进主包 `dependencies`（未发布的包锁不出来 ⇒ 干净检出 `npm ci` 直接 E404，见 §10.1 #14 / §13 #15）。**开发期形态**（子包未发布，且仓库要能干净检出后自举）＝ 三个子包装在根 `devDependencies` 里用 `file:packages/<pkg>` 链接（`npm ci` 不 omit dev ⇒ 装得出 `node_modules` 链接；devDeps 不进发布清单 ⇒ 用户侧看不到 `file:` 规格），~~另加主包**自链** `"dsh-plugin-wallpaper-engine": "file:."`~~（三个子包的宿主半边曾从主包 `import` 冻结键表；2026-10-15 改走 ① Service 后**自链已删**，见 §10.1 #16）；两种形态都得**同一次提交重算 `package-lock.json`**；
+1. **版本**：主包与所有子包**同号**（同一个 `version`）；主包以**精确版本**依赖子包（不用 `^`）——⚠️ 这是**发布形态**：子包发布到 npm **之前**不许把这行写进主包 `dependencies`（未发布的包锁不出来 ⇒ 干净检出 `npm ci` 直接 E404，见 §10.1 #14 / §13 #15）。**开发期形态**（子包未发布，且仓库要能干净检出后自举）＝ 三个子包装在根 `devDependencies` 里用 `file:packages/<pkg>` 链接（`npm ci` 不 omit dev ⇒ 装得出 `node_modules` 链接；devDeps 不进发布清单 ⇒ 用户侧看不到 `file:` 规格），~~另加主包**自链** `"dsh-we-slim": "file:."`~~（三个子包的宿主半边曾从主包 `import` 冻结键表；2026-10-15 改走 ① Service 后**自链已删**，见 §10.1 #16）；两种形态都得**同一次提交重算 `package-lock.json`**；
 2. **安装**：用户只装主包一个名字（Web / 工具 / CLI 都行）；
 3. **升级**：`dsh plugin add <主包>@<新版本>` + **重启**（无 `update_bundle`，I8）；
    或 `dsh plugin --profile <p> remove <主包>` 后重装；
@@ -950,7 +950,7 @@ S5 之前"宿主半边"只有一条线：壁纸包拿 `wallpaperEngineHost` 的�
 | 13 | **把"开关"当"更新"用**（开关只改配置与在场性，不重读源码、不换依赖版本 ⇒ "开关能开、功能还是旧的"被读成修复无效） | §1.1 的两条档位边界 + **§11 的边界表**（用户文档以此为准）；验收里用 §7.6 第 4 条把"开关生效"与"已重启"分开 |
 | 14 | **子包只有宿主半边、UI 留在主包** ⇒ 关掉该行只撤路由、**界面还在**（`C1` 子路径行不参与客户端扫描） | §2.4 的粒度事实 + §5.3 的表态：带 UI 的功能族要么自带客户端半边，要么明说它不可单独开关。~~**本风险当前就是实况**：`packages/fonts` 只有宿主半边~~ ✅ **已消解（2026-10-16，P-C 第一刀）**：fonts 已自带浏览器半边与产物 ⇒ 关行即不再画字体节（§7.3 落地账 / §7.8 层 3）。本仓今天**没有**"只有宿主半边却带 UI"的包；该形态本身仍合法（宿主侧功能为主的包） |
 | 15 | **清单声明了装不上的依赖**（子包尚未发布到 npm 期间，主包 `dependencies` 写了它们）⇒ 干净检出 `npm ci` 在 **install 步**就 E404、CI 两条腿同时红；本机因 `node_modules` 早已存在而完全看不见（同 §10.2 第 5 条的"本机 ≠ CI"） | 子包未发布期间**不写进 `dependencies`**，改为 `devDependencies` + `file:packages/<pkg>`（`npm ci` 装得出链接、dev 不进发布清单，§12 第 1 条 / §10.1 #14）；`verify-package-publish` ⑧ 的清单⇄锁同步判据（漂移 ⇒ 提交前就红）。**修完仍会红两处**：删声明后运行期启动自检在第 7 步红（§10.1 #15）、主包自链缺失在第 32 步红（§10.1 #16）—— 两处都已按开发期形态修好（`3f6c9109` + 本次） |
-| 16 | **子包宿主半边要从主包 `import`**（`dsh-plugin-wallpaper-engine/subpackage-boot.js`，fx/parallax/fonts 三处）：干净检出里主包不在自己的 `node_modules`（npm 不会把根包自链），解析逐级向上 ⇒ `ERR_MODULE_NOT_FOUND`。本机因 `scripts/dev-link-subpackages.mjs` 建过链接而完全看不见（同 §10.2 第 5 条） | ✅ **已消除（2026-10-15，跨包改走 ① Cordis Service）**：三处裸名 import 全部改为 `inject: ['wallpaperEngineHost']` + `ctx.wallpaperEngineHost` ⇒ 根 `devDependencies` 的自链已删、`rootSelfLink()` / `--no-self-link` 同步删除。历史缓解（自链 `"file:."`，npm 装成指向仓库根的 junction，探针 `%TEMP%\selflink-probe`）不再需要 |
+| 16 | **子包宿主半边要从主包 `import`**（`dsh-we-slim/subpackage-boot.js`，fx/parallax/fonts 三处）：干净检出里主包不在自己的 `node_modules`（npm 不会把根包自链），解析逐级向上 ⇒ `ERR_MODULE_NOT_FOUND`。本机因 `scripts/dev-link-subpackages.mjs` 建过链接而完全看不见（同 §10.2 第 5 条） | ✅ **已消除（2026-10-15，跨包改走 ① Cordis Service）**：三处裸名 import 全部改为 `inject: ['wallpaperEngineHost']` + `ctx.wallpaperEngineHost` ⇒ 根 `devDependencies` 的自链已删、`rootSelfLink()` / `--no-self-link` 同步删除。历史缓解（自链 `"file:."`，npm 装成指向仓库根的 junction，探针 `%TEMP%\selflink-probe`）不再需要 |
 
 ### 13.1 拆包整线（`6385b62e`）审查的**未完成项**
 
@@ -1000,7 +1000,7 @@ S5 之前"宿主半边"只有一条线：壁纸包拿 `wallpaperEngineHost` 的�
 | D-12 | **开关档位 / 重启边界**（"不用重启"的射程） | **已定案（本轮细化）**：开关只承诺**能力**（同行切换宿主半边 + 浏览器可见面，§1.1 边界 1、§11）；**代码 / 版本 / 清单 / 增删行一律重启**（`U3` / `R3` / `I8`，§1.1 边界 2）。判据 = §7.6 第 4 条 |
 | D-13 | **主包被关掉时的用户可见语义**（§6.5） | ✅ **已定案（2026-10-15，用户口径）：B 明确连坐** —— 主包被关掉 = 整包被关掉，理由是大批组件在机制上依赖主包（配置模板逻辑 / `applyComponent` 门面 / §5.1 ② 的子包→主包 value import），见 §6.5 的表态块。**残余开口** ✅ **已裁决（2026-10-16）**：不自动撤子包行（`inject: ['wallpaperEngineHost']` 级联 park 已覆盖"半死状态"，自动撤行撞 §2.4 / `I8`）；"整族已停用"由主包行状态面渲染（复用 D3③）；判据归 §7.6 第 4 条整族实例 —— 见 §6.5 的 2026-10-16 裁决块 |
 | D-14 | **字体系统子插件的收口形态** | **定案（2026-10-15，用户口径 A）：目标 = 整个「字体自定义」配置类**（宿主半边 + 浏览器半边 + 外观页签字体节 + 字体键所有权）；**不必现在完成** —— 收口线 = P-B 的能力 + P-C（§6.1 / §6.3 表态）+ P-D（§6.4 预设）之后，见 §7.8 |
-| D-15 | **组件行统一后的行名** | ✅ **已定案（2026-10-16，用户口径）：组件行从未发布 ⇒ 沿用清单里已有的真名 `dsh-plugin-wallpaper-engine-<sub>` 做行 `name`，`id` 不变，零迁移**（§15.1 / §3 范围勘误）。**P-D 阶段1（2026-10-18）唯一例外**：`wallpaper` 一格随包改名，行 `id` 由「`wallpaper-engine-` + 旧目录名」改为 `wallpaper-engine-media-bridge` —— 理由 = S4.3 强制 `id = wallpaper-engine-<目录名>`，且该行**从未发布** ⇒ 仍是零迁移（落地账见 §7.4） |
+| D-15 | **组件行统一后的行名** | ✅ **已定案（2026-10-16，用户口径）：组件行从未发布 ⇒ 沿用清单里已有的真名 `dsh-we-slim-<sub>` 做行 `name`，`id` 不变，零迁移**（§15.1 / §3 范围勘误）。**P-D 阶段1（2026-10-18）唯一例外**：`wallpaper` 一格随包改名，行 `id` 由「`wallpaper-engine-` + 旧目录名」改为 `wallpaper-engine-media-bridge` —— 理由 = S4.3 强制 `id = wallpaper-engine-<目录名>`，且该行**从未发布** ⇒ 仍是零迁移（落地账见 §7.4） |
 | D-16 | `visibility.js`（97 行）归属 | ✅ **已定案并落地（2026-10-16）**：移到 `lib/component-visibility.js`（顶层语义名，与 `lib/inventory.js` 同族），`lib/components/` 目录删除；`lib/index.js` 的再导出位置不变（§15.6 P-F-2） |
 | D-17 | 组件浏览器半边是否本轮搬进包 | 待定（§15.6 P-F-3；剩余范围 = `about-notice` / `mascot-avatar` 两批 —— `media-bridge` 已改名 `wallpaper`，其浏览器半边已由 P-D S3a–S3d（2026-10-18）交付六节渲染器，不再占 P-F 账） |
 | D-18 | **统一后的发布形态排期** | 待定（§15.6 P-F-4；统一 ⇒ 主包必须**精确依赖**这 3 个包 ⇒ ADR-0014 `S8.2`「发布形态尚未执行过」由"没做过"变"必须做"，§12 的发布顺序要排期） |
@@ -1029,10 +1029,10 @@ S5 之前"宿主半边"只有一条线：壁纸包拿 `wallpaperEngineHost` 的�
 
 ### 15.1 前提勘误：组件行**从未发布** ⇒ 零迁移代价
 
-- **实测**：已发布面**只有主行一行** —— `npm view dsh-plugin-wallpaper-engine time --json` 显示
-  `1.3.3` 发布于 `2026-10-15T09:27:18Z`；`npm pack dsh-plugin-wallpaper-engine@1.3.3` 解包后
+- **实测**：已发布面**只有主行一行** —— `npm view dsh-we-slim time --json` 显示
+  `1.3.3` 发布于 `2026-10-15T09:27:18Z`；`npm pack dsh-we-slim@1.3.3` 解包后
   `cordis.patch.yml` 里只有 `- id: wallpaper-engine`（唯一 `- insert:` 块内），且包内**没有** `lib/components/`。
-- 三条组件行今天用**子路径名**引用，但这三个**真包名**（`dsh-plugin-wallpaper-engine-<sub>`）在 registry **全部 E404**
+- 三条组件行今天用**子路径名**引用，但这三个**真包名**（`dsh-we-slim-<sub>`）在 registry **全部 E404**
   ［复算：`npm view <name> version`］⇒ 它们从未被发布，也从未被 `node_modules` 解析过。
 - ⇒ **不存在"曾关过该组件"的用户**（用户口径，2026-10-16）：§3 的"保留 `id` 与 `name`"
   （`writePluginEnabled(filename, id, name, enabled)` 按 **id+name** 匹配覆盖项）**对这一族不适用**。
@@ -1050,7 +1050,7 @@ S5 之前"宿主半边"只有一条线：壁纸包拿 `wallpaperEngineHost` 的�
 - ③ 的**副作用必须是知情选择**：ADR-0013 **D16 / D17**（`:192-197`）明确"不做浏览器侧关掉即不下载 /
   不做每组件一格开关"，但把浏览器半边搬进包 ⇒ 客户端 graph row 天然是**包级**的，等于**顺带拿到**这两件事的一半。
   同时它把"关一行会不会留下界面"从"不可能"变成"必须判"（§13 #14 的形态：要么自带半边，要么明说不可单独开关）。
-- 三条组件 `package.json` 的 `name` **今天已经是真包名**（`dsh-plugin-wallpaper-engine-<sub>`）。**批 1c 收口后**
+- 三条组件 `package.json` 的 `name` **今天已经是真包名**（`dsh-we-slim-<sub>`）。**批 1c 收口后**
   这句话的"半分片"部分已不成立：三格都住 `packages/<pkg>/`、都有自带 `cordis.patch.yml` 与主包 patch 的**真名行**、
   都由根 `devDependencies` 的 `file:` 链接被 `node_modules` 解析（开发期形态，§8.1）；**仍未做**的是**发布形态**
   （`dependencies` 精确版本 + 真发布，§12 / `D-18`）—— 所以准确说法是"**已出户的组件包，未发布**"。
@@ -1249,7 +1249,7 @@ S5 之前"宿主半边"只有一条线：壁纸包拿 `wallpaperEngineHost` 的�
 
 | # | 决策 | 建议 |
 |---|---|---|
-| P-F-1 | 三个包的**包名** | 沿用清单里已有的真名（`dsh-plugin-wallpaper-engine-<sub>`）；`id` 不变（§15.1） |
+| P-F-1 | 三个包的**包名** | 沿用清单里已有的真名（`dsh-we-slim-<sub>`）；`id` 不变（§15.1） |
 | P-F-2 | `visibility.js` 归属 | ✅ **已定案并落地（2026-10-16）**：移到 `lib/component-visibility.js`（顶层语义名），`lib/components/` 目录删除，`lib/index.js` 再导出位置不变 → §14 D-16 |
 | P-F-3 | 账③ 是否本轮 | 拆 2a / 2b 两批；`wallpaper` 那格已由 P-D S3a–S3d（2026-10-18）交付六节浏览器半边 → 落 §14 D-17 |
 | P-F-4 | **发布形态排期** | 统一后主包必须**精确依赖**这 3 个包 ⇒ ADR-0014 `S8.2`「发布形态尚未执行过」由"没做过"变"必须做"；按 §12 顺序（先发子包 → 主包 `dependencies` 加精确版本 + 删 `devDependencies` 的 `file:` + 重算 lock → 再发主包）。**可先只落开发期形态**（`devDependencies` + `file:packages/<pkg>`）→ 落 §14 D-18 |
@@ -1261,9 +1261,9 @@ S5 之前"宿主半边"只有一条线：壁纸包拿 `wallpaperEngineHost` 的�
 ### 15.7 复算入口
 
 ```powershell
-npm view dsh-plugin-wallpaper-engine time --json            # 已发布版本与时间（1.3.3 = 2026-10-15T09:27:18Z）
-npm pack dsh-plugin-wallpaper-engine@1.3.3                   # 解包后：patch 只有一行、无 lib/components/
-npm view dsh-plugin-wallpaper-engine-about-notice version    # 期望 E404（mascot-avatar / wallpaper 同）
+npm view dsh-we-slim time --json            # 已发布版本与时间（1.3.3 = 2026-10-15T09:27:18Z）
+npm pack dsh-we-slim@1.3.3                   # 解包后：patch 只有一行、无 lib/components/
+npm view dsh-we-slim-about-notice version    # 期望 E404（mascot-avatar / wallpaper 同）
 git grep -n "lib/components" -- lib src test scripts package.json   # 引用面（lib/client.js 是构建产物，须排除）
 node test/tools/packages.mjs            # 包 / 行 / 产物发现层（带地板与负对照）
 node test/tools/guard-targets.mjs       # 模块面（复算守卫覆盖率）

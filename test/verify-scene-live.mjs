@@ -2139,7 +2139,7 @@ const hostLib = hostLibComposed;
     // 产物自己是**按子包真名**注册的（与 patch 行名逐字相等）—— 名不对 ⇒ 客户端 require 不到。
     // 两段分开判：产物头是跨行的（load({ \n \t id: "<包名>"）—— 合成一行会认不中。
     && fxProduct.includes('__ModuleLoader__.load({')
-    && fxProduct.includes('id: "dsh-plugin-wallpaper-engine-fx"'));
+    && fxProduct.includes('id: "dsh-we-slim-fx"'));
   // ── 3D 效果（「扩展」三号模块）：同上，整族搬进 packages/parallax ──────────────────
   // 与前两族不同的设计要点：行为层**不建 DOM**（只写 CSS 变量）——"顺手 appendChild 一版"
   // 是最容易走偏的写法，所以在**产物**层面断言它没有建 DOM 的痕迹（变量型行为层是它的要点）。
@@ -2156,7 +2156,7 @@ const hostLib = hostLibComposed;
     && countOnce(parallaxProduct, 'function renderParallaxIsland(ctx)') === 1
     && parallaxProduct.includes('parallaxSmooth')
     && !parallaxProduct.includes('parallaxHost')
-    && parallaxProduct.includes('id: "dsh-plugin-wallpaper-engine-parallax"'));
+    && parallaxProduct.includes('id: "dsh-we-slim-parallax"'));
   // 负对照：两侧都要有牙 —— ① 登记被加回 INLINE_MODULES；② 子包产物里少一份实现。
   check('negative control: 登记被加回 INLINE_MODULES ⇒ 同一条判据判红',
     !/file:\s*'src\/fx-layer\.js'/.test(inlineText)

@@ -269,7 +269,7 @@ check('负对照：依赖使用判据对合成输入有牙',
   && !usedByClosure('left-pad', ['node:fs']));    // 不相关的内置不是它
 // 覆盖面：patch 抽取器真的读到了三条子包行（抽取器退化 ⇒ 这里当场红，不静默恒真）。
 check('覆盖面：patch 行名抽到了三个子包行（本判据的"加载证据"不是空集）',
-  ['dsh-plugin-wallpaper-engine-fx', 'dsh-plugin-wallpaper-engine-parallax', 'dsh-plugin-wallpaper-engine-fonts']
+  ['dsh-we-slim-fx', 'dsh-we-slim-parallax', 'dsh-we-slim-fonts']
     .every((n) => loadEvidence.includes(n)),
   patchRowNames(PATCH_TEXT).join(', '));
 // 负对照：行名确实是证据 —— 但要**同一条路径边界**（正/负两个方向都喂同一个 `usedByClosure`）。
@@ -378,7 +378,7 @@ section('⑦ 安装期不得跑任何仓库脚本（无构建钩子 + 不引用�
 // 为什么单列一条（P-A 的实际事故）：`npm ci` 第一件事是把**清单**当理想树去 registry 解析。
 // `3842584e` 把三条子包依赖写进根 `dependencies`、却没动 `package-lock.json`（那时子包还没
 // 发布到 npm）⇒ 干净检出上直接
-//   `npm error 404  'dsh-plugin-wallpaper-engine-fonts@1.3.3' is not in this registry.`
+//   `npm error 404  'dsh-we-slim-fonts@1.3.3' is not in this registry.`
 // CI 两条腿在第 5 步（install）同时红；而本机 node_modules 早已存在、从没跑过 `npm ci`
 // ⇒ 本机 82/82 全绿照样看不见（同 §10.2 第 5 条的"本机 ≠ CI"）。
 // 判据 = CI 那条不变量的**离线形态**：清单里的每个依赖（连规格）都必须在锁文件根条目里逐字

@@ -39,7 +39,7 @@ body:
     attributes:
       label: 安装方式
       options:
-        - npm 包名（dsh plugin add dsh-plugin-wallpaper-engine）
+        - npm 包名（dsh plugin add dsh-we-slim）
         - GitHub Release 的 .tgz
         - link: 本地源码
         - 插件市场 / 插件中心

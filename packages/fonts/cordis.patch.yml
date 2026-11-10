@@ -3,4 +3,4 @@
 # scripts/dev-link-subpackages.mjs 与 ADR-0014 S4.4）；id 一旦定下不再改。
 - insert:
     - id: wallpaper-engine-fonts
-      name: 'dsh-plugin-wallpaper-engine-fonts'
+      name: 'dsh-we-slim-fonts'

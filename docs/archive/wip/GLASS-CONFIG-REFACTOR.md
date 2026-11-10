@@ -942,7 +942,7 @@ body[data-we-glass-chat][data-we-wallpaper] [data-composer-card], … [class*="_
 
 ```
 ReferenceError: Cannot access 'glassValue' before initialization
-    at applyEffects (…/dsh-plugin-wallpaper-engine/client.js&rev=9dbd47d9c1b7:14217:24)
+    at applyEffects (…/dsh-we-slim/client.js&rev=9dbd47d9c1b7:14217:24)
 ```
 
 时间分布与用户的点击对齐：09:47:34 起、末条 10:25:18，其中 10:22:02 / 10:22:53 / 10:22:57 / 10:25:18
@@ -957,7 +957,7 @@ ReferenceError: Cannot access 'glassValue' before initialization
 （按 `glassValue` 全文搜过）。⇒ **必须整进程重启 app**；单纯刷新页面不保证生效。
 
 **为什么会走到这一步（流程性事实，比这个 bug 本身更重要）**：
-`~/.dsh/profiles/{desktop,web}/node_modules/dsh-plugin-wallpaper-engine` 是指向本工作区的
+`~/.dsh/profiles/{desktop,web}/node_modules/dsh-we-slim` 是指向本工作区的
 **junction**（`LinkType=Junction`，两侧同一 target）。即**我的每一次中间态构建都立刻就是"已安装的插件"**，
 没有安装/复制这道缓冲。WD 期间任何一次中途 `npm run build` 都可能被正在运行的 app 取走。
 守卫不可能发现这件事：**缺陷不在最终树里，而在被部署产物的一个瞬时状态里** ——

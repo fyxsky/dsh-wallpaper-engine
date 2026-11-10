@@ -10,12 +10,12 @@
  *
  * ## 构建期形状（与 packages/fonts/src/client.js 逐条同形）
  *   · 产物 = packages/media-bridge/lib/client.media-bridge.js，id = 子包真实包名
- *     dsh-plugin-wallpaper-engine-media-bridge（与宿主 graph row 逐字相等）；入口 = 本文件，
+ *     dsh-we-slim-media-bridge（与宿主 graph row 逐字相等）；入口 = 本文件，
  *     正文只取**首个块注释之后**的内容。
  *   · 本包的 INLINE_MODULES（client.build.json 的 inline[]）内联在正文之前 ⇒ 兄弟文件与入口落在
  *     **同一个工厂作用域**：互相按裸名引用，不 import、不 require、不许 `...host` 展开、不许动态键。
  *   · 唯一例外 = 产物里由构建循环 outline 在正文与内联件之前发出的那一行
- *     `const host = require('dsh-plugin-wallpaper-engine');`（ADR-0014 S5.2）。
+ *     `const host = require('dsh-we-slim');`（ADR-0014 S5.2）。
  *
  * ## 消费侧契约（唯一跨包通道 = 主 bundle 的显式键集，ADR-0014 S5.1 / S5.4）
  * 下面的解构名单与主包 `src/host-bridge.js` 的 HOST_BRIDGE_BINDINGS 壁纸段**逐键一致**（缺键大声抛，

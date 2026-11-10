@@ -91,15 +91,15 @@
 ### v1.4.0（2026-10-22 · npm 已发布）
 
 > 首个按**八包发布集**形态发布的版本：主包 + 七个子包同版本、同批上架；主包把七个子包声明为
-> **精确版本运行依赖**（`1.4.0` 不带范围），所以用户只需装 `dsh-plugin-wallpaper-engine`
+> **精确版本运行依赖**（`1.4.0` 不带范围），所以用户只需装 `dsh-we-slim`
 > 一个包名，npm / pnpm 就会把全部八包解析下来。
 > `package.json` 版本号 `1.3.3` → `1.4.0`（minor：拆包后的首个正式版）。
 > **宿主半边有改动 ⇒ 升级后要重启 `dsh web`；纯客户端部分刷新页面即可。**
 
 #### 八包发布集首次上 npm（2026-10-22）
 
-- **`dsh-plugin-wallpaper-engine` + 七个子包同版本 `1.4.0` 一并发布**，这是拆包之后第一次让"一个包名装齐全部八包"在 npm 上真正成立（此前 1.3.3 及更早只有主包，子包只存在于源码里）。装法只有一个：`dsh plugin --profile <p> add dsh-plugin-wallpaper-engine`，或 `npm i dsh-plugin-wallpaper-engine`；七个子包作为**精确版本**运行依赖自动解析，用户不需要逐个装。
-- **顺序不可颠倒**：必须先七个子包、最后主包。主包先上而子包缺失时，用户的安装会在**他自己的机器上**以 `ERR_PNPM_FETCH_404 … installing the dependencies of dsh-plugin-wallpaper-engine@1.4.0` 失败并整体回滚（已实测）。发布脚本按 `release-set.json` 的 `publishOrder` 执行、失败即停。
+- **`dsh-we-slim` + 七个子包同版本 `1.4.0` 一并发布**，这是拆包之后第一次让"一个包名装齐全部八包"在 npm 上真正成立（此前 1.3.3 及更早只有主包，子包只存在于源码里）。装法只有一个：`dsh plugin --profile <p> add dsh-we-slim`，或 `npm i dsh-we-slim`；七个子包作为**精确版本**运行依赖自动解析，用户不需要逐个装。
+- **顺序不可颠倒**：必须先七个子包、最后主包。主包先上而子包缺失时，用户的安装会在**他自己的机器上**以 `ERR_PNPM_FETCH_404 … installing the dependencies of dsh-we-slim@1.4.0` 失败并整体回滚（已实测）。发布脚本按 `release-set.json` 的 `publishOrder` 执行、失败即停。
 - **GitHub Release 必须挂八件套 + `release-set.json`**，只挂主包 tgz 是一个装不上的包；离线安装走 `npm run install:release -- --set <目录> --profile <名> --dsh-home <目录> --app-closed`（用 profile 的 `overrides` 把七个子包钉到同目录 tarball）。
 - 发布前新增硬档守卫 `test/verify-release-set.mjs`：真打一次包、解开八个 tarball 的字节，判"主包声明的七个子包 = 精确版本且在集内 / 主包不带开发面目录 / 每个子包真有自己 `exports['./client']` 的浏览器半边"。发布流程见 [`CONTRIBUTING.md`](../CONTRIBUTING.md)。
 

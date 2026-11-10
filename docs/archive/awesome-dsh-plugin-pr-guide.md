@@ -2,7 +2,7 @@
 
 > 目标仓库：`awesome-dsh-plugin/awesome-dsh-plugin`
 > 你的 fork：`elysia395/awesome-dsh-plugin`
-> 提交对象：插件 `dsh-plugin-wallpaper-engine`（仓库 `elysia395/dsh-wallpaper-engine`）
+> 提交对象：插件 `dsh-we-slim`（仓库 `elysia395/dsh-wallpaper-engine`）
 
 本指南依据上游 `CONTRIBUTING.md` 与 `check-submission.mjs` 的校验逻辑编写。上游 README 由脚本生成，**禁止手改**；所有改动只发生在 `data/plugins/` 下你的那个 YAML 文件 + 由脚本重新生成的 README。
 
@@ -103,7 +103,7 @@ node scripts/generate-readme.mjs
 
 ```powershell
 git add data/plugins/elysia395__dsh-wallpaper-engine.yml README.md README.zh.md
-git commit -m "Add dsh-plugin-wallpaper-engine to themes"
+git commit -m "Add dsh-we-slim to themes"
 git push origin add/dsh-wallpaper-engine
 ```
 
@@ -129,15 +129,15 @@ git push origin add/dsh-wallpaper-engine
 
 1. 打开 `https://github.com/elysia395/awesome-dsh-plugin`，GitHub 会提示你的 `add/dsh-wallpaper-engine` 分支（有绿色 **Compare & pull request** 按钮）。
 2. 确认 base 仓库 = `awesome-dsh-plugin/awesome-dsh-plugin` 的 `main`，head 仓库 = 你的 fork 的 `add/dsh-wallpaper-engine`。
-3. 标题：`Add dsh-plugin-wallpaper-engine to themes`
+3. 标题：`Add dsh-we-slim to themes`
 4. 正文简明说明：
    ```markdown
-   Adds [dsh-plugin-wallpaper-engine](https://github.com/elysia395/dsh-wallpaper-engine) under Themes & Appearance.
+   Adds [dsh-we-slim](https://github.com/elysia395/dsh-wallpaper-engine) under Themes & Appearance.
 
    - Renders local Wallpaper Engine Video/Web wallpapers behind the DSH web chat UI
    - iOS-style liquid glass effect with adjustable blur / dim / border / glass sliders
    - Declares `dsh.bundle` manifest with `cordis.patch.yml`
-   - Publishable via npm (`dsh plugin add dsh-plugin-wallpaper-engine`)
+   - Publishable via npm (`dsh plugin add dsh-we-slim`)
    ```
 5. 点击 **Create pull request**。
 
@@ -145,7 +145,7 @@ git push origin add/dsh-wallpaper-engine
 
 ```powershell
 gh repo set-default awesome-dsh-plugin/awesome-dsh-plugin
-gh pr create --base main --head elysia395:add/dsh-wallpaper-engine --title "Add dsh-plugin-wallpaper-engine to themes" --body "..."
+gh pr create --base main --head elysia395:add/dsh-wallpaper-engine --title "Add dsh-we-slim to themes" --body "..."
 ```
 
 ---
@@ -224,12 +224,12 @@ node scripts/generate-readme.mjs
 
 # 4. 提交推送
 git add data/plugins/elysia395__dsh-wallpaper-engine.yml README.md README.zh.md
-git commit -m "Add dsh-plugin-wallpaper-engine to themes"
+git commit -m "Add dsh-we-slim to themes"
 git push origin add/dsh-wallpaper-engine
 
 # 5. 打 topic（若未做）
 gh repo edit elysia395/dsh-wallpaper-engine --add-topic dsh-plugin
 
 # 6. 创建 PR
-gh pr create --base main --head elysia395:add/dsh-wallpaper-engine --title "Add dsh-plugin-wallpaper-engine to themes" --body "..."
+gh pr create --base main --head elysia395:add/dsh-wallpaper-engine --title "Add dsh-we-slim to themes" --body "..."
 ```

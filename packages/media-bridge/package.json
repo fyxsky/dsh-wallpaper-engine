@@ -1,6 +1,6 @@
 {
-  "name": "dsh-plugin-wallpaper-engine-media-bridge",
-  "version": "1.4.2",
+  "name": "dsh-we-slim-media-bridge",
+  "version": "1.0.0",
   "description": "System media bridge host half (now-playing / spectrum / artwork / media control) plus the P-D phase 1 wallpaper domain: the wallpaper host route families and the browser half of the wallpaper library / playback tabs. Package name stays media-bridge (already published by upstream 1.4.0; see docs/adr/0014-subpackage-contract.md §S4.3).",
   "icon": "./icon.png",
   "type": "module",
@@ -17,12 +17,21 @@
       "patch": "./cordis.patch.yml"
     },
     "client": {
-      "inject": ["@deepseek-ai/dsh-client-runtime", "dsh-plugin-wallpaper-engine"],
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "dsh-we-slim"
+      ],
       "platform": "web",
       "immediately": true
     }
   },
-  "files": ["lib/", "cordis.patch.yml", "locale/", "icon.png", "package.json"],
+  "files": [
+    "lib/",
+    "cordis.patch.yml",
+    "locale/",
+    "icon.png",
+    "package.json"
+  ],
   "peerDependencies": {
     "@deepseek-ai/dsh-host-webserver": ">=0.1.5-rc.1"
   },

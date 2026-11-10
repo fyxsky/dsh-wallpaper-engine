@@ -222,7 +222,7 @@ async function runScenario({ mode = 'varied', blobSize = 120000, gpuAlreadyPinne
       throw new Error('wallpaper 浏览器半边必须恰好注册一份 bundle（实际 ' + subHandoffs.length + ' 份）');
     }
     const wallpaperExports = subHandoffs[0].factory((spec) => (
-      spec === 'dsh-plugin-wallpaper-engine' ? exportsObj : { createPortal: (n) => n }
+      spec === 'dsh-we-slim' ? exportsObj : { createPortal: (n) => n }
     ));
     if (typeof wallpaperExports.apply !== 'function') throw new Error('wallpaper 浏览器半边必须导出 apply');
   }

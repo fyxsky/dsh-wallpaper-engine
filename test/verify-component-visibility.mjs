@@ -62,7 +62,7 @@ import { locate, locateFile, moduleFace } from './tools/source-locator.mjs';
 import { discoverPackages } from './tools/packages.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const BARE = 'dsh-plugin-wallpaper-engine';
+const BARE = 'dsh-we-slim';
 /** 本轮范围（有意写成棘轮，见文件头）—— 声明面的键集必须恰为这两组。 */
 const SCOPE = ['about-notice', 'mascot-avatar'];
 const OUT_OF_SCOPE = ['media-bridge'];// P-D 阶段1：壁纸域并入 media-bridge（包名不变）

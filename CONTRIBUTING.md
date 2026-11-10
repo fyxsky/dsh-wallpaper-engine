@@ -402,7 +402,7 @@ UI 改动还应说明实际测试过的 DSH 界面、浏览器或 DSH Desktop �
 
 | 通道 | 用户侧入口 | 需要先满足 |
 |---|---|---|
-| npm（推荐，DSH 桌面"添加插件"直接可用） | 包名 `dsh-plugin-wallpaper-engine`（可带 `@<版本>`） | 九个包**同版本**全部在 registry 上 |
+| npm（推荐，DSH 桌面"添加插件"直接可用） | 包名 `dsh-we-slim`（可带 `@<版本>`） | 九个包**同版本**全部在 registry 上 |
 | GitHub Release（镜像 / 离线） | 九个 tarball + `release-set.json` | Release 资产**必须是九件套**，离线安装用 `scripts/install-release.mjs` |
 
 两条通道共用同一份产物：`npm run pack:release`。
@@ -411,18 +411,18 @@ UI 改动还应说明实际测试过的 DSH 界面、浏览器或 DSH Desktop �
 
 ### 1. 为什么"只挂母包"必然失败（实测，别再试）
 
-发布形态的主包 `dependencies` 里是八条裸精确版本（如 `dsh-plugin-wallpaper-engine-fx: "<版本>"`）。
+发布形态的主包 `dependencies` 里是八条裸精确版本（如 `dsh-we-slim-fx: "<版本>"`）。
 pnpm 会拿这些版本去 **registry** 解析，与"主包 tgz 从哪来"无关。在隔离 profile 上实测过：
 
 ```text
 # 探针 A：只装发布形态主包 tarball（历史样例；版本号是当时的值，不是当前版本）
-[ERR_PNPM_FETCH_404] GET https://registry.npmjs.org/dsh-plugin-wallpaper-engine-media-bridge: Not Found - 404
-This error happened while installing the dependencies of dsh-plugin-wallpaper-engine@1.3.3
+[ERR_PNPM_FETCH_404] GET https://registry.npmjs.org/dsh-we-slim-media-bridge: Not Found - 404
+This error happened while installing the dependencies of dsh-we-slim@1.3.3
 ```
 
 ```text
 # 探针 B：把九个 tarball 全部当顶层 file: 依赖一次装
-[ERR_PNPM_FETCH_404] GET https://registry.npmjs.org/dsh-plugin-wallpaper-engine-fonts: Not Found - 404
+[ERR_PNPM_FETCH_404] GET https://registry.npmjs.org/dsh-we-slim-fonts: Not Found - 404
 ```
 
 ```text
@@ -500,7 +500,7 @@ Windows PowerShell 等价写法见 §5 的脚本片段（Git Bash 不可用时�
 
 #### 3.2 为什么要"先子后主、且中间不中断"
 
-主包先发而某个子包没发 = **灾难路径**：用户 `pnpm add dsh-plugin-wallpaper-engine` 会在安装期
+主包先发而某个子包没发 = **灾难路径**：用户 `pnpm add dsh-we-slim` 会在安装期
 以 `ERR_PNPM_FETCH_404` 失败并整体回滚。DSH 会把这类失败分类成 `not-found` 并在 UI 上报错，用户
 看到的是"这个插件装不上"。已发布的主包**不能**靠重发同版本修好（同版本不可覆盖）——只能补发子包
 （补发后立刻恢复可用），或升版本重发主包。
@@ -512,7 +512,7 @@ Windows PowerShell 等价写法见 §5 的脚本片段（Git Bash 不可用时�
 ```sh
 # ① registry 上九个版本都在（VERSION 换成本次发布版本）
 VERSION=<本次版本>
-for p in dsh-plugin-wallpaper-engine dsh-plugin-wallpaper-engine-{about-notice,fonts,fx,glass,mascot-avatar,media-bridge,parallax,pet-link}; do
+for p in dsh-we-slim dsh-we-slim-{about-notice,fonts,fx,glass,mascot-avatar,media-bridge,parallax,pet-link}; do
   npm view "$p@$VERSION" version || echo "MISSING $p"
 done
 ```
@@ -522,13 +522,13 @@ done
 mkdir -p /tmp/rel-check && cd /tmp/rel-check
 printf '{"name":"rel-check","private":true,"version":"0.0.0"}\n' > package.json
 printf 'packages:\n  - .\nnodeLinker: hoisted\nautoInstallPeers: false\n' > pnpm-workspace.yaml
-pnpm add dsh-plugin-wallpaper-engine@<VERSION>
-node -e "const{createRequire}=require('node:module');const r=createRequire(process.cwd()+'/cordis.yml');for(const n of ['dsh-plugin-wallpaper-engine','dsh-plugin-wallpaper-engine-fonts','dsh-plugin-wallpaper-engine-fx','dsh-plugin-wallpaper-engine-parallax','dsh-plugin-wallpaper-engine-pet-link','dsh-plugin-wallpaper-engine-media-bridge','dsh-plugin-wallpaper-engine-mascot-avatar','dsh-plugin-wallpaper-engine-about-notice','dsh-plugin-wallpaper-engine-glass'])r.resolve(n);console.log('9/9 OK')"
+pnpm add dsh-we-slim@<VERSION>
+node -e "const{createRequire}=require('node:module');const r=createRequire(process.cwd()+'/cordis.yml');for(const n of ['dsh-we-slim','dsh-we-slim-fonts','dsh-we-slim-fx','dsh-we-slim-parallax','dsh-we-slim-pet-link','dsh-we-slim-media-bridge','dsh-we-slim-mascot-avatar','dsh-we-slim-about-notice','dsh-we-slim-glass'])r.resolve(n);console.log('9/9 OK')"
 ```
 
 ```sh
 # ③ DSH 桌面端到端：新建 profile → 添加插件 → 贴包名 → 装完后确认九个目录都在
-ls "<DSH_HOME>/profiles/<profile>/node_modules" | grep dsh-plugin-wallpaper-engine
+ls "<DSH_HOME>/profiles/<profile>/node_modules" | grep dsh-we-slim
 ```
 
 #### 3.4 npmmirror 镜像

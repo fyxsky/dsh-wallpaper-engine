@@ -8,7 +8,7 @@
  *    或下面的 host 显式键集拿到。
  *
  * ## 构建期形状（与 packages/fx/src/client.js 逐条同形）
- *   · 产物 = packages/fonts/lib/client.fonts.js，id = 子包真实包名 dsh-plugin-wallpaper-engine-fonts
+ *   · 产物 = packages/fonts/lib/client.fonts.js，id = 子包真实包名 dsh-we-slim-fonts
  *     （与宿主 graph row 逐字相等）；入口 = 本文件，正文只取**首个块注释之后**的内容。
  *   · 本包的 INLINE_MODULES（client.build.json 的 inline[]）内联在正文之前 ⇒ 兄弟文件与入口落在
  *     **同一个工厂作用域**：互相按裸名引用，不 import、不 require、不许 `...host` 展开、不许动态键。

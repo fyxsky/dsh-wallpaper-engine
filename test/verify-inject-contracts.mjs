@@ -780,7 +780,7 @@ function selftest(ok) {
 
   // nc-sub5：`...subpackageKeys(id)` 只有在**认得叶子表绑定**时才展开；不给表仍判 dynamic（原有牙没丢）
   const subRaw = [
-    "import { subpackageKeys } from 'dsh-plugin-wallpaper-engine/subpackage-boot.js';",
+    "import { subpackageKeys } from 'dsh-we-slim/subpackage-boot.js';",
     "const keys = subpackageKeys('probe');",
     "export const DEPS = ['base'];",
     'export function registerProbeRoutes(webServer, c) {',

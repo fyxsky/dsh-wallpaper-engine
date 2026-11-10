@@ -16,7 +16,7 @@
  * `lib/subpackage-boot.js` 的 `subpackageKeys('media-bridge', ctx)` 取**同一份冻结键视图**
  * ⇒ 两条路径不可能漂移（对账面 = `test/verify-inject-contracts.mjs` ② 的叶子冻结表逐键对账）。
  *
- * `export const name` 与 patch 行的 `name` 逐字相等（`dsh-plugin-wallpaper-engine-media-bridge`）。
+ * `export const name` 与 patch 行的 `name` 逐字相等（`dsh-we-slim-media-bridge`）。
  *
  * ⚠️ **跨包纪律（ADR-0014 S5.1 / S5.2，判据 `test/verify-subpackage-purity.mjs`）**：本模块
  * **零主包说明符、零相对路径逃出本包** —— 只 import 本包内的路由族。宿主能力一律经
@@ -66,7 +66,7 @@ import { createOcclusionHub } from './occlusion/index.js';
 import { registerOcclusionRoutes } from './routes/occlusion.js';
 
 /** patch 行 slug（`cordis.patch.yml` 里该行 `name` 的完整值，两处逐字相等）。 */
-export const name = 'dsh-plugin-wallpaper-engine-media-bridge';
+export const name = 'dsh-we-slim-media-bridge';
 
 /**
  * 硬依赖 web 服务 + 主包宿主服务：与主行 `lib/index.js` 的 `inject` 同一套语义。

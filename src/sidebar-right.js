@@ -35,7 +35,7 @@ let weSidebarMode = "drawer";
 let weSidebarOpenFn = null; // 官方态的 openTab 调用（非官方态为 null）
 let weSidebarCtrl = null;   // 官方态控制器（isExpanded/active/toggleExpanded 的宿主面）
 const WE_SIDEBAR_KIND = "wallpaper-library";
-const WE_SIDEBAR_ID = "dsh-plugin-wallpaper-engine/library";
+const WE_SIDEBAR_ID = "dsh-we-slim/library";
 
 function sidebarRightMode() {
   return weSidebarMode;

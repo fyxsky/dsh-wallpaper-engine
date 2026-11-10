@@ -14,4 +14,4 @@
 # id = `wallpaper-engine-<目录名>` 因此自然成立）。id 一旦定下不再改（ADR-0014 S4.3）。
 - insert:
     - id: wallpaper-engine-media-bridge
-      name: 'dsh-plugin-wallpaper-engine-media-bridge'
+      name: 'dsh-we-slim-media-bridge'

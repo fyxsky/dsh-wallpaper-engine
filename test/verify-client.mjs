@@ -465,33 +465,33 @@ const readoutOfSlider = (row) => {
 // ── A3：fx/parallax 的扩展模块描述符住在各自子包里 ─────────────────────────────
 // 「扩展」页签的三张卡现在来自三个 bundle：avatar（本 bundle 模块作用域注册）、fx、parallax。
 // 子包产物只在 loader 上注册自己那份 bundle，真正的注册动作发生在它们各自的 factory：
-// 它们用 require('dsh-plugin-wallpaper-engine') 取主 bundle 的**显式键集**
+// 它们用 require('dsh-we-slim') 取主 bundle 的**显式键集**
 // （src/host-bridge.js 的 HOST_BRIDGE_BINDINGS），再 registerExtensionModule / registerLayerHooks。
 // 所以这里必须在 apply(ctx) **之前**、同一个 vm 上下文里把两份产物求值掉，且 requireMock 要把
 // 主 bundle 的导出面交给它们 —— 否则页签只剩 avatar，:788 会红（这正是本判据要看见的形态）。
 // 求值顺序**故意反着来**（先 parallax 后 fx）：屏上顺序必须由 descriptor.order 决定，
 // 不许靠 bundle 求值顺序（三份 bundle 的到达顺序在真实 loader 里不保证）。
 const SUBPACKAGE_CLIENT_ARTIFACTS = [
-  ['../packages/parallax/lib/client.parallax.js', 'dsh-plugin-wallpaper-engine-parallax'],
-  ['../packages/fx/lib/client.fx.js', 'dsh-plugin-wallpaper-engine-fx'],
+  ['../packages/parallax/lib/client.parallax.js', 'dsh-we-slim-parallax'],
+  ['../packages/fx/lib/client.fx.js', 'dsh-we-slim-fx'],
   // P-C 第一刀：字体节（「字体自定义」那一节）已随子包出产物 —— 设置页/外观页要看到它，
   // 挂载台就必须像真实 loader 那样把这份 bundle 也求值掉（它的 factory 会往面板节注册表注册）。
-  ['../packages/fonts/lib/client.fonts.js', 'dsh-plugin-wallpaper-engine-fonts'],
+  ['../packages/fonts/lib/client.fonts.js', 'dsh-we-slim-fonts'],
   // pet-link 收口：桌宠联动的浏览器半边也出产物了。它的 factory 会调
   // 主 bundle 显式键集里的 registerPetLink 把服务登记回主包（门面缓冲 + 登记到达时补做）。
   // 求值在 apply() **之前** ⇒ 这里正是"子包先到"那一半的真实形态。
-  ['../packages/pet-link/lib/client.pet-link.js', 'dsh-plugin-wallpaper-engine-pet-link'],
+  ['../packages/pet-link/lib/client.pet-link.js', 'dsh-we-slim-pet-link'],
   // P-D S3a：「壁纸库」页签第四节「自定义壁纸」随壁纸子包出产物（packages/media-bridge/lib/
   // client.media-bridge.js）。它的 factory 会往面板节注册表登记 library 节（order 40）⇒ 与真实
   // loader 同形，求值在 apply() **之前**，否则：788 那条「library tab has 自定义壁纸」会红。
-  ['../packages/media-bridge/lib/client.media-bridge.js', 'dsh-plugin-wallpaper-engine-media-bridge'],
+  ['../packages/media-bridge/lib/client.media-bridge.js', 'dsh-we-slim-media-bridge'],
   // ADR-0016 第二刀：「主题预设」+「玻璃 UI」节渲染器随玻璃子包出产物。它的 factory 会调
   // 显式键集里的 registerPanelSection 把玻璃节登记进注册表；挂载台不求值它 ⇒ 外观页签的
   // 玻璃节就是 null（占位桩按 id 取不到渲染器），下面所有玻璃面板断言全会红。
-  ['../packages/glass/lib/client.glass.js', 'dsh-plugin-wallpaper-engine-glass'],
+  ['../packages/glass/lib/client.glass.js', 'dsh-we-slim-glass'],
 ];
 const subRequireMock = (spec) => {
-  if (spec === 'dsh-plugin-wallpaper-engine') return exportsObj;
+  if (spec === 'dsh-we-slim') return exportsObj;
   return requireMock(spec);
 };
 for (const [rel, expectedId] of SUBPACKAGE_CLIENT_ARTIFACTS) {

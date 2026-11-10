@@ -40,9 +40,9 @@
  * （`name in fiber.inject`）⇒ 主包停用，子包 fiber 自动 park（ADR-0014 S7.2「关主包 = 关整族」的物理基础）。
  *
  * 开发期解析：`scripts/dev-link-subpackages.mjs` 在 `<profile>/node_modules/` 建
- * `dsh-plugin-wallpaper-engine-<pkg> → packages/<pkg>` junction（发布态天然是兄弟目录，同一份 patch 两态成立）。
- * ⚠️ 本文件已零主包 specifier ⇒ 仓内跑它**不再**需要仓库根的 `node_modules/dsh-plugin-wallpaper-engine`
- * 自链接（那一层链接只服务旧的 `dsh-plugin-wallpaper-engine/subpackage-boot.js` 叶子通道）。
+ * `dsh-we-slim-<pkg> → packages/<pkg>` junction（发布态天然是兄弟目录，同一份 patch 两态成立）。
+ * ⚠️ 本文件已零主包 specifier ⇒ 仓内跑它**不再**需要仓库根的 `node_modules/dsh-we-slim`
+ * 自链接（那一层链接只服务旧的 `dsh-we-slim/subpackage-boot.js` 叶子通道）。
  */
 
 import { join } from 'node:path';
@@ -51,7 +51,7 @@ import { registerFontsetsRoutes } from './routes/fontsets.js';
 import { registerSystemFontsRoutes } from './routes/system-fonts.js';
 
 /** 行标识：与 packages/fonts/cordis.patch.yml 里那行的 `name` 逐字相同（ADR-0014 S4.2 会逐字对账）。 */
-export const name = 'dsh-plugin-wallpaper-engine-fonts';
+export const name = 'dsh-we-slim-fonts';
 
 /** 这一族的宿主注入面：`webServer`（两条路由都注册在它上面）+ 主包的跨包服务面（ADR-0014 S5.1）。 */
 export const inject = ['webServer', 'wallpaperEngineHost'];

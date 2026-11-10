@@ -1,7 +1,7 @@
 /**
  * 跨包浏览器半边通道：宿主注入的**显式键集**（ADR-0014 §5.1 / §5.4）。
  *
- * 子包产物由 loader 用 `require("dsh-plugin-wallpaper-engine")` 取主 bundle 的导出面。
+ * 子包产物由 loader 用 `require("dsh-we-slim")` 取主 bundle 的导出面。
  * 这里挂的是**显式键集**，不是整个 module.exports：子包要什么就登记什么，多给一个键就是多
  * 一条没人维护的隐式契约。键集与各子包 src/client.js 里 `const { … } = host;` 的解构逐键对齐
  * （解构名单 = 申报键真源；子包产物里的 *_HOST_REQUIRED 由构建期从它派生，见 scripts/build-client.mjs

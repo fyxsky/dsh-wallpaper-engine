@@ -88,7 +88,7 @@ export async function verifyComposerFixedBrowser({ send, evaluate, until, check,
         registerExtensionModule:()=>{},registerLayerHooks:(_id,hooks)=>{window.__hooks=hooks;}};
       window.__selection=selection;
       window.__ModuleLoader__={load:({factory})=>factory(name=>{
-        if(name!=='dsh-plugin-wallpaper-engine')throw Error('Unexpected dependency '+name);
+        if(name!=='dsh-we-slim')throw Error('Unexpected dependency '+name);
         return host;
       })};
       ${source}

@@ -2,7 +2,7 @@
  * subpackage-shapes.mjs —— `packages/*` 里**两种包形态**的唯一真源（P1 upstream-fork 引入）。
  *
  * 为什么需要这张表：`packages/` 下现在有两种互不相同的包。
- *   ① 一般子包（`dsh-plugin-wallpaper-engine-<短名>`）：本仓自己写的，宿主半边 `inject` 主包服务、
+ *   ① 一般子包（`dsh-we-slim-<短名>`）：本仓自己写的，宿主半边 `inject` 主包服务、
  *      浏览器半边由 `scripts/build-client.mjs` 从 `src/` 编译而来，清单走 ADR-0014 S3.8 的
  *      逐字模板（含 `name = <主包名>-<目录名>` 与 `version = 主包 version`）。
  *   ② **upstream-fork**（`packages/pet`）：上游 `dsh-pet@0.3.7` 的受控派生副本 —— 固定派生身份

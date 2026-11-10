@@ -294,7 +294,7 @@ graph LR
 
 | 维度 | 上游：单包单行 | 当前形态：主包 + 组件行 + 内核化 |
 |---|---|---|
-| patch 行 | 1 行，`name` 是裸包名 | 多行，全部用**真包名**（`dsh-plugin-wallpaper-engine` + 各子包真名）；行可单独 disable |
+| patch 行 | 1 行，`name` 是裸包名 | 多行，全部用**真包名**（`dsh-we-slim` + 各子包真名）；行可单独 disable |
 | 关掉一行会怎样 | 关掉整包 | 只丢该组件的宿主路由族 + 它的浏览器可见面；其余行不动 |
 | 门面体量 | 门面即宿主 | 门面 = 装配 + 协议聚合；行数现算：`wc -l lib/index.js` 与 `git show origin/main:lib/index.js \| wc -l` |
 | 依赖注入 | 门面内自由引用 | 每个路由族带**显式 `DEPS` 声明**，与调用点实参**双向对账**（`verify-inject-contracts`） |
@@ -967,7 +967,7 @@ bundle 是压缩产物，符号名（`me`/`Qb` 等）会随上游同步变化。
    - dsh 0.2.0 `resolveBundleDir` **安装锚优先**：插件实际从 app 的 `node_modules` 拷贝加载；
    - `ensureBundledProfile({ force: app.isPackaged })`：开发态 **不** 强制重写 profile；
      `~/.dsh-dev/profiles/web/package.json` 的 `dsh.profile.bundles` **已含**
-     `dsh-plugin-wallpaper-engine`，无需任何接线动作。
+     `dsh-we-slim`，无需任何接线动作。
 2. **修改插件后的刷新**（本仓库改动 → 可测）：在 `dsh-my-ui` 根目录跑
    `node scripts/prepare-dependencies.mjs` 重新物化 `node_modules` 拷贝，然后重启实例
    （patchReload 已随 0.2.0 移除，别指望热载）。
@@ -1002,7 +1002,7 @@ bundle 是压缩产物，符号名（`me`/`Qb` 等）会随上游同步变化。
 
 ### 9.9 运维事实
 
-- **profile 锚点**：`~/.dsh-dev/profiles/web/node_modules/dsh-plugin-wallpaper-engine` 若是实体目录（旧拷贝），会以更高优先级遮蔽 app 侧新拷贝（installation-anchor-first）；正确形态是指向 app 拷贝的**符号链接**（`ensureBundledPluginLinks` 仅 force 时重建，dev 永不 force）。
+- **profile 锚点**：`~/.dsh-dev/profiles/web/node_modules/dsh-we-slim` 若是实体目录（旧拷贝），会以更高优先级遮蔽 app 侧新拷贝（installation-anchor-first）；正确形态是指向 app 拷贝的**符号链接**（`ensureBundledPluginLinks` 仅 force 时重建，dev 永不 force）。
 - **x11 依赖**：物化拷贝不带 node_modules，`import('x11')` 在实例内解析不到 ⇒ hub 降级 `backend:"none"`（不崩）。x11 作为插件正式依赖随 npm 包分发（用户侧由 dsh 插件管理器的 profile pnpm 安装；win/mac 也会装但永不 import，死重 5.2MB，可接受），解析不到即优雅降级。
 - **归属候选集**：插件宿主是 runtime utility 子进程（`--expose-internals`），窗口属于 Electron 主进程 ⇒ own 判定用候选集 `[process.pid, process.ppid]`（§9.4 按此修正）。
 
@@ -1089,7 +1089,7 @@ ls packages/*/package.json                                # 在册独立子包
 git grep -n "id: wallpaper-engine" -- cordis.patch.yml    # 主包 patch 里的行（两种行都在这里）
 git grep -n "file:packages/" -- package.json              # 开发期依赖形态（S8.1）
 git grep -n "from '" -- packages                          # 宿主半边的 import 面（S5.1 / S5.3）
-git grep -n 'require("dsh-plugin-wallpaper-engine")' -- packages   # 浏览器平面唯一说明符（S5.2）
+git grep -n 'require("dsh-we-slim")' -- packages   # 浏览器平面唯一说明符（S5.2）
 node test/tools/host-route-index.mjs --write              # 重算 docs/ROUTE-INDEX.md
 node test/tools/guard-targets.mjs --write                 # 重算 docs/GUARD-MAP.md
 ```
@@ -1100,15 +1100,15 @@ node test/tools/guard-targets.mjs --write                 # 重算 docs/GUARD-MA
 
 ```mermaid
 graph TD
-  MAIN["主包 · 行 id=wallpaper-engine<br/>name='dsh-plugin-wallpaper-engine'"]
-  MAIN -->|"真名行 —— 组件行（另有浏览器半边）"| C3["id=wallpaper-engine-media-bridge<br/>name='dsh-plugin-wallpaper-engine-media-bridge'<br/>住 packages/media-bridge/，独立清单 + 宿主半边 + 自出浏览器半边产物"]
-  MAIN -->|"真名行 —— 组件行"| C1["id=wallpaper-engine-about-notice<br/>name='dsh-plugin-wallpaper-engine-about-notice'<br/>住 packages/about-notice/，独立清单"]
-  MAIN -->|"同上"| C2["id=wallpaper-engine-mascot-avatar<br/>name='dsh-plugin-wallpaper-engine-mascot-avatar'<br/>住 packages/mascot-avatar/，独立清单"]
-  MAIN -->|"真名行 —— 独立子包行（本规范）"| S1["id=wallpaper-engine-fx<br/>name='dsh-plugin-wallpaper-engine-fx'<br/>住 packages/fx/，独立清单 + 独立发布"]
-  MAIN -->|"同上"| S2["id=wallpaper-engine-parallax<br/>name='dsh-plugin-wallpaper-engine-parallax'"]
-  MAIN -->|"同上"| S3["id=wallpaper-engine-fonts<br/>name='dsh-plugin-wallpaper-engine-fonts'"]
-  MAIN -->|"真名行 —— 独立子包行（包内安装器形态 S3.8a）"| S4["id=wallpaper-engine-pet-link<br/>name='dsh-plugin-wallpaper-engine-pet-link'<br/>住 packages/pet-link/，独立清单 + 包内安装器入口 + 自出浏览器半边产物"]
-  MAIN -->|"真名行 —— 独立子包行（玻璃已整体出户）"| S5["id=wallpaper-engine-glass<br/>name='dsh-plugin-wallpaper-engine-glass'<br/>住 packages/glass/，独立清单 + 自出浏览器半边产物"]
+  MAIN["主包 · 行 id=wallpaper-engine<br/>name='dsh-we-slim'"]
+  MAIN -->|"真名行 —— 组件行（另有浏览器半边）"| C3["id=wallpaper-engine-media-bridge<br/>name='dsh-we-slim-media-bridge'<br/>住 packages/media-bridge/，独立清单 + 宿主半边 + 自出浏览器半边产物"]
+  MAIN -->|"真名行 —— 组件行"| C1["id=wallpaper-engine-about-notice<br/>name='dsh-we-slim-about-notice'<br/>住 packages/about-notice/，独立清单"]
+  MAIN -->|"同上"| C2["id=wallpaper-engine-mascot-avatar<br/>name='dsh-we-slim-mascot-avatar'<br/>住 packages/mascot-avatar/，独立清单"]
+  MAIN -->|"真名行 —— 独立子包行（本规范）"| S1["id=wallpaper-engine-fx<br/>name='dsh-we-slim-fx'<br/>住 packages/fx/，独立清单 + 独立发布"]
+  MAIN -->|"同上"| S2["id=wallpaper-engine-parallax<br/>name='dsh-we-slim-parallax'"]
+  MAIN -->|"同上"| S3["id=wallpaper-engine-fonts<br/>name='dsh-we-slim-fonts'"]
+  MAIN -->|"真名行 —— 独立子包行（包内安装器形态 S3.8a）"| S4["id=wallpaper-engine-pet-link<br/>name='dsh-we-slim-pet-link'<br/>住 packages/pet-link/，独立清单 + 包内安装器入口 + 自出浏览器半边产物"]
+  MAIN -->|"真名行 —— 独立子包行（玻璃已整体出户）"| S5["id=wallpaper-engine-glass<br/>name='dsh-we-slim-glass'<br/>住 packages/glass/，独立清单 + 自出浏览器半边产物"]
 ```
 
 - **组件行**：代码在主包 `files` 里、随主包发布，清单就是主包清单；本仓现存的三格
@@ -1171,7 +1171,7 @@ graph LR
   LOADER -->|"同上"| WB["packages/media-bridge/lib/client.media-bridge.js"]
   LOADER -->|"同上"| PL["packages/pet-link/lib/client.pet-link.js"]
   LOADER -->|"同上"| GB["packages/glass/lib/client.glass.js"]
-  FB -->|"require('dsh-plugin-wallpaper-engine') —— 唯一外部说明符"| MAINB
+  FB -->|"require('dsh-we-slim') —— 唯一外部说明符"| MAINB
   PB -->|"同上"| MAINB
   FT -->|"同上"| MAINB
   WB -->|"同上"| MAINB
