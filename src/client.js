@@ -3436,6 +3436,23 @@ const officialColorOf = (tokens) => {
 };
 
 // ── 在线图库（本 fork 新增）：接口地址 / 取图路径 / 压缩档 / 内网开关 + 拉取、测试、下载 ──
+// ── 图库预设：默认**优先二次元/卡通**（用户口径），其余按需切换 ──
+const GALLERY_PRESETS = [
+  { id: 'lolicon', label: '二次元 · Lolicon（多张）', endpoint: 'https://api.lolicon.app/setu/v2?num=20&r18=0', format: 'auto', jsonPath: 'data[].urls.original' },
+  { id: 'alcy', label: '二次元 · 樱道（随机单张）', endpoint: 'https://t.alcy.cc/pc', format: 'image', jsonPath: '' },
+  { id: '360', label: '卡通 · 360 壁纸（动漫分类）', endpoint: 'http://wallpaper.apc.360.cn/index.php?c=WallPaper&a=getAppsByCategory&cid=26&start=0&count=20', format: 'json-list', jsonPath: '' },
+  { id: 'bing', label: 'Bing 每日 8 张', endpoint: 'https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=zh-CN', format: 'json-list', jsonPath: 'images[].url' },
+  { id: 'picsum', label: 'Picsum 随机 30 张', endpoint: 'https://picsum.photos/v2/list?page=1&limit=30', format: 'auto', jsonPath: '' },
+];
+const onGalleryPreset = (id) => {
+  const p = GALLERY_PRESETS.find((x) => x.id === id);
+  if (!p) return;
+  setSetting('galleryEndpoint', p.endpoint);
+  setSetting('galleryFormat', p.format);
+  setSetting('galleryJsonPath', p.jsonPath);
+  emit();
+};
+
 const onGalleryEndpoint = (e) => { setSetting('galleryEndpoint', String((e && e.target && e.target.value) || '')); emit(); };
 const onGalleryJsonPath = (e) => { setSetting('galleryJsonPath', String((e && e.target && e.target.value) || '')); emit(); };
 const onGalleryCompress = (v) => { setSetting('galleryCompress', v === 'off' ? 'off' : 'lossless'); emit(); };
@@ -4092,7 +4109,7 @@ function WallpaperPicker() {
         note: selection.galleryNote,
         result: selection.galleryResult,
       },
-      galleryThumbUrl,
+      galleryThumbUrl, galleryPresets: GALLERY_PRESETS, onGalleryPreset,
       onGalleryEndpoint, onGalleryJsonPath, onGalleryCompress, onGalleryAllowPrivate,
       onGalleryFetch, onGalleryProbe, onGalleryToggle, onGallerySelectAll, onGalleryDownload,
     });

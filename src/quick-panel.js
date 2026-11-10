@@ -877,7 +877,7 @@
                 note: sel.galleryNote,
                 result: sel.galleryResult,
               },
-              galleryThumbUrl,
+              galleryThumbUrl, galleryPresets: GALLERY_PRESETS, onGalleryPreset,
               onGalleryEndpoint, onGalleryJsonPath, onGalleryCompress, onGalleryAllowPrivate,
               onGalleryFetch, onGalleryProbe, onGalleryToggle, onGallerySelectAll, onGalleryDownload,
             })

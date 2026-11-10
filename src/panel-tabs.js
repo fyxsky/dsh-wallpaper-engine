@@ -57,7 +57,20 @@
     const busy = g.busy === true;
     const row = (children, key) => React.createElement("div", { className: "we-picker__ctl we-picker__ctl--wrap", key }, children);
     const label = (text) => React.createElement("span", { className: "we-picker__hint we-picker__label" }, text);
+    const presets = Array.isArray(ctx.galleryPresets) ? ctx.galleryPresets : [];
+    const presetRow = presets.length === 0 ? null : row([
+      label(weT("预设")),
+      React.createElement("select", {
+        className: "we-picker__select",
+        value: "",
+        onChange: (e) => { if (e.target.value) ctx.onGalleryPreset(e.target.value); },
+      },
+        React.createElement("option", { value: "" }, weT("选一个预设…（默认二次元）")),
+        presets.map((p) => React.createElement("option", { key: p.id, value: p.id }, p.label)),
+      ),
+    ], "g-preset");
     const head = React.createElement(React.Fragment, null,
+      presetRow,
       React.createElement("div", { className: "we-picker__hint" }, weT("填一个图库接口地址（Picsum / Bing 每日 / 自建图床都行），拉回来的图可以勾选后下载到「自定义壁纸」目录")),
       row([
         React.createElement("input", {
