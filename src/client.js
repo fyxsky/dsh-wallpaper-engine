@@ -438,6 +438,8 @@ const selection = {
   galleryError: "",
   galleryNote: "",
   galleryResult: null,
+  // 自定义壁纸的批量勾选（删除用）。
+  uploadSel: [],
   // 360 之类分页接口的游标：每次「拉取」推进一页，避免每次都是同样 20 张。
   galleryPage: 0,
   uploadError: "",
@@ -1555,6 +1557,25 @@ async function uploadWallpaperFile(file) {
   }
   setTransient("uploading", false);
   emit();
+}
+
+// ── 自定义壁纸的批量选择 / 删除 ─────────────────────────────────────────────
+const onUploadToggle = (id) => {
+  const cur = Array.isArray(selection.uploadSel) ? selection.uploadSel.slice() : [];
+  const i = cur.indexOf(id);
+  if (i >= 0) cur.splice(i, 1); else cur.push(id);
+  setTransient('uploadSel', cur); emit();
+};
+const onUploadSelectAll = (on) => {
+  const all = ((selection.inventory && Array.isArray(selection.inventory.wallpapers)) ? selection.inventory.wallpapers : [])
+    .map((w) => String((w && w.id) || '')).filter((id) => id.startsWith('up-'));
+  setTransient('uploadSel', on ? all : []); emit();
+};
+async function onUploadDeleteSelected() {
+  const ids = Array.isArray(selection.uploadSel) ? selection.uploadSel.slice() : [];
+  if (ids.length === 0) return;
+  for (const id of ids) { try { await removeUploadWallpaper(id); } catch { /* 继续删其余 */ } }
+  setTransient('uploadSel', []); emit();
 }
 
 async function removeUploadWallpaper(id) {
@@ -4233,6 +4254,7 @@ if (activeTab === "appearance") return renderAppearanceTab({
         onClear, onTogglePlay, onRatingToggle: onRatingFilterToggle, onTypeToggle: onTypeFilterToggle,
         onShowNormalView, onShowHiddenView,
         onToggleBatchMode, onArmBatchHide, onBatchHide, onBatchCancel, onSearchInput, onPickCard,
+        onUploadToggle, onUploadSelectAll, onUploadDeleteSelected,
       }) : React.createElement(React.Fragment, null,
         // 页签内容 → **每个页签末尾一个重置**（issue #192 用户口径：重置指定选项卡）→
         // 全局重置（只在「系统」页签末尾，即设置页里最接近"最底部"的位置）。
