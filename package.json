@@ -192,7 +192,10 @@
   },
   "dependencies": {
     "webwallgl": "^3.0.0",
-    "x11": "^4.3.1"
+    "x11": "^4.3.1",
+    "dsh-we-slim-glass": "github:fyxsky/dsh-wallpaper-engine#main&path:/packages/glass",
+    "dsh-we-slim-fonts": "github:fyxsky/dsh-wallpaper-engine#main&path:/packages/fonts",
+    "dsh-we-slim-media-bridge": "github:fyxsky/dsh-wallpaper-engine#main&path:/packages/media-bridge"
   },
   "overrides": {
     "js-yaml": "4.3.2"
